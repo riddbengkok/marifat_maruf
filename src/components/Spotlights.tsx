@@ -55,7 +55,7 @@ const Spotlights = () => {
       ref={sectionRef}
       className="wrapper style2 spotlights fade-up py-20"
     >
-      {spotlights.map((spotlight) => (
+      {spotlights.map((spotlight, index) => (
         <section key={spotlight.id} className="flex flex-col lg:flex-row min-h-screen">
           {/* Image */}
           <div className="lg:w-1/2 relative overflow-hidden">
