@@ -74,7 +74,7 @@ const Spotlights = () => {
           {/* Content */}
           <div className="lg:w-1/2 flex items-center p-8 lg:p-16 bg-gradient-to-br from-gray-900 to-black">
             <div className="inner max-w-lg">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-gradient">
+              <h2 className="text-hyperspace-h1 font-bold mb-6 text-gradient">
                 {spotlight.title}
               </h2>
               <p className="text-lg text-gray-300 mb-8 leading-relaxed">

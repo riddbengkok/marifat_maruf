@@ -49,7 +49,7 @@ const Intro = () => {
       </div>
 
       <div className="inner relative z-10 text-center px-4 lg:px-8">
-        <h1 className="text-6xl lg:text-8xl font-bold mb-6 text-gradient">
+        <h1 className="text-hyperspace-h1 font-bold mb-6 text-gradient">
           Hyperspace
         </h1>
         <p className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">

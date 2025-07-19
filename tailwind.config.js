@@ -27,10 +27,19 @@ module.exports = {
         '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
         '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
         '5xl': ['3rem', { lineHeight: '1' }],
-        '6xl': ['3.75rem', { lineHeight: '1' }],
-        '7xl': ['4.5rem', { lineHeight: '1' }],
-        '8xl': ['6rem', { lineHeight: '1' }],
-        '9xl': ['8rem', { lineHeight: '1' }],
+        '6xl': ['2.75em', { lineHeight: '1.5' }], // h1 size from Hyperspace
+        '7xl': ['1.75em', { lineHeight: '1.5' }], // h2 size from Hyperspace
+        '8xl': ['1.1em', { lineHeight: '1.5' }], // h3 size from Hyperspace
+        '9xl': ['1em', { lineHeight: '1.5' }], // h4 size from Hyperspace
+        // Hyperspace-specific font sizes
+        'hyperspace-h1': ['2.75em', { lineHeight: '1.5' }],
+        'hyperspace-h2': ['1.75em', { lineHeight: '1.5' }],
+        'hyperspace-h3': ['1.1em', { lineHeight: '1.5' }],
+        'hyperspace-h4': ['1em', { lineHeight: '1.5' }],
+        'hyperspace-h5': ['0.8em', { lineHeight: '1.5' }],
+        'hyperspace-h6': ['0.6em', { lineHeight: '1.5' }],
+        'hyperspace-p': ['1em', { lineHeight: '1.75' }],
+        'hyperspace-intro': ['1.25em', { lineHeight: '1.75' }],
       },
       fontWeight: {
         'thin': '100',

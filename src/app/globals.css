@@ -39,46 +39,56 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-source-sans), 'Source Sans Pro', sans-serif;
   font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
-  margin: 0 0 1rem 0;
+  line-height: 1.5;
+  margin: 0 0 0.5em 0;
+  color: #ffffff;
 }
 
 h1 {
-  font-size: 3.5rem;
+  font-size: 2.75em; /* 44px */
   font-weight: 900;
-  letter-spacing: -0.05em;
 }
 
 h2 {
-  font-size: 2.5rem;
+  font-size: 1.75em; /* 28px */
   font-weight: 800;
-  letter-spacing: -0.025em;
 }
 
 h3 {
-  font-size: 1.75rem;
+  font-size: 1.1em; /* 17.6px */
   font-weight: 700;
 }
 
 h4 {
-  font-size: 1.25rem;
+  font-size: 1em; /* 16px */
   font-weight: 600;
 }
 
 h5 {
-  font-size: 1.125rem;
+  font-size: 0.8em; /* 12.8px */
   font-weight: 600;
 }
 
 h6 {
-  font-size: 1rem;
+  font-size: 0.6em; /* 9.6px */
   font-weight: 600;
 }
 
 p {
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 2em 0;
   line-height: 1.75;
+  font-size: 1em; /* 16px */
+}
+
+/* Special intro paragraph styling from original Hyperspace */
+#intro p {
+  font-size: 1.25em; /* 20px */
+}
+
+@media screen and (max-width: 736px) {
+  #intro p {
+    font-size: 1em; /* 16px */
+  }
 }
 
 a {
@@ -270,56 +280,61 @@ small, .text-sm {
   box-shadow: 0 10px 25px rgba(155, 241, 255, 0.3);
 }
 
-/* Responsive typography */
-@media (max-width: 768px) {
-  body {
-    font-size: 14px;
-  }
-  
+/* Responsive typography - matching original Hyperspace */
+@media (max-width: 980px) {
   h1 {
-    font-size: 2.5rem;
+    font-size: 2em; /* 32px */
   }
   
   h2 {
-    font-size: 2rem;
+    font-size: 1.25em; /* 20px */
   }
   
   h3 {
-    font-size: 1.5rem;
+    font-size: 1em; /* 16px */
   }
   
-  .text-6xl {
-    font-size: 3rem;
+  h4 {
+    font-size: 0.8em; /* 12.8px */
   }
   
-  .text-7xl {
-    font-size: 3.5rem;
+  h5 {
+    font-size: 0.6em; /* 9.6px */
   }
   
-  .text-8xl {
-    font-size: 4rem;
+  h6 {
+    font-size: 0.6em; /* 9.6px */
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 736px) {
   h1 {
-    font-size: 2rem;
+    font-size: 2em; /* 32px */
   }
   
   h2 {
-    font-size: 1.75rem;
+    font-size: 1.25em; /* 20px */
   }
   
-  .text-6xl {
-    font-size: 2.5rem;
+  h3 {
+    font-size: 1em; /* 16px */
   }
   
-  .text-7xl {
-    font-size: 3rem;
+  h4 {
+    font-size: 0.8em; /* 12.8px */
   }
   
-  .text-8xl {
-    font-size: 3.5rem;
+  h5 {
+    font-size: 0.6em; /* 9.6px */
+  }
+  
+  h6 {
+    font-size: 0.6em; /* 9.6px */
+  }
+  
+  /* Special intro paragraph sizing from original */
+  #intro p {
+    font-size: 1em;
   }
 }
 

@@ -97,7 +97,7 @@ const Contact = () => {
       className="wrapper style1 fade-up py-20 bg-gradient-to-br from-black to-gray-900"
     >
       <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
-        <h2 className="text-5xl lg:text-6xl font-bold mb-6 text-center text-gradient">
+        <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
           Get in touch
         </h2>
         <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">

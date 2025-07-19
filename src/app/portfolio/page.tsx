@@ -2,6 +2,7 @@
 
 import ProjectModal from '@/components/ProjectModal'
 import Sidebar from '@/components/Sidebar'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
@@ -67,7 +68,7 @@ const Portfolio = () => {
       id: 1,
       title: "User Transfer Report",
       description: "Comprehensive user transfer reporting system with detailed analytics and data visualization for financial transactions.",
-      image: "/images/pic01.jpg",
+      image: "/images/rifat.jpg",
       technologies: ["Vue.js", "Laravel", "Figma", "MySQL"],
       link: "https://www.figma.com/design/H9S7zoLuAu2A2zRJdtbGcK/user-transfer-report---vue-laravel?node-id=0-1&p=f&t=7lHb8MkXkTdsN6c4-0",
       category: "Full Stack",
@@ -314,15 +315,30 @@ const Portfolio = () => {
           </div>
 
           <div className="inner relative z-10 text-center px-4 lg:px-8">
-            <h1 className="text-6xl lg:text-8xl font-bold mb-6 text-gradient">
+            <h1 className="text-hyperspace-h1 font-bold mb-6 text-gradient">
               Marifat Maruf
             </h1>
-            <h2 className="text-2xl lg:text-3xl font-semibold mb-4 text-cyan-400">
+            
+            {/* Profile Picture */}
+            <div className="flex justify-center mb-6">
+              <div className="relative w-32 h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden border-4 border-cyan-400/30 shadow-2xl transition-all duration-300 transform hover:scale-105">
+                <Image
+                  src="/images/rifat.jpg"
+                  alt="Marifat Maruf"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 128px, 160px"
+                  priority
+                />
+              </div>
+            </div>
+            
+            <h2 className="text-hyperspace-h2 font-semibold mb-4">
               Frontend Web Developer
             </h2>
-            <p className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
-              Experienced frontend developer with 12+ years of expertise specializing in React.js, Vue.js, and modern web technologies. 
-              Currently working remotely as a Frontend Web Developer, creating responsive and user-friendly web applications.
+            <p className="text-hyperspace-intro text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
+               Obsessed with finding the sweet spot between beauty, performance, and efficiency. I design solutions that are powerful without wasting unnecessary energy. 
+                  Focused on web application development, I specialize in React.js, Vue.js, and modern frontend technologies with 6+ years of experience.
             </p>
             <div className="actions space-x-4">
               <button
@@ -367,7 +383,7 @@ const Portfolio = () => {
         {/* Skills Section */}
         <section id="skills" className="wrapper style2 fade-up py-20 bg-gradient-to-br from-gray-900 to-black">
           <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
-            <h2 className="text-5xl lg:text-6xl font-bold mb-6 text-center text-gradient">
+            <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
               Skills & Expertise
             </h2>
             <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
@@ -396,7 +412,7 @@ const Portfolio = () => {
         {/* Experience Section */}
         <section id="experience" className="wrapper style1 fade-up py-20 bg-gradient-to-br from-black to-gray-900">
           <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
-            <h2 className="text-5xl lg:text-6xl font-bold mb-6 text-center text-gradient">
+            <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
               Professional Experience
             </h2>
             <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
@@ -471,7 +487,7 @@ const Portfolio = () => {
         {/* Projects Section */}
         <section id="projects" className="wrapper style3 fade-up py-20">
           <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
-            <h2 className="text-5xl lg:text-6xl font-bold mb-6 text-center text-gradient">
+            <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
               Featured Projects
             </h2>
             <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
@@ -575,7 +591,7 @@ const Portfolio = () => {
         {/* Education & Certifications Section */}
         <section id="education" className="wrapper style2 fade-up py-20 bg-gradient-to-br from-gray-900 to-black">
           <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
-            <h2 className="text-5xl lg:text-6xl font-bold mb-6 text-center text-gradient">
+            <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
               Education & Certifications
             </h2>
             <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
@@ -648,7 +664,7 @@ const Portfolio = () => {
         {/* Achievements Section */}
         <section id="achievements" className="wrapper style3 fade-up py-20">
           <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
-            <h2 className="text-5xl lg:text-6xl font-bold mb-6 text-center text-gradient">
+            <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
               Key Achievements
             </h2>
             <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
@@ -673,7 +689,7 @@ const Portfolio = () => {
         {/* Contact Section */}
         <section id="contact" className="wrapper style1 fade-up py-20 bg-gradient-to-br from-black to-gray-900">
           <div className="inner max-w-4xl mx-auto px-4 lg:px-8 text-center">
-            <h2 className="text-5xl lg:text-6xl font-bold mb-6 text-gradient">
+            <h2 className="text-hyperspace-h1 font-bold mb-6 text-gradient">
               Let&apos;s Work Together
             </h2>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
