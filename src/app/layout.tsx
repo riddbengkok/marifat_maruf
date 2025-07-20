@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${sourceSans.variable} ${sourceCode.variable} is-preload`}>
+      <body className={`${sourceSans.variable} ${sourceCode.variable}`}>
         {children}
       </body>
     </html>

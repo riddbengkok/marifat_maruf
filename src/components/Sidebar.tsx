@@ -17,6 +17,7 @@ const Sidebar = () => {
   }
 
   const isFeaturesPage = pathname === '/features'
+  const isPromptGeneratorPage = pathname === '/prompt-generator'
 
   return (
     <>
@@ -60,7 +61,7 @@ const Sidebar = () => {
           {/* Logo/Brand */}
           <div className="mb-8">
             <Link href="/" className="text-2xl font-bold text-gradient">
-              {isFeaturesPage ? 'Features' : 'Portfolio'}
+              {isFeaturesPage ? 'Features' : isPromptGeneratorPage ? 'Prompt Generator' : 'Portfolio'}
             </Link>
           </div>
 
@@ -108,6 +109,28 @@ const Sidebar = () => {
                       onClick={() => setIsOpen(false)}
                     >
                       ← Back to Portfolio
+                    </Link>
+                  </li>
+                </>
+              ) : isPromptGeneratorPage ? (
+                // Prompt Generator page navigation
+                <>
+                  <li className="pt-4 border-t border-white/20">
+                    <Link
+                      href="/"
+                      className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      ← Back to Portfolio
+                    </Link>
+                  </li>
+                  <li className="pt-4 border-t border-white/20">
+                    <Link
+                      href="/features"
+                      className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      View Features →
                     </Link>
                   </li>
                 </>
@@ -169,6 +192,15 @@ const Sidebar = () => {
                       onClick={() => setIsOpen(false)}
                     >
                       View Features →
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/prompt-generator"
+                      className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      AI Prompt Generator →
                     </Link>
                   </li>
                 </>
