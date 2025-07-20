@@ -1,7 +1,8 @@
 'use client';
 
-import { AudioFormData } from '@/components/PromptGenerator/AudioFormData';
+import type { AudioFormData } from '@/components/PromptGenerator/AudioFormData';
 import AudioPromptGeneratorForm from '@/components/PromptGenerator/AudioPromptGeneratorForm';
+
 import GenerateButton from '@/components/PromptGenerator/GenerateButton';
 import Header from '@/components/PromptGenerator/Header';
 import Instructions from '@/components/PromptGenerator/Instructions';
@@ -479,20 +480,10 @@ export default function AIAudioPromptGenerator() {
         url="https://hyperspace-next.vercel.app/ai-audio-prompt-generator"
       />
 
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <div className="audio-generator-main">
         <Sidebar />
-
-        <main
-          style={{
-            flex: 1,
-            marginLeft: '256px',
-            padding: '32px',
-            backgroundColor: '#000',
-            color: '#fff',
-            minHeight: '100vh',
-          }}
-        >
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <main className="audio-generator-content">
+          <div className="audio-generator-inner">
             <Header
               title="AI Audio Prompt Generator"
               subtitle="Create professional audio prompts for AI generators"
@@ -527,91 +518,30 @@ export default function AIAudioPromptGenerator() {
                 />
 
                 {/* Tips Section */}
-                <div
-                  style={{
-                    marginTop: '24px',
-                    padding: '24px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                  }}
-                >
-                  <h3
-                    style={{
-                      fontSize: '20px',
-                      fontWeight: 'bold',
-                      marginBottom: '16px',
-                      color: '#00d4ff',
-                    }}
-                  >
+                <div className="audio-tips-section">
+                  <h3 className="audio-tips-title">
                     💡 Tips for Better Results
                   </h3>
-
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '24px',
-                    }}
-                  >
+                  <div className="audio-tips-grid">
                     {/* ChatGPT Enhancement */}
                     <div>
-                      <h4
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: 'semibold',
-                          marginBottom: '12px',
-                          color: '#fff',
-                        }}
-                      >
+                      <h4 className="audio-tips-card-title">
                         🤖 Enhance with ChatGPT
                       </h4>
-                      <p
-                        style={{
-                          fontSize: '14px',
-                          color: '#ccc',
-                          marginBottom: '16px',
-                          lineHeight: '1.5',
-                        }}
-                      >
+                      <p className="audio-tips-card-desc">
                         Copy your prompt and ask ChatGPT to enhance it with more
                         details, musical terminology, and creative elements.
                       </p>
                       <button
                         onClick={copyEnhancedPromptRequest}
-                        style={{
-                          backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                          border: '1px solid rgba(0, 212, 255, 0.3)',
-                          color: '#00d4ff',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s',
-                        }}
-                        onMouseOver={e => {
-                          e.currentTarget.style.backgroundColor =
-                            'rgba(0, 212, 255, 0.2)';
-                        }}
-                        onMouseOut={e => {
-                          e.currentTarget.style.backgroundColor =
-                            'rgba(0, 212, 255, 0.1)';
-                        }}
+                        className="audio-tips-btn"
                       >
                         Copy Enhancement Request
                       </button>
                     </div>
-
                     {/* AI Audio Generators */}
                     <div>
-                      <h4
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: 'semibold',
-                          marginBottom: '12px',
-                          color: '#fff',
-                        }}
-                      >
+                      <h4 className="audio-tips-card-title">
                         {formData.soundType === 'sound effect' &&
                           '🔊 AI Sound Effect Generators'}
                         {formData.soundType === 'music' &&
@@ -621,13 +551,7 @@ export default function AIAudioPromptGenerator() {
                         {!formData.soundType &&
                           '🎵 Popular AI Audio Generators'}
                       </h4>
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: '1fr 1fr',
-                          gap: '8px',
-                        }}
-                      >
+                      <div className="audio-resources-grid">
                         {/* Sound Effect Generators */}
                         {formData.soundType === 'sound effect' && (
                           <>
@@ -635,25 +559,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://elevenlabs.io"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               ElevenLabs
                             </a>
@@ -661,25 +567,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://soundraw.io"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Soundraw
                             </a>
@@ -687,25 +575,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://freesound.org"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Freesound
                             </a>
@@ -713,25 +583,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://zapsplat.com"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Zapsplat
                             </a>
@@ -739,25 +591,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://mixkit.co"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Mixkit
                             </a>
@@ -765,31 +599,12 @@ export default function AIAudioPromptGenerator() {
                               href="https://pixabay.com/sound-effects"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Pixabay
                             </a>
                           </>
                         )}
-
                         {/* Music Generators */}
                         {formData.soundType === 'music' && (
                           <>
@@ -797,25 +612,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://suno.ai"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Suno AI
                             </a>
@@ -823,25 +620,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://udio.com"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Udio
                             </a>
@@ -849,25 +628,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://mubert.com"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Mubert
                             </a>
@@ -875,25 +636,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://aiva.ai"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               AIVA
                             </a>
@@ -901,25 +644,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://boomy.com"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Boomy
                             </a>
@@ -927,31 +652,12 @@ export default function AIAudioPromptGenerator() {
                               href="https://soundraw.io"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Soundraw
                             </a>
                           </>
                         )}
-
                         {/* Ambience Generators */}
                         {formData.soundType === 'ambience' && (
                           <>
@@ -959,51 +665,15 @@ export default function AIAudioPromptGenerator() {
                               href="https://ambient-mixer.com"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Ambient Mixer
                             </a>
                             <a
-                              href="https://mynoise.net"
+                              href="https://my-noise.com"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               MyNoise
                             </a>
@@ -1011,25 +681,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://noisli.com"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Noisli
                             </a>
@@ -1037,25 +689,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://freesound.org"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Freesound
                             </a>
@@ -1063,25 +697,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://soundraw.io"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Soundraw
                             </a>
@@ -1089,31 +705,12 @@ export default function AIAudioPromptGenerator() {
                               href="https://pixabay.com/sound-effects"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Pixabay
                             </a>
                           </>
                         )}
-
                         {/* Default/General Audio Generators */}
                         {!formData.soundType && (
                           <>
@@ -1121,25 +718,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://suno.ai"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Suno AI
                             </a>
@@ -1147,25 +726,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://udio.com"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Udio
                             </a>
@@ -1173,25 +734,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://mubert.com"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Mubert
                             </a>
@@ -1199,25 +742,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://soundraw.io"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Soundraw
                             </a>
@@ -1225,25 +750,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://aiva.ai"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               AIVA
                             </a>
@@ -1251,25 +758,7 @@ export default function AIAudioPromptGenerator() {
                               href="https://boomy.com"
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                color: '#00d4ff',
-                                padding: '6px 12px',
-                                borderRadius: '4px',
-                                fontSize: '12px',
-                                textDecoration: 'none',
-                                textAlign: 'center',
-                                transition: 'all 0.2s',
-                              }}
-                              onMouseOver={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.1)';
-                              }}
-                              onMouseOut={e => {
-                                e.currentTarget.style.backgroundColor =
-                                  'rgba(255, 255, 255, 0.05)';
-                              }}
+                              className="audio-resource-link"
                             >
                               Boomy
                             </a>

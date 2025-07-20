@@ -5,6 +5,8 @@ import GenerateButton from '@/components/PromptGenerator/GenerateButton';
 import Header from '@/components/PromptGenerator/Header';
 import Instructions from '@/components/PromptGenerator/Instructions';
 import LoadingSpinner from '@/components/PromptGenerator/LoadingSpinner';
+import PresetTemplates from '@/components/PromptGenerator/PresetTemplates';
+import ProgressIndicator from '@/components/PromptGenerator/ProgressIndicator';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
 import PromptGeneratorForm from '@/components/PromptGenerator/PromptGeneratorForm';
 import StructuredData from '@/components/SEO/StructuredData';
@@ -20,6 +22,98 @@ export default function AIVideoPromptGenerator() {
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [templateApplied, setTemplateApplied] = useState(false);
+  const [appliedTemplateName, setAppliedTemplateName] = useState('');
+
+  // Progress steps
+  const progressSteps = [
+    'Core Elements',
+    'Video Parameters',
+    'Visual & Technical',
+    'Atmosphere & Mood',
+    'Environment & Context',
+    'Sensory & Materials',
+    'Action & Details',
+    'Generate Prompt',
+  ];
+
+  // Calculate current step based on form completion
+  const calculateCurrentStep = (formData: FormData) => {
+    if (formData.subject) {
+      if (
+        formData.cameraMovement ||
+        formData.videoDuration ||
+        formData.frameRate
+      ) {
+        if (formData.lighting || formData.pov || formData.composition) {
+          if (formData.vibe || formData.mood || formData.atmosphere) {
+            if (formData.weather || formData.timeOfDay || formData.season) {
+              if (formData.sense || formData.colors || formData.textures) {
+                if (
+                  formData.actions ||
+                  formData.details ||
+                  formData.additionalDetails
+                ) {
+                  return 7; // Action & Details
+                }
+                return 6; // Sensory & Materials
+              }
+              return 5; // Environment & Context
+            }
+            return 4; // Atmosphere & Mood
+          }
+          return 3; // Visual & Technical
+        }
+        return 2; // Video Parameters
+      }
+      return 1; // Core Elements
+    }
+    return 1; // Core Elements
+  };
+
+  // Handle template application
+  const handleApplyTemplate = (
+    template: Partial<FormData>,
+    templateName: string
+  ) => {
+    console.log('Applying template:', template);
+
+    // Apply all template values
+    Object.entries(template).forEach(([key, value]) => {
+      console.log(`Updating field: ${key} = ${value}`);
+      updateFormData(key, value);
+    });
+
+    // Force re-render of nested options by updating key fields
+    setTimeout(() => {
+      if (template.lighting) updateFormData('lighting', template.lighting);
+      if (template.pov) updateFormData('pov', template.pov);
+      if (template.composition)
+        updateFormData('composition', template.composition);
+      if (template.atmosphere)
+        updateFormData('atmosphere', template.atmosphere);
+      if (template.weather) updateFormData('weather', template.weather);
+      if (template.sense) updateFormData('sense', template.sense);
+      if (template.actions) updateFormData('actions', template.actions);
+      if (template.cameraMovement)
+        updateFormData('cameraMovement', template.cameraMovement);
+      if (template.videoStyle)
+        updateFormData('videoStyle', template.videoStyle);
+    }, 100);
+
+    // Show success feedback
+    setTemplateApplied(true);
+    setAppliedTemplateName(templateName);
+
+    // Clear success message after 3 seconds
+    setTimeout(() => {
+      setTemplateApplied(false);
+      setAppliedTemplateName('');
+    }, 3000);
+
+    console.log('Template application complete');
+  };
 
   // Initial form data for video prompts
   const initialFormData: FormData = {
@@ -110,6 +204,11 @@ export default function AIVideoPromptGenerator() {
     key: 'ai-video-prompt-form',
     initialData: initialFormData,
   });
+
+  // Update current step when form data changes
+  useEffect(() => {
+    setCurrentStep(calculateCurrentStep(formData));
+  }, [formData]);
 
   useEffect(() => {
     setMounted(true);
@@ -300,12 +399,36 @@ export default function AIVideoPromptGenerator() {
             minHeight: '100vh',
           }}
         >
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div className="generator-main">
             <Header
               title="AI Video Prompt Generator"
               subtitle="Create professional video prompts for AI generators"
               icon="🎬"
             />
+
+            <ProgressIndicator
+              currentStep={currentStep}
+              totalSteps={progressSteps.length}
+              steps={progressSteps}
+            />
+
+            <PresetTemplates onApplyTemplate={handleApplyTemplate} />
+
+            {/* Template Applied Success Notification */}
+            {templateApplied && (
+              <div className="template-notification">
+                <span className="template-notification__icon">✅</span>
+                <div>
+                  <div className="template-notification__title">
+                    Template Applied Successfully!
+                  </div>
+                  <div className="template-notification__desc">
+                    &ldquo;{appliedTemplateName}&rdquo; template has been
+                    loaded. You can now customize any fields as needed.
+                  </div>
+                </div>
+              </div>
+            )}
 
             <Instructions
               title="How to Use"
@@ -334,259 +457,44 @@ export default function AIVideoPromptGenerator() {
                   copied={copied}
                 />
 
-                {/* Tips Section */}
-                <div
-                  style={{
-                    marginTop: '24px',
-                    padding: '24px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                  }}
-                >
-                  <h3
-                    style={{
-                      fontSize: '20px',
-                      fontWeight: 'bold',
-                      marginBottom: '16px',
-                      color: '#00d4ff',
-                    }}
-                  >
-                    💡 Tips for Better Results
+                {/* Enhanced Tips Section */}
+                <div className="tips-section">
+                  <div className="tips-section__top-border" />
+                  <h3 className="tips-section__title">
+                    <span style={{ fontSize: '24px' }}>💡</span>
+                    Tips for Better Results
                   </h3>
-
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '24px',
-                    }}
-                  >
+                  <div className="tips-section__grid">
                     {/* ChatGPT Enhancement */}
-                    <div>
-                      <h4
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: 'semibold',
-                          marginBottom: '12px',
-                          color: '#fff',
-                        }}
-                      >
-                        🤖 Enhance with ChatGPT
+                    <div className="tips-section__card">
+                      <h4 className="tips-section__card-title">
+                        <span style={{ fontSize: '20px' }}>🤖</span>
+                        Enhance with ChatGPT
                       </h4>
-                      <p
-                        style={{
-                          fontSize: '14px',
-                          color: '#ccc',
-                          marginBottom: '16px',
-                          lineHeight: '1.5',
-                        }}
-                      >
+                      <p className="tips-section__card-desc">
                         Copy your prompt and ask ChatGPT to enhance it with more
                         details, professional terminology, and creative
                         elements.
                       </p>
                       <button
                         onClick={copyEnhancedPromptRequest}
-                        style={{
-                          backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                          border: '1px solid rgba(0, 212, 255, 0.3)',
-                          color: '#00d4ff',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s',
-                        }}
-                        onMouseOver={e => {
-                          e.currentTarget.style.backgroundColor =
-                            'rgba(0, 212, 255, 0.2)';
-                        }}
-                        onMouseOut={e => {
-                          e.currentTarget.style.backgroundColor =
-                            'rgba(0, 212, 255, 0.1)';
-                        }}
+                        className="tips-section__card-btn"
                       >
+                        <span>📋</span>
                         Copy Enhancement Request
                       </button>
                     </div>
-
                     {/* AI Video Generators */}
-                    <div>
-                      <h4
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: 'semibold',
-                          marginBottom: '12px',
-                          color: '#fff',
-                        }}
-                      >
-                        🎬 Popular AI Video Generators
+                    <div className="tips-section__card">
+                      <h4 className="tips-section__card-title">
+                        <span style={{ fontSize: '20px' }}>🎥</span>
+                        Use with AI Video Generators
                       </h4>
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: '1fr 1fr',
-                          gap: '8px',
-                        }}
-                      >
-                        <a
-                          href="https://runwayml.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          Runway ML
-                        </a>
-                        <a
-                          href="https://pika.art"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          Pika Labs
-                        </a>
-                        <a
-                          href="https://www.adobe.com/products/firefly.html"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          Adobe Firefly
-                        </a>
-                        <a
-                          href="https://www.blackmagicdesign.com/products/davinciresolve"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          DaVinci Resolve
-                        </a>
-                        <a
-                          href="https://aistudio.google.com/app/prompts/veo"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          Google Veo 3
-                        </a>
-                        <a
-                          href="https://runwayml.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          Runway ML
-                        </a>
-                      </div>
+                      <p className="tips-section__card-desc">
+                        Paste your generated prompt into tools like Runway, Pika
+                        Labs, or Sora for best results. Adjust parameters as
+                        needed for each platform.
+                      </p>
                     </div>
                   </div>
                 </div>
