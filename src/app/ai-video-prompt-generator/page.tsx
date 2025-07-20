@@ -1,45 +1,28 @@
 'use client';
 
-import { ImageFormData } from '@/components/PromptGenerator/FormData';
+import { FormData } from '@/components/PromptGenerator/FormData';
 import GenerateButton from '@/components/PromptGenerator/GenerateButton';
 import Header from '@/components/PromptGenerator/Header';
-import ImagePromptGeneratorForm from '@/components/PromptGenerator/ImagePromptGeneratorForm';
 import Instructions from '@/components/PromptGenerator/Instructions';
 import LoadingSpinner from '@/components/PromptGenerator/LoadingSpinner';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
+import PromptGeneratorForm from '@/components/PromptGenerator/PromptGeneratorForm';
 import StructuredData from '@/components/SEO/StructuredData';
 import { useFormStorage } from '@/hooks/useFormStorage';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 
-// Dynamically import Sidebar to prevent SSR issues
-const Sidebar = dynamic(() => import('@/components/Sidebar'), {
-  ssr: false,
-  loading: () => (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        width: '256px',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        backdropFilter: 'blur(12px)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.2)',
-        zIndex: 40,
-      }}
-    />
-  ),
-});
+// Dynamic import for Sidebar with SSR disabled
+const Sidebar = dynamic(() => import('@/components/Sidebar'), { ssr: false });
 
-export default function PromptGenerator() {
+export default function AIVideoPromptGenerator() {
   const [mounted, setMounted] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Initial form data for image prompts
-  const initialFormData: ImageFormData = {
+  // Initial form data for video prompts
+  const initialFormData: FormData = {
     // Core Elements
     subject: '',
     style: '',
@@ -49,8 +32,23 @@ export default function PromptGenerator() {
     lighting: '',
     pov: '',
     composition: '',
-    aspectRatio: '1:1',
+    aspectRatio: '16:9', // Default to video aspect ratio
     quality: 'high',
+
+    // Video-Specific Parameters
+    cameraMovement: '',
+    videoDuration: '',
+    frameRate: '',
+    videoStyle: '',
+    transition: '',
+
+    // Nested Camera Movement Options
+    movementSpeed: '',
+    movementDirection: '',
+
+    // Nested Video Style Options
+    cinematicStyle: '',
+    animationStyle: '',
 
     // Nested Lighting Options
     lightIntensity: '',
@@ -104,24 +102,22 @@ export default function PromptGenerator() {
     energyLevel: '',
 
     // Technical
-    model: 'dalle',
+    model: 'runway', // Default to video model
   };
 
   // Use the storage hook for form data persistence
-  const { formData, updateFormData, resetFormData } =
-    useFormStorage<ImageFormData>({
-      key: 'ai-image-prompt-form',
-      initialData: initialFormData,
-    });
+  const { formData, updateFormData, resetFormData } = useFormStorage<FormData>({
+    key: 'ai-video-prompt-form',
+    initialData: initialFormData,
+  });
 
   useEffect(() => {
-    console.log('Component mounted, setting mounted to true');
     setMounted(true);
   }, []);
 
   const generatePrompt = () => {
     if (!formData.subject.trim()) {
-      alert('Please enter a subject for your image');
+      alert('Please enter a subject for your video');
       return;
     }
 
@@ -131,6 +127,27 @@ export default function PromptGenerator() {
     if (formData.subject) parts.push(formData.subject);
     if (formData.style) parts.push(`in ${formData.style} style`);
     if (formData.setting) parts.push(`set in ${formData.setting}`);
+
+    // Video-Specific Parameters
+    if (formData.cameraMovement) {
+      let movementDesc = formData.cameraMovement;
+      if (formData.movementSpeed) movementDesc += ` ${formData.movementSpeed}`;
+      if (formData.movementDirection)
+        movementDesc += ` ${formData.movementDirection}`;
+      parts.push(`camera: ${movementDesc}`);
+    }
+
+    if (formData.videoDuration)
+      parts.push(`duration: ${formData.videoDuration}`);
+    if (formData.frameRate) parts.push(`frame rate: ${formData.frameRate}`);
+    if (formData.videoStyle) parts.push(`video style: ${formData.videoStyle}`);
+    if (formData.transition) parts.push(`transition: ${formData.transition}`);
+
+    // Video Style Nested Options
+    if (formData.cinematicStyle)
+      parts.push(`cinematic style: ${formData.cinematicStyle}`);
+    if (formData.animationStyle)
+      parts.push(`animation style: ${formData.animationStyle}`);
 
     // Visual & Technical
     if (formData.lighting) {
@@ -161,7 +178,7 @@ export default function PromptGenerator() {
       parts.push(`with ${compDesc} composition`);
     }
 
-    if (formData.aspectRatio && formData.aspectRatio !== '1:1')
+    if (formData.aspectRatio && formData.aspectRatio !== '16:9')
       parts.push(`${formData.aspectRatio} aspect ratio`);
     if (formData.quality && formData.quality !== 'high')
       parts.push(`${formData.quality} quality`);
@@ -214,7 +231,7 @@ export default function PromptGenerator() {
       parts.push(`additional: ${formData.additionalDetails}`);
 
     // Technical
-    if (formData.model && formData.model !== 'dalle')
+    if (formData.model && formData.model !== 'runway')
       parts.push(`model: ${formData.model}`);
 
     const finalPrompt = parts.join(', ');
@@ -234,7 +251,7 @@ export default function PromptGenerator() {
   };
 
   const copyEnhancedPromptRequest = async () => {
-    const enhancedRequest = `Please enhance this AI image prompt to make it more detailed and professional: "${generatedPrompt}"`;
+    const enhancedRequest = `Please enhance this AI video prompt to make it more detailed and professional: "${generatedPrompt}"`;
     try {
       await navigator.clipboard.writeText(enhancedRequest);
       setCopied(true);
@@ -264,10 +281,10 @@ export default function PromptGenerator() {
   return (
     <>
       <StructuredData
-        type="image-generator"
-        title="AI Image Prompt Generator - Create Stunning Image Prompts"
-        description="Generate professional AI image prompts with our comprehensive tool. Create artistic, realistic, and creative image prompts for DALL-E, Midjourney, Stable Diffusion, and other AI image generators."
-        url="https://hyperspace-next.vercel.app/prompt-generator"
+        type="video-generator"
+        title="AI Video Prompt Generator - Create Professional Video Prompts"
+        description="Generate high-quality AI video prompts with our advanced tool. Create cinematic, commercial, and artistic video prompts for Runway, Pika Labs, Sora, and other AI video generators."
+        url="https://hyperspace-next.vercel.app/ai-video-prompt-generator"
       />
 
       <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -285,25 +302,24 @@ export default function PromptGenerator() {
         >
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <Header
-              title="AI Image Prompt Generator"
-              subtitle="Create professional image prompts for AI generators"
-              icon="🎨"
+              title="AI Video Prompt Generator"
+              subtitle="Create professional video prompts for AI generators"
+              icon="🎬"
             />
 
             <Instructions
               title="How to Use"
               steps={[
                 'Enter your main subject or concept',
-                'Select visual elements like lighting and composition',
-                'Choose atmosphere and mood details',
-                'Add environment and context information',
-                'Select sensory and material qualities',
-                'Generate your professional image prompt',
-                'Copy and use with AI image generators like DALL-E, Midjourney, or Stable Diffusion',
+                'Select video-specific parameters like camera movement and duration',
+                'Choose visual elements like lighting and composition',
+                'Add atmosphere and mood details',
+                'Generate your professional video prompt',
+                'Copy and use with AI video generators like Runway, Pika Labs, or Sora',
               ]}
             />
 
-            <ImagePromptGeneratorForm
+            <PromptGeneratorForm
               formData={formData}
               onFormDataChange={updateFormData}
             />
@@ -395,7 +411,7 @@ export default function PromptGenerator() {
                       </button>
                     </div>
 
-                    {/* AI Image Generators */}
+                    {/* AI Video Generators */}
                     <div>
                       <h4
                         style={{
@@ -405,7 +421,7 @@ export default function PromptGenerator() {
                           color: '#fff',
                         }}
                       >
-                        🎨 Popular AI Image Generators
+                        🎬 Popular AI Video Generators
                       </h4>
                       <div
                         style={{
@@ -415,7 +431,7 @@ export default function PromptGenerator() {
                         }}
                       >
                         <a
-                          href="https://openai.com/dall-e-2"
+                          href="https://runwayml.com"
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{
@@ -438,10 +454,10 @@ export default function PromptGenerator() {
                               'rgba(255, 255, 255, 0.05)';
                           }}
                         >
-                          DALL-E
+                          Runway ML
                         </a>
                         <a
-                          href="https://www.midjourney.com"
+                          href="https://pika.art"
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{
@@ -464,36 +480,10 @@ export default function PromptGenerator() {
                               'rgba(255, 255, 255, 0.05)';
                           }}
                         >
-                          Midjourney
+                          Pika Labs
                         </a>
                         <a
-                          href="https://stability.ai"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          Stable Diffusion
-                        </a>
-                        <a
-                          href="https://firefly.adobe.com"
+                          href="https://www.adobe.com/products/firefly.html"
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{
@@ -519,7 +509,7 @@ export default function PromptGenerator() {
                           Adobe Firefly
                         </a>
                         <a
-                          href="https://leonardo.ai"
+                          href="https://www.blackmagicdesign.com/products/davinciresolve"
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{
@@ -542,10 +532,10 @@ export default function PromptGenerator() {
                               'rgba(255, 255, 255, 0.05)';
                           }}
                         >
-                          Leonardo AI
+                          DaVinci Resolve
                         </a>
                         <a
-                          href="https://www.bing.com/create"
+                          href="https://aistudio.google.com/app/prompts/veo"
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{
@@ -568,7 +558,33 @@ export default function PromptGenerator() {
                               'rgba(255, 255, 255, 0.05)';
                           }}
                         >
-                          Bing Image Creator
+                          Google Veo 3
+                        </a>
+                        <a
+                          href="https://runwayml.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            color: '#00d4ff',
+                            padding: '6px 12px',
+                            borderRadius: '4px',
+                            fontSize: '12px',
+                            textDecoration: 'none',
+                            textAlign: 'center',
+                            transition: 'all 0.2s',
+                          }}
+                          onMouseOver={e => {
+                            e.currentTarget.style.backgroundColor =
+                              'rgba(255, 255, 255, 0.1)';
+                          }}
+                          onMouseOut={e => {
+                            e.currentTarget.style.backgroundColor =
+                              'rgba(255, 255, 255, 0.05)';
+                          }}
+                        >
+                          Runway ML
                         </a>
                       </div>
                     </div>

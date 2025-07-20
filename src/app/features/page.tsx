@@ -1,25 +1,25 @@
-'use client'
+'use client';
 
-import Contact from '@/components/Contact'
-import Features from '@/components/Features'
-import Footer from '@/components/Footer'
-import Intro from '@/components/Intro'
-import Sidebar from '@/components/Sidebar'
-import Spotlights from '@/components/Spotlights'
-import { useEffect, useState } from 'react'
+import Contact from '@/components/Contact';
+import Features from '@/components/Features';
+import Footer from '@/components/Footer';
+import Intro from '@/components/Intro';
+import Sidebar from '@/components/Sidebar';
+import Spotlights from '@/components/Spotlights';
+import { useEffect, useState } from 'react';
 
 export default function FeaturesPage() {
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     // Simulate loading
     const timer = setTimeout(() => {
-      setIsLoaded(true)
-      document.body.classList.add('loaded')
-    }, 100)
+      setIsLoaded(true);
+      document.body.classList.add('loaded');
+    }, 100);
 
-    return () => clearTimeout(timer)
-  }, [])
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>
@@ -46,5 +46,5 @@ export default function FeaturesPage() {
         <Footer />
       </div>
     </>
-  )
-} 
+  );
+}

@@ -1,53 +1,56 @@
-'use client'
+'use client';
 
-import Image from 'next/image'
-import { useEffect, useRef } from 'react'
+import Image from 'next/image';
+import { useEffect, useRef } from 'react';
 
 const Spotlights = () => {
-  const sectionRef = useRef<HTMLElement>(null)
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('visible')
+            entry.target.classList.add('visible');
           }
-        })
+        });
       },
       { threshold: 0.1 }
-    )
+    );
 
     if (sectionRef.current) {
-      observer.observe(sectionRef.current)
+      observer.observe(sectionRef.current);
     }
 
-    return () => observer.disconnect()
-  }, [])
+    return () => observer.disconnect();
+  }, []);
 
   const spotlights = [
     {
       id: 1,
-      title: "Sed ipsum dolor",
-      description: "Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.",
-      image: "/images/pic01.jpg",
-      position: "center center"
+      title: 'Sed ipsum dolor',
+      description:
+        'Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.',
+      image: '/images/pic01.jpg',
+      position: 'center center',
     },
     {
       id: 2,
-      title: "Feugiat consequat",
-      description: "Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.",
-      image: "/images/pic02.jpg",
-      position: "top center"
+      title: 'Feugiat consequat',
+      description:
+        'Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.',
+      image: '/images/pic02.jpg',
+      position: 'top center',
     },
     {
       id: 3,
-      title: "Ultricies aliquam",
-      description: "Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.",
-      image: "/images/pic03.jpg",
-      position: "25% 25%"
-    }
-  ]
+      title: 'Ultricies aliquam',
+      description:
+        'Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.',
+      image: '/images/pic03.jpg',
+      position: '25% 25%',
+    },
+  ];
 
   return (
     <section
@@ -55,8 +58,11 @@ const Spotlights = () => {
       ref={sectionRef}
       className="wrapper style2 spotlights fade-up py-20"
     >
-      {spotlights.map((spotlight, index) => (
-        <section key={spotlight.id} className="flex flex-col lg:flex-row min-h-screen">
+      {spotlights.map(spotlight => (
+        <section
+          key={spotlight.id}
+          className="flex flex-col lg:flex-row min-h-screen"
+        >
           {/* Image */}
           <div className="lg:w-1/2 relative overflow-hidden">
             <div className="relative h-64 lg:h-full">
@@ -90,7 +96,7 @@ const Spotlights = () => {
         </section>
       ))}
     </section>
-  )
-}
+  );
+};
 
-export default Spotlights 
+export default Spotlights;

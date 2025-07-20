@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import component-specific styles */
+@import url('../styles/buttons.css');
+@import url('../styles/forms.css');
+
 /* Hyperspace Theme Styles */
 :root {
   --primary-color: #9bf1ff;
@@ -9,8 +13,6 @@
   --background-color: #0c0c0c;
   --text-color: #ffffff;
   --accent-color: #4ecdc4;
-  --font-source-sans: var(--font-source-sans);
-  --font-source-code: var(--font-source-code);
 }
 
 * {
@@ -24,7 +26,14 @@ html {
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-source-sans), 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family:
+    var(--font-source-sans),
+    'Source Sans Pro',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
   line-height: 1.75;
@@ -36,7 +45,12 @@ body {
 }
 
 /* Typography from original Hyperspace template */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-source-sans), 'Source Sans Pro', sans-serif;
   font-weight: 700;
   line-height: 1.5;
@@ -102,8 +116,12 @@ a:hover {
 }
 
 /* Monospace font for code elements */
-code, pre, kbd, samp {
-  font-family: var(--font-source-code), 'Source Code Pro', 'Monaco', 'Consolas', monospace;
+code,
+pre,
+kbd,
+samp {
+  font-family:
+    var(--font-source-code), 'Source Code Pro', 'Monaco', 'Consolas', monospace;
   font-size: 0.875em;
 }
 
@@ -125,7 +143,8 @@ nav {
 }
 
 /* Small text */
-small, .text-sm {
+small,
+.text-sm {
   font-size: 0.875rem;
   line-height: 1.5;
 }
@@ -205,7 +224,11 @@ small, .text-sm {
 
 /* Utility classes */
 .text-gradient {
-  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--accent-color)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -271,7 +294,11 @@ small, .text-sm {
 }
 
 .button.scrolly {
-  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--accent-color)
+  );
   color: #000;
 }
 
@@ -285,23 +312,23 @@ small, .text-sm {
   h1 {
     font-size: 2em; /* 32px */
   }
-  
+
   h2 {
     font-size: 1.25em; /* 20px */
   }
-  
+
   h3 {
     font-size: 1em; /* 16px */
   }
-  
+
   h4 {
     font-size: 0.8em; /* 12.8px */
   }
-  
+
   h5 {
     font-size: 0.6em; /* 9.6px */
   }
-  
+
   h6 {
     font-size: 0.6em; /* 9.6px */
   }
@@ -311,31 +338,29 @@ small, .text-sm {
   h1 {
     font-size: 2em; /* 32px */
   }
-  
+
   h2 {
     font-size: 1.25em; /* 20px */
   }
-  
+
   h3 {
     font-size: 1em; /* 16px */
   }
-  
+
   h4 {
     font-size: 0.8em; /* 12.8px */
   }
-  
+
   h5 {
     font-size: 0.6em; /* 9.6px */
   }
-  
+
   h6 {
     font-size: 0.6em; /* 9.6px */
   }
-  
+
   /* Special intro paragraph sizing from original */
   #intro p {
     font-size: 1em;
   }
 }
-
- 

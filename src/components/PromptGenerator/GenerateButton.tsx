@@ -1,35 +1,53 @@
-'use client'
+'use client';
 
+import { useAuth } from '@/hooks/useAuth';
+import { useState } from 'react';
+import './PromptGenerator.css';
+import ResetButton from './ResetButton';
 
 interface GenerateButtonProps {
-  onClick: () => void
+  onClick: () => void;
+  onReset?: () => void;
 }
 
-export default function GenerateButton({ onClick }: GenerateButtonProps) {
+export default function GenerateButton({
+  onClick,
+  onReset,
+}: GenerateButtonProps) {
+  const { user, signInWithGoogle } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = async () => {
+    if (!user) {
+      try {
+        setIsLoading(true);
+        await signInWithGoogle();
+      } catch (error) {
+        console.error('Error signing in with Google:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      onClick();
+    }
+  };
+
   return (
-    <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+    <div className="button-container">
+      <div className="button-container-spacer"></div>
+
       <button
-        onClick={onClick}
-        style={{
-          padding: '16px 32px',
-          fontSize: '18px',
-          fontWeight: '600',
-          backgroundColor: '#00ffff',
-          color: '#000',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease'
-        }}
-        onMouseOver={(e) => {
-          e.currentTarget.style.backgroundColor = '#00cccc'
-        }}
-        onMouseOut={(e) => {
-          e.currentTarget.style.backgroundColor = '#00ffff'
-        }}
+        onClick={handleClick}
+        disabled={isLoading}
+        className="btn-primary"
       >
-        🚀 Generate Detailed Prompt
+        {isLoading && <div className="loading-spinner"></div>}
+        {user ? '🚀 Generate Prompt' : '🔐 Sign in Google to Generate Prompt'}
       </button>
+
+      <div className="button-container-right">
+        {onReset && <ResetButton onReset={onReset} />}
+      </div>
     </div>
-  )
-} 
+  );
+}

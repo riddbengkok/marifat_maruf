@@ -1,27 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { FormData, formOptions, ImageFormData } from './FormData';
+import { ImageFormData, formOptions } from './FormData';
 import FormField from './FormField';
 import FormSection from './FormSection';
 import NestedOptions from './NestedOptions';
 
-interface PromptGeneratorFormProps {
-  formData: FormData | ImageFormData;
+interface ImagePromptGeneratorFormProps {
+  formData: ImageFormData;
   onFormDataChange: (field: string, value: string) => void;
 }
 
-// Type guard to check if formData is for video prompts
-function isVideoFormData(
-  formData: FormData | ImageFormData
-): formData is FormData {
-  return 'cameraMovement' in formData;
-}
-
-export default function PromptGeneratorForm({
+export default function ImagePromptGeneratorForm({
   formData,
   onFormDataChange,
-}: PromptGeneratorFormProps) {
+}: ImagePromptGeneratorFormProps) {
   // Group visibility states
   const [showLightingOptions, setShowLightingOptions] = useState(false);
   const [showPOVOptions, setShowPOVOptions] = useState(false);
@@ -30,9 +23,6 @@ export default function PromptGeneratorForm({
   const [showEnvironmentOptions, setShowEnvironmentOptions] = useState(false);
   const [showSensoryOptions, setShowSensoryOptions] = useState(false);
   const [showActionOptions, setShowActionOptions] = useState(false);
-  const [showCameraMovementOptions, setShowCameraMovementOptions] =
-    useState(false);
-  const [showVideoStyleOptions, setShowVideoStyleOptions] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     onFormDataChange(field, value);
@@ -60,17 +50,8 @@ export default function PromptGeneratorForm({
       case 'actions':
         setShowActionOptions(value !== '');
         break;
-      case 'cameraMovement':
-        setShowCameraMovementOptions(value !== '');
-        break;
-      case 'videoStyle':
-        setShowVideoStyleOptions(value !== '');
-        break;
     }
   };
-
-  // Check if this is video form data
-  const isVideoData = isVideoFormData(formData);
 
   return (
     <div style={{ marginBottom: '32px' }}>
@@ -121,141 +102,6 @@ export default function PromptGeneratorForm({
           />
         </div>
       </FormSection>
-
-      {/* Video-Specific Parameters - Only show for video data */}
-      {isVideoData && (
-        <FormSection title="Video Parameters" icon="🎬">
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '24px',
-              marginBottom: '8px',
-            }}
-          >
-            <FormField
-              label="Camera Movement"
-              icon="📹"
-              type="select"
-              value={formData.cameraMovement}
-              onChange={value => handleInputChange('cameraMovement', value)}
-              options={formOptions.cameraMovements.map(movement => ({
-                value: movement,
-                label: movement,
-              }))}
-              placeholder="Select camera movement..."
-            />
-
-            <FormField
-              label="Video Duration"
-              icon="⏱️"
-              type="select"
-              value={formData.videoDuration}
-              onChange={value => handleInputChange('videoDuration', value)}
-              options={formOptions.videoDurations.map(duration => ({
-                value: duration,
-                label: duration,
-              }))}
-              placeholder="Select duration..."
-            />
-
-            <FormField
-              label="Frame Rate"
-              icon="🎞️"
-              type="select"
-              value={formData.frameRate}
-              onChange={value => handleInputChange('frameRate', value)}
-              options={formOptions.frameRates.map(rate => ({
-                value: rate,
-                label: rate,
-              }))}
-              placeholder="Select frame rate..."
-            />
-
-            <FormField
-              label="Video Style"
-              icon="🎭"
-              type="select"
-              value={formData.videoStyle}
-              onChange={value => handleInputChange('videoStyle', value)}
-              options={formOptions.videoStyles.map(style => ({
-                value: style,
-                label: style,
-              }))}
-              placeholder="Select video style..."
-            />
-
-            <FormField
-              label="Transition"
-              icon="🔄"
-              type="select"
-              value={formData.transition}
-              onChange={value => handleInputChange('transition', value)}
-              options={formOptions.transitions.map(transition => ({
-                value: transition,
-                label: transition,
-              }))}
-              placeholder="Select transition..."
-            />
-          </div>
-
-          {/* Camera Movement Nested Options */}
-          <NestedOptions
-            title="Camera Movement Details"
-            icon="📹"
-            isVisible={showCameraMovementOptions}
-            onFieldChange={handleInputChange}
-            fields={[
-              {
-                label: 'Movement Speed',
-                fieldName: 'movementSpeed',
-                value: formData.movementSpeed,
-                options: formOptions.movementSpeeds.map(speed => ({
-                  value: speed,
-                  label: speed,
-                })),
-              },
-              {
-                label: 'Movement Direction',
-                fieldName: 'movementDirection',
-                value: formData.movementDirection,
-                options: formOptions.movementDirections.map(direction => ({
-                  value: direction,
-                  label: direction,
-                })),
-              },
-            ]}
-          />
-
-          {/* Video Style Nested Options */}
-          <NestedOptions
-            title="Video Style Details"
-            icon="🎭"
-            isVisible={showVideoStyleOptions}
-            onFieldChange={handleInputChange}
-            fields={[
-              {
-                label: 'Cinematic Style',
-                fieldName: 'cinematicStyle',
-                value: formData.cinematicStyle,
-                options: formOptions.cinematicStyles.map(style => ({
-                  value: style,
-                  label: style,
-                })),
-              },
-              {
-                label: 'Animation Style',
-                fieldName: 'animationStyle',
-                value: formData.animationStyle,
-                options: formOptions.animationStyles.map(style => ({
-                  value: style,
-                  label: style,
-                })),
-              },
-            ]}
-          />
-        </FormSection>
-      )}
 
       {/* Visual & Technical Group */}
       <FormSection title="Visual & Technical" icon="📷">
@@ -771,10 +617,13 @@ export default function PromptGeneratorForm({
             type="select"
             value={formData.model}
             onChange={value => handleInputChange('model', value)}
-            options={formOptions.models.map(model => ({
-              value: model,
-              label: model,
-            }))}
+            options={[
+              { value: 'dalle', label: 'DALL-E' },
+              { value: 'midjourney', label: 'Midjourney' },
+              { value: 'stable-diffusion', label: 'Stable Diffusion' },
+              { value: 'firefly', label: 'Adobe Firefly' },
+              { value: 'leonardo', label: 'Leonardo AI' },
+            ]}
             placeholder="Select AI model..."
           />
         </div>

@@ -1,0 +1,21 @@
+{
+  "name": "Marifat - Frontend Web Developer & AI Tools",
+  "short_name": "Marifat",
+  "description": "Professional portfolio and AI tools for frontend web development",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0c0c",
+  "theme_color": "#00ffff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["productivity", "utilities", "developer tools"],
+  "lang": "en",
+  "scope": "/",
+  "prefer_related_applications": false
+}

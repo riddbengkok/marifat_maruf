@@ -1,36 +1,36 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 
 const Intro = () => {
-  const sectionRef = useRef<HTMLElement>(null)
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('visible')
+            entry.target.classList.add('visible');
           }
-        })
+        });
       },
       { threshold: 0.1 }
-    )
+    );
 
     if (sectionRef.current) {
-      observer.observe(sectionRef.current)
+      observer.observe(sectionRef.current);
     }
 
-    return () => observer.disconnect()
-  }, [])
+    return () => observer.disconnect();
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
+    const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+      element.scrollIntoView({ behavior: 'smooth' });
     }
-  }
+  };
 
   return (
     <section
@@ -40,7 +40,7 @@ const Intro = () => {
     >
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black"></div>
-      
+
       {/* Animated background elements */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-20 w-32 h-32 bg-cyan-400 rounded-full blur-xl animate-pulse"></div>
@@ -54,8 +54,8 @@ const Intro = () => {
         </h1>
         <p className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
           Just another fine responsive site template designed by{' '}
-          <a 
-            href="http://html5up.net" 
+          <a
+            href="http://html5up.net"
             className="text-cyan-300 hover:text-cyan-200 transition-colors duration-200 underline"
             target="_blank"
             rel="noopener noreferrer"
@@ -64,8 +64,8 @@ const Intro = () => {
           </a>
           <br />
           and released for free under the{' '}
-          <a 
-            href="http://html5up.net/license" 
+          <a
+            href="http://html5up.net/license"
             className="text-cyan-300 hover:text-cyan-200 transition-colors duration-200 underline"
             target="_blank"
             rel="noopener noreferrer"
@@ -107,7 +107,7 @@ const Intro = () => {
         </svg>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Intro 
+export default Intro;

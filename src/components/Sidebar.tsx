@@ -1,23 +1,25 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import GoogleLoginButton from './Auth/GoogleLoginButton';
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
+    const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+      element.scrollIntoView({ behavior: 'smooth' });
     }
-    setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
 
-  const isFeaturesPage = pathname === '/features'
-  const isPromptGeneratorPage = pathname === '/prompt-generator'
+  const isFeaturesPage = pathname === '/features';
+  const isPromptGeneratorPage = pathname === '/prompt-generator';
+  const isVideoPromptGeneratorPage = pathname === '/ai-video-prompt-generator';
 
   return (
     <>
@@ -61,7 +63,13 @@ const Sidebar = () => {
           {/* Logo/Brand */}
           <div className="mb-8">
             <Link href="/" className="text-2xl font-bold text-gradient">
-              {isFeaturesPage ? 'Features' : isPromptGeneratorPage ? 'Prompt Generator' : 'Portfolio'}
+              {isFeaturesPage
+                ? 'Features'
+                : isPromptGeneratorPage
+                  ? 'Image Prompt Generator'
+                  : isVideoPromptGeneratorPage
+                    ? 'Video Prompt Generator'
+                    : 'Portfolio'}
             </Link>
           </div>
 
@@ -112,8 +120,8 @@ const Sidebar = () => {
                     </Link>
                   </li>
                 </>
-              ) : isPromptGeneratorPage ? (
-                // Prompt Generator page navigation
+              ) : isPromptGeneratorPage || isVideoPromptGeneratorPage ? (
+                // Prompt Generator pages navigation
                 <>
                   <li className="pt-4 border-t border-white/20">
                     <Link
@@ -133,6 +141,27 @@ const Sidebar = () => {
                       View Features →
                     </Link>
                   </li>
+                  {isPromptGeneratorPage ? (
+                    <li>
+                      <Link
+                        href="/ai-video-prompt-generator"
+                        className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        Video Prompt Generator →
+                      </Link>
+                    </li>
+                  ) : (
+                    <li>
+                      <Link
+                        href="/prompt-generator"
+                        className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        Image Prompt Generator →
+                      </Link>
+                    </li>
+                  )}
                 </>
               ) : (
                 // Portfolio page navigation (root)
@@ -200,7 +229,16 @@ const Sidebar = () => {
                       className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
                       onClick={() => setIsOpen(false)}
                     >
-                      AI Prompt Generator →
+                      AI Image Prompt Generator →
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/ai-video-prompt-generator"
+                      className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      AI Video Prompt Generator →
                     </Link>
                   </li>
                 </>
@@ -208,11 +246,20 @@ const Sidebar = () => {
             </ul>
           </nav>
 
+          {/* Authentication Section */}
+          <div className="pt-4 border-t border-white/20 mb-4">
+            <div className="text-center">
+              <GoogleLoginButton
+                size="small"
+                variant="outline"
+                className="w-full"
+              />
+            </div>
+          </div>
+
           {/* Footer */}
           <div className="pt-4 border-t border-white/20">
-            <p className="text-sm text-gray-400">
-              © 2024 Marifat Maruf
-            </p>
+            <p className="text-sm text-gray-400">© 2024 Marifat Maruf</p>
           </div>
         </div>
       </section>
@@ -225,7 +272,7 @@ const Sidebar = () => {
         />
       )}
     </>
-  )
-}
+  );
+};
 
-export default Sidebar 
+export default Sidebar;
