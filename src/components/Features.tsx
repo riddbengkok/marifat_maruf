@@ -65,6 +65,24 @@ const Features = () => {
     },
     {
       id: 3,
+      title: 'AI Audio Prompt Generator',
+      description:
+        'Create detailed audio prompts for AI music generation tools. Generate musical compositions with specific genres, instruments, effects, and emotional qualities.',
+      icon: (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.793L4.5 14H2a1 1 0 01-1-1V7a1 1 0 011-1h2.5l3.883-3.793a1 1 0 011.617.793zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z"
+            clipRule="evenodd"
+          />
+        </svg>
+      ),
+      link: '/ai-audio-prompt-generator',
+      image: '/images/audio-prompt-generator-screenshot.jpg',
+      technologies: ['Next.js', 'TypeScript', 'Audio AI', 'Music Generation'],
+    },
+    {
+      id: 4,
       title: 'Professional Portfolio',
       description:
         'Showcase your work with a modern, responsive portfolio website. Features project galleries, skills visualization, and professional contact forms.',
@@ -87,7 +105,7 @@ const Features = () => {
       ],
     },
     {
-      id: 4,
+      id: 5,
       title: 'Modern Web Development',
       description:
         'Full-stack web development services using modern technologies. From frontend frameworks to backend APIs, we build scalable and performant applications.',
@@ -105,7 +123,7 @@ const Features = () => {
       technologies: ['React', 'Vue.js', 'Laravel', 'Node.js'],
     },
     {
-      id: 5,
+      id: 6,
       title: 'UI/UX Design',
       description:
         'Create beautiful and intuitive user interfaces with modern design principles. From wireframes to high-fidelity prototypes, we design for the best user experience.',
@@ -123,7 +141,7 @@ const Features = () => {
       technologies: ['Figma', 'Adobe XD', 'Prototyping', 'User Research'],
     },
     {
-      id: 6,
+      id: 7,
       title: 'Performance Optimization',
       description:
         'Optimize your web applications for speed and efficiency. From code splitting to image optimization, we ensure your sites load fast and perform well.',

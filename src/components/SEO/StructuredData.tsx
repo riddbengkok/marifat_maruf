@@ -1,7 +1,12 @@
 import Script from 'next/script';
 
 interface StructuredDataProps {
-  type: 'video-generator' | 'image-generator' | 'portfolio' | 'home';
+  type:
+    | 'video-generator'
+    | 'image-generator'
+    | 'audio-generator'
+    | 'portfolio'
+    | 'home';
   title: string;
   description: string;
   url: string;
@@ -85,6 +90,28 @@ export default function StructuredData({
           ],
           screenshot:
             'https://hyperspace-next.vercel.app/images/image-generator-screenshot.jpg',
+          softwareVersion: '1.0.0',
+        };
+
+      case 'audio-generator':
+        return {
+          ...baseData,
+          '@type': 'WebApplication',
+          name: 'AI Audio Prompt Generator',
+          description:
+            'Generate high-quality AI audio prompts for Suno, Udio, Mubert, and other AI audio generators.',
+          applicationCategory: 'MultimediaApplication',
+          featureList: [
+            'Audio prompt generation',
+            'Musical genre selection',
+            'Instrument and effects options',
+            'Tempo and key settings',
+            'Sound design elements',
+            'Professional prompt templates',
+            'Multiple AI model support',
+          ],
+          screenshot:
+            'https://hyperspace-next.vercel.app/images/audio-generator-screenshot.jpg',
           softwareVersion: '1.0.0',
         };
 

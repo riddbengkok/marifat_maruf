@@ -1,15 +1,17 @@
+import { AudioFormData } from '@/components/PromptGenerator/AudioFormData';
 import { FormData, ImageFormData } from '@/components/PromptGenerator/FormData';
 import { useEffect, useState } from 'react';
 
-interface UseFormStorageProps<T extends FormData | ImageFormData> {
+interface UseFormStorageProps<
+  T extends FormData | ImageFormData | AudioFormData,
+> {
   key: string;
   initialData: T;
 }
 
-export function useFormStorage<T extends FormData | ImageFormData>({
-  key,
-  initialData,
-}: UseFormStorageProps<T>) {
+export function useFormStorage<
+  T extends FormData | ImageFormData | AudioFormData,
+>({ key, initialData }: UseFormStorageProps<T>) {
   const [formData, setFormData] = useState<T>(initialData);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -39,11 +41,18 @@ export function useFormStorage<T extends FormData | ImageFormData>({
     }
   }, [formData, key, isLoaded]);
 
-  const updateFormData = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
+  const updateFormData = (field: string | Partial<T>, value?: string) => {
+    if (typeof field === 'string' && value !== undefined) {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value,
+      }));
+    } else if (typeof field === 'object') {
+      setFormData(prev => ({
+        ...prev,
+        ...field,
+      }));
+    }
   };
 
   const resetFormData = () => {

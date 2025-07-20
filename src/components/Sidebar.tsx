@@ -20,6 +20,7 @@ const Sidebar = () => {
   const isFeaturesPage = pathname === '/features';
   const isPromptGeneratorPage = pathname === '/prompt-generator';
   const isVideoPromptGeneratorPage = pathname === '/ai-video-prompt-generator';
+  const isAudioPromptGeneratorPage = pathname === '/ai-audio-prompt-generator';
 
   return (
     <>
@@ -69,7 +70,9 @@ const Sidebar = () => {
                   ? 'Image Prompt Generator'
                   : isVideoPromptGeneratorPage
                     ? 'Video Prompt Generator'
-                    : 'Portfolio'}
+                    : isAudioPromptGeneratorPage
+                      ? 'Audio Prompt Generator'
+                      : 'Portfolio'}
             </Link>
           </div>
 
@@ -120,7 +123,9 @@ const Sidebar = () => {
                     </Link>
                   </li>
                 </>
-              ) : isPromptGeneratorPage || isVideoPromptGeneratorPage ? (
+              ) : isPromptGeneratorPage ||
+                isVideoPromptGeneratorPage ||
+                isAudioPromptGeneratorPage ? (
                 // Prompt Generator pages navigation
                 <>
                   <li className="pt-4 border-t border-white/20">
@@ -142,25 +147,68 @@ const Sidebar = () => {
                     </Link>
                   </li>
                   {isPromptGeneratorPage ? (
-                    <li>
-                      <Link
-                        href="/ai-video-prompt-generator"
-                        className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        Video Prompt Generator →
-                      </Link>
-                    </li>
+                    <>
+                      <li>
+                        <Link
+                          href="/ai-video-prompt-generator"
+                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Video Prompt Generator →
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/ai-audio-prompt-generator"
+                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Audio Prompt Generator →
+                        </Link>
+                      </li>
+                    </>
+                  ) : isVideoPromptGeneratorPage ? (
+                    <>
+                      <li>
+                        <Link
+                          href="/prompt-generator"
+                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Image Prompt Generator →
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/ai-audio-prompt-generator"
+                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Audio Prompt Generator →
+                        </Link>
+                      </li>
+                    </>
                   ) : (
-                    <li>
-                      <Link
-                        href="/prompt-generator"
-                        className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        Image Prompt Generator →
-                      </Link>
-                    </li>
+                    <>
+                      <li>
+                        <Link
+                          href="/prompt-generator"
+                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Image Prompt Generator →
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/ai-video-prompt-generator"
+                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Video Prompt Generator →
+                        </Link>
+                      </li>
+                    </>
                   )}
                 </>
               ) : (
@@ -239,6 +287,15 @@ const Sidebar = () => {
                       onClick={() => setIsOpen(false)}
                     >
                       AI Video Prompt Generator →
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/ai-audio-prompt-generator"
+                      className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      AI Audio Prompt Generator →
                     </Link>
                   </li>
                 </>
