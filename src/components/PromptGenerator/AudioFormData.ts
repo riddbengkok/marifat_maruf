@@ -1,6 +1,7 @@
 export interface AudioFormData {
   // Core Elements
   subject: string;
+  soundType: string; // New field: sound effect, music, ambience
   genre: string;
   mood: string;
   style: string;
@@ -103,6 +104,114 @@ export interface AudioFormData {
 
 export const audioFormOptions = {
   // Core Elements
+  soundTypes: ['sound effect', 'music', 'ambience'],
+
+  // Sound Effect specific options
+  soundEffectTypes: [
+    'explosion',
+    'gunshot',
+    'footsteps',
+    'door slam',
+    'glass breaking',
+    'car engine',
+    'sirens',
+    'phone ring',
+    'notification',
+    'button click',
+    'sword swing',
+    'magic spell',
+    'thunder',
+    'wind',
+    'water splash',
+    'fire crackling',
+    'metal clang',
+    'wood creak',
+    'paper rustle',
+    'clock tick',
+  ],
+
+  // Ambience specific options
+  ambienceTypes: [
+    'forest',
+    'jungle',
+    'ocean',
+    'beach',
+    'mountain',
+    'desert',
+    'city',
+    'suburb',
+    'office',
+    'restaurant',
+    'hospital',
+    'school',
+    'library',
+    'church',
+    'cafe',
+    'park',
+    'garden',
+    'farm',
+    'factory',
+    'warehouse',
+    'airport',
+    'train station',
+    'busy street',
+    'quiet street',
+    'rainy day',
+    'snowy day',
+    'windy day',
+    'stormy night',
+    'peaceful night',
+    'busy morning',
+  ],
+
+  // Animal sounds for ambience
+  animalSounds: [
+    'birds chirping',
+    'crickets',
+    'frogs',
+    'wolves howling',
+    'dogs barking',
+    'cats meowing',
+    'horses neighing',
+    'cows mooing',
+    'sheep bleating',
+    'chickens clucking',
+    'ducks quacking',
+    'geese honking',
+    'owls hooting',
+    'eagles screeching',
+    'dolphins clicking',
+    'whales singing',
+    'insects buzzing',
+    'bees humming',
+    'cicadas',
+    'monkeys chattering',
+  ],
+
+  // Weather sounds for ambience
+  weatherSounds: [
+    'rain falling',
+    'thunder',
+    'lightning',
+    'wind blowing',
+    'snow falling',
+    'hail',
+    'storm',
+    'drizzle',
+    'heavy rain',
+    'gentle rain',
+    'rain on roof',
+    'rain on leaves',
+    'rain on pavement',
+    'wind through trees',
+    'wind through grass',
+    'wind chimes',
+    'snow crunching',
+    'ice cracking',
+    'fog',
+    'mist',
+  ],
+
   genres: [
     'pop',
     'rock',
@@ -528,19 +637,6 @@ export const audioFormOptions = {
   ],
 
   // Nested Sound Design Options
-  ambienceTypes: [
-    'nature',
-    'urban',
-    'indoor',
-    'outdoor',
-    'underwater',
-    'space',
-    'wind',
-    'rain',
-    'traffic',
-    'crowd',
-  ],
-
   textureTypes: [
     'smooth',
     'rough',

@@ -25,6 +25,7 @@ export default function AIAudioPromptGenerator() {
   const initialFormData: AudioFormData = {
     // Core Elements
     subject: '',
+    soundType: '',
     genre: '',
     mood: '',
     style: '',
@@ -146,134 +147,275 @@ export default function AIAudioPromptGenerator() {
 
     // Core Elements
     if (formData.subject) parts.push(formData.subject);
-    if (formData.genre) parts.push(`in ${formData.genre} genre`);
-    if (formData.mood) parts.push(`with ${formData.mood} mood`);
-    if (formData.style) parts.push(`in ${formData.style} style`);
+    if (formData.soundType) parts.push(`as ${formData.soundType}`);
 
-    // Audio-Specific Parameters
-    if (formData.tempo) {
-      let tempoDesc = formData.tempo;
-      if (formData.tempoSpeed) tempoDesc += ` ${formData.tempoSpeed}`;
-      if (formData.tempoFeel) tempoDesc += ` with ${formData.tempoFeel} feel`;
-      parts.push(`tempo: ${tempoDesc}`);
+    // Sound Type specific logic
+    if (formData.soundType === 'sound effect') {
+      // Sound Effect specific fields
+      if (formData.genre) parts.push(`type: ${formData.genre}`);
+      if (formData.effects) {
+        let effectsDesc = formData.effects;
+        if (formData.reverbType)
+          effectsDesc += ` with ${formData.reverbType} reverb`;
+        if (formData.delayType)
+          effectsDesc += ` and ${formData.delayType} delay`;
+        if (formData.distortionType)
+          effectsDesc += ` and ${formData.distortionType} distortion`;
+        parts.push(`effects: ${effectsDesc}`);
+      }
+      if (formData.soundDesign) {
+        let soundDesc = formData.soundDesign;
+        if (formData.textureType)
+          soundDesc += ` and ${formData.textureType} texture`;
+        parts.push(`sound design: ${soundDesc}`);
+      }
+      if (formData.atmosphere) {
+        let atmosDesc = formData.atmosphere;
+        if (formData.atmosphereDensity)
+          atmosDesc += ` ${formData.atmosphereDensity}`;
+        if (formData.atmosphereMovement)
+          atmosDesc += ` with ${formData.atmosphereMovement} movement`;
+        parts.push(`atmosphere: ${atmosDesc}`);
+      }
+      if (formData.emotions) parts.push(`emotions: ${formData.emotions}`);
+      if (formData.energy) {
+        let energyDesc = formData.energy;
+        if (formData.energyLevel) energyDesc += ` ${formData.energyLevel}`;
+        if (formData.energyFlow)
+          energyDesc += ` with ${formData.energyFlow} flow`;
+        parts.push(`energy: ${energyDesc}`);
+      }
+      if (formData.intensity) parts.push(`intensity: ${formData.intensity}`);
+      if (formData.setting) {
+        let settingDesc = formData.setting;
+        if (formData.environmentType)
+          settingDesc += ` ${formData.environmentType}`;
+        if (formData.spatialDepth)
+          settingDesc += ` with ${formData.spatialDepth} spatial depth`;
+        parts.push(`setting: ${settingDesc}`);
+      }
+      if (formData.timeOfDay) parts.push(`time: ${formData.timeOfDay}`);
+      if (formData.season) parts.push(`season: ${formData.season}`);
+      if (formData.location) parts.push(`location: ${formData.location}`);
+      if (formData.textures) parts.push(`textures: ${formData.textures}`);
+      if (formData.colors) parts.push(`colors: ${formData.colors}`);
+      if (formData.materials) parts.push(`materials: ${formData.materials}`);
+      if (formData.sensations) {
+        let senseDesc = formData.sensations;
+        if (formData.temperature)
+          senseDesc += ` ${formData.temperature} temperature`;
+        if (formData.humidity)
+          senseDesc += ` with ${formData.humidity} humidity`;
+        parts.push(`sensations: ${senseDesc}`);
+      }
+      if (formData.dynamics) {
+        let dynamicDesc = formData.dynamics;
+        if (formData.dynamicRange)
+          dynamicDesc += ` with ${formData.dynamicRange} range`;
+        if (formData.dynamicContrast)
+          dynamicDesc += ` and ${formData.dynamicContrast} contrast`;
+        parts.push(`dynamics: ${dynamicDesc}`);
+      }
+      if (formData.movement) {
+        let movementDesc = formData.movement;
+        if (formData.movementSpeed)
+          movementDesc += ` ${formData.movementSpeed}`;
+        if (formData.movementDirection)
+          movementDesc += ` ${formData.movementDirection}`;
+        parts.push(`movement: ${movementDesc}`);
+      }
+      if (formData.flow) parts.push(`flow: ${formData.flow}`);
+    } else if (formData.soundType === 'music') {
+      // Music specific fields
+      if (formData.genre) parts.push(`in ${formData.genre} genre`);
+      if (formData.mood) parts.push(`with ${formData.mood} mood`);
+      if (formData.style) parts.push(`in ${formData.style} style`);
+      if (formData.tempo) {
+        let tempoDesc = formData.tempo;
+        if (formData.tempoSpeed) tempoDesc += ` ${formData.tempoSpeed}`;
+        if (formData.tempoFeel) tempoDesc += ` with ${formData.tempoFeel} feel`;
+        parts.push(`tempo: ${tempoDesc}`);
+      }
+      if (formData.key) {
+        let keyDesc = formData.key;
+        if (formData.keyModality) keyDesc += ` ${formData.keyModality}`;
+        if (formData.keyComplexity)
+          keyDesc += ` with ${formData.keyComplexity} complexity`;
+        parts.push(`key: ${keyDesc}`);
+      }
+      if (formData.timeSignature)
+        parts.push(`time signature: ${formData.timeSignature}`);
+      if (formData.duration) parts.push(`duration: ${formData.duration}`);
+      if (formData.audioQuality && formData.audioQuality !== 'high')
+        parts.push(`${formData.audioQuality} quality`);
+      if (formData.productionStyle)
+        parts.push(`production style: ${formData.productionStyle}`);
+      if (formData.arrangementStyle)
+        parts.push(`arrangement style: ${formData.arrangementStyle}`);
+      if (formData.instruments) {
+        let instrumentDesc = formData.instruments;
+        if (formData.primaryInstruments)
+          instrumentDesc += ` with ${formData.primaryInstruments} as primary`;
+        if (formData.secondaryInstruments)
+          instrumentDesc += ` and ${formData.secondaryInstruments} as secondary`;
+        if (formData.percussionType)
+          instrumentDesc += ` with ${formData.percussionType} percussion`;
+        parts.push(`instruments: ${instrumentDesc}`);
+      }
+      if (formData.vocals) parts.push(`vocals: ${formData.vocals}`);
+      if (formData.effects) {
+        let effectsDesc = formData.effects;
+        if (formData.reverbType)
+          effectsDesc += ` with ${formData.reverbType} reverb`;
+        if (formData.delayType)
+          effectsDesc += ` and ${formData.delayType} delay`;
+        if (formData.distortionType)
+          effectsDesc += ` and ${formData.distortionType} distortion`;
+        parts.push(`effects: ${effectsDesc}`);
+      }
+      if (formData.soundDesign) {
+        let soundDesc = formData.soundDesign;
+        if (formData.textureType)
+          soundDesc += ` and ${formData.textureType} texture`;
+        parts.push(`sound design: ${soundDesc}`);
+      }
+      if (formData.atmosphere) {
+        let atmosDesc = formData.atmosphere;
+        if (formData.atmosphereDensity)
+          atmosDesc += ` ${formData.atmosphereDensity}`;
+        if (formData.atmosphereMovement)
+          atmosDesc += ` with ${formData.atmosphereMovement} movement`;
+        parts.push(`atmosphere: ${atmosDesc}`);
+      }
+      if (formData.emotions) parts.push(`emotions: ${formData.emotions}`);
+      if (formData.energy) {
+        let energyDesc = formData.energy;
+        if (formData.energyLevel) energyDesc += ` ${formData.energyLevel}`;
+        if (formData.energyFlow)
+          energyDesc += ` with ${formData.energyFlow} flow`;
+        parts.push(`energy: ${energyDesc}`);
+      }
+      if (formData.intensity) parts.push(`intensity: ${formData.intensity}`);
+      if (formData.setting) {
+        let settingDesc = formData.setting;
+        if (formData.environmentType)
+          settingDesc += ` ${formData.environmentType}`;
+        if (formData.spatialDepth)
+          settingDesc += ` with ${formData.spatialDepth} spatial depth`;
+        parts.push(`setting: ${settingDesc}`);
+      }
+      if (formData.timeOfDay) parts.push(`time: ${formData.timeOfDay}`);
+      if (formData.season) parts.push(`season: ${formData.season}`);
+      if (formData.location) parts.push(`location: ${formData.location}`);
+      if (formData.textures) parts.push(`textures: ${formData.textures}`);
+      if (formData.colors) parts.push(`colors: ${formData.colors}`);
+      if (formData.materials) parts.push(`materials: ${formData.materials}`);
+      if (formData.sensations) {
+        let senseDesc = formData.sensations;
+        if (formData.temperature)
+          senseDesc += ` ${formData.temperature} temperature`;
+        if (formData.humidity)
+          senseDesc += ` with ${formData.humidity} humidity`;
+        parts.push(`sensations: ${senseDesc}`);
+      }
+      if (formData.dynamics) {
+        let dynamicDesc = formData.dynamics;
+        if (formData.dynamicRange)
+          dynamicDesc += ` with ${formData.dynamicRange} range`;
+        if (formData.dynamicContrast)
+          dynamicDesc += ` and ${formData.dynamicContrast} contrast`;
+        parts.push(`dynamics: ${dynamicDesc}`);
+      }
+      if (formData.movement) {
+        let movementDesc = formData.movement;
+        if (formData.movementSpeed)
+          movementDesc += ` ${formData.movementSpeed}`;
+        if (formData.movementDirection)
+          movementDesc += ` ${formData.movementDirection}`;
+        parts.push(`movement: ${movementDesc}`);
+      }
+      if (formData.rhythm) parts.push(`rhythm: ${formData.rhythm}`);
+      if (formData.flow) parts.push(`flow: ${formData.flow}`);
+    } else if (formData.soundType === 'ambience') {
+      // Ambience specific fields
+      if (formData.genre) parts.push(`ambience: ${formData.genre}`);
+      if (formData.mood) parts.push(`with ${formData.mood}`);
+      if (formData.style) parts.push(`and ${formData.style}`);
+      if (formData.effects) {
+        let effectsDesc = formData.effects;
+        if (formData.reverbType)
+          effectsDesc += ` with ${formData.reverbType} reverb`;
+        if (formData.delayType)
+          effectsDesc += ` and ${formData.delayType} delay`;
+        if (formData.distortionType)
+          effectsDesc += ` and ${formData.distortionType} distortion`;
+        parts.push(`effects: ${effectsDesc}`);
+      }
+      if (formData.soundDesign) {
+        let soundDesc = formData.soundDesign;
+        if (formData.textureType)
+          soundDesc += ` and ${formData.textureType} texture`;
+        parts.push(`sound design: ${soundDesc}`);
+      }
+      if (formData.atmosphere) {
+        let atmosDesc = formData.atmosphere;
+        if (formData.atmosphereDensity)
+          atmosDesc += ` ${formData.atmosphereDensity}`;
+        if (formData.atmosphereMovement)
+          atmosDesc += ` with ${formData.atmosphereMovement} movement`;
+        parts.push(`atmosphere: ${atmosDesc}`);
+      }
+      if (formData.emotions) parts.push(`emotions: ${formData.emotions}`);
+      if (formData.energy) {
+        let energyDesc = formData.energy;
+        if (formData.energyLevel) energyDesc += ` ${formData.energyLevel}`;
+        if (formData.energyFlow)
+          energyDesc += ` with ${formData.energyFlow} flow`;
+        parts.push(`energy: ${energyDesc}`);
+      }
+      if (formData.intensity) parts.push(`intensity: ${formData.intensity}`);
+      if (formData.setting) {
+        let settingDesc = formData.setting;
+        if (formData.environmentType)
+          settingDesc += ` ${formData.environmentType}`;
+        if (formData.spatialDepth)
+          settingDesc += ` with ${formData.spatialDepth} spatial depth`;
+        parts.push(`setting: ${settingDesc}`);
+      }
+      if (formData.timeOfDay) parts.push(`time: ${formData.timeOfDay}`);
+      if (formData.season) parts.push(`season: ${formData.season}`);
+      if (formData.location) parts.push(`location: ${formData.location}`);
+      if (formData.textures) parts.push(`textures: ${formData.textures}`);
+      if (formData.colors) parts.push(`colors: ${formData.colors}`);
+      if (formData.materials) parts.push(`materials: ${formData.materials}`);
+      if (formData.sensations) {
+        let senseDesc = formData.sensations;
+        if (formData.temperature)
+          senseDesc += ` ${formData.temperature} temperature`;
+        if (formData.humidity)
+          senseDesc += ` with ${formData.humidity} humidity`;
+        parts.push(`sensations: ${senseDesc}`);
+      }
+      if (formData.dynamics) {
+        let dynamicDesc = formData.dynamics;
+        if (formData.dynamicRange)
+          dynamicDesc += ` with ${formData.dynamicRange} range`;
+        if (formData.dynamicContrast)
+          dynamicDesc += ` and ${formData.dynamicContrast} contrast`;
+        parts.push(`dynamics: ${dynamicDesc}`);
+      }
+      if (formData.movement) {
+        let movementDesc = formData.movement;
+        if (formData.movementSpeed)
+          movementDesc += ` ${formData.movementSpeed}`;
+        if (formData.movementDirection)
+          movementDesc += ` ${formData.movementDirection}`;
+        parts.push(`movement: ${movementDesc}`);
+      }
+      if (formData.flow) parts.push(`flow: ${formData.flow}`);
     }
 
-    if (formData.key) {
-      let keyDesc = formData.key;
-      if (formData.keyModality) keyDesc += ` ${formData.keyModality}`;
-      if (formData.keyComplexity)
-        keyDesc += ` with ${formData.keyComplexity} complexity`;
-      parts.push(`key: ${keyDesc}`);
-    }
-
-    if (formData.timeSignature)
-      parts.push(`time signature: ${formData.timeSignature}`);
-    if (formData.duration) parts.push(`duration: ${formData.duration}`);
-    if (formData.audioQuality && formData.audioQuality !== 'high')
-      parts.push(`${formData.audioQuality} quality`);
-
-    // Style Nested Options
-    if (formData.productionStyle)
-      parts.push(`production style: ${formData.productionStyle}`);
-    if (formData.arrangementStyle)
-      parts.push(`arrangement style: ${formData.arrangementStyle}`);
-
-    // Instrumentation & Sound
-    if (formData.instruments) {
-      let instrumentDesc = formData.instruments;
-      if (formData.primaryInstruments)
-        instrumentDesc += ` with ${formData.primaryInstruments} as primary`;
-      if (formData.secondaryInstruments)
-        instrumentDesc += ` and ${formData.secondaryInstruments} as secondary`;
-      if (formData.percussionType)
-        instrumentDesc += ` with ${formData.percussionType} percussion`;
-      parts.push(`instruments: ${instrumentDesc}`);
-    }
-
-    if (formData.vocals) parts.push(`vocals: ${formData.vocals}`);
-    if (formData.effects) {
-      let effectsDesc = formData.effects;
-      if (formData.reverbType)
-        effectsDesc += ` with ${formData.reverbType} reverb`;
-      if (formData.delayType) effectsDesc += ` and ${formData.delayType} delay`;
-      if (formData.distortionType)
-        effectsDesc += ` and ${formData.distortionType} distortion`;
-      parts.push(`effects: ${effectsDesc}`);
-    }
-
-    if (formData.soundDesign) {
-      let soundDesc = formData.soundDesign;
-      if (formData.ambienceType)
-        soundDesc += ` with ${formData.ambienceType} ambience`;
-      if (formData.textureType)
-        soundDesc += ` and ${formData.textureType} texture`;
-      parts.push(`sound design: ${soundDesc}`);
-    }
-
-    // Atmosphere & Emotion
-    if (formData.atmosphere) {
-      let atmosDesc = formData.atmosphere;
-      if (formData.atmosphereDensity)
-        atmosDesc += ` ${formData.atmosphereDensity}`;
-      if (formData.atmosphereMovement)
-        atmosDesc += ` with ${formData.atmosphereMovement} movement`;
-      parts.push(`atmosphere: ${atmosDesc}`);
-    }
-    if (formData.emotions) parts.push(`emotions: ${formData.emotions}`);
-    if (formData.energy) {
-      let energyDesc = formData.energy;
-      if (formData.energyLevel) energyDesc += ` ${formData.energyLevel}`;
-      if (formData.energyFlow)
-        energyDesc += ` with ${formData.energyFlow} flow`;
-      parts.push(`energy: ${energyDesc}`);
-    }
-    if (formData.intensity) parts.push(`intensity: ${formData.intensity}`);
-
-    // Context & Setting
-    if (formData.setting) {
-      let settingDesc = formData.setting;
-      if (formData.environmentType)
-        settingDesc += ` ${formData.environmentType}`;
-      if (formData.spatialDepth)
-        settingDesc += ` with ${formData.spatialDepth} spatial depth`;
-      parts.push(`setting: ${settingDesc}`);
-    }
-    if (formData.timeOfDay) parts.push(`time: ${formData.timeOfDay}`);
-    if (formData.season) parts.push(`season: ${formData.season}`);
-    if (formData.location) parts.push(`location: ${formData.location}`);
-
-    // Sensory & Texture
-    if (formData.textures) parts.push(`textures: ${formData.textures}`);
-    if (formData.colors) parts.push(`colors: ${formData.colors}`);
-    if (formData.materials) parts.push(`materials: ${formData.materials}`);
-    if (formData.sensations) {
-      let senseDesc = formData.sensations;
-      if (formData.temperature)
-        senseDesc += ` ${formData.temperature} temperature`;
-      if (formData.humidity) senseDesc += ` with ${formData.humidity} humidity`;
-      parts.push(`sensations: ${senseDesc}`);
-    }
-
-    // Dynamics & Movement
-    if (formData.dynamics) {
-      let dynamicDesc = formData.dynamics;
-      if (formData.dynamicRange)
-        dynamicDesc += ` with ${formData.dynamicRange} range`;
-      if (formData.dynamicContrast)
-        dynamicDesc += ` and ${formData.dynamicContrast} contrast`;
-      parts.push(`dynamics: ${dynamicDesc}`);
-    }
-    if (formData.movement) {
-      let movementDesc = formData.movement;
-      if (formData.movementSpeed) movementDesc += ` ${formData.movementSpeed}`;
-      if (formData.movementDirection)
-        movementDesc += ` ${formData.movementDirection}`;
-      parts.push(`movement: ${movementDesc}`);
-    }
-    if (formData.rhythm) parts.push(`rhythm: ${formData.rhythm}`);
-    if (formData.flow) parts.push(`flow: ${formData.flow}`);
-
-    // Additional Details
+    // Additional Details (common for all types)
     if (formData.additionalDetails)
       parts.push(`additional: ${formData.additionalDetails}`);
     if (formData.references) parts.push(`references: ${formData.references}`);
@@ -470,7 +612,14 @@ export default function AIAudioPromptGenerator() {
                           color: '#fff',
                         }}
                       >
-                        🎵 Popular AI Audio Generators
+                        {formData.soundType === 'sound effect' &&
+                          '🔊 AI Sound Effect Generators'}
+                        {formData.soundType === 'music' &&
+                          '🎵 AI Music Generators'}
+                        {formData.soundType === 'ambience' &&
+                          '🌲 AI Ambience Generators'}
+                        {!formData.soundType &&
+                          '🎵 Popular AI Audio Generators'}
                       </h4>
                       <div
                         style={{
@@ -479,162 +628,653 @@ export default function AIAudioPromptGenerator() {
                           gap: '8px',
                         }}
                       >
-                        <a
-                          href="https://suno.ai"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          Suno AI
-                        </a>
-                        <a
-                          href="https://udio.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          Udio
-                        </a>
-                        <a
-                          href="https://mubert.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          Mubert
-                        </a>
-                        <a
-                          href="https://soundraw.io"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          Soundraw
-                        </a>
-                        <a
-                          href="https://aiva.ai"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          AIVA
-                        </a>
-                        <a
-                          href="https://boomy.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
-                        >
-                          Boomy
-                        </a>
+                        {/* Sound Effect Generators */}
+                        {formData.soundType === 'sound effect' && (
+                          <>
+                            <a
+                              href="https://elevenlabs.io"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              ElevenLabs
+                            </a>
+                            <a
+                              href="https://soundraw.io"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Soundraw
+                            </a>
+                            <a
+                              href="https://freesound.org"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Freesound
+                            </a>
+                            <a
+                              href="https://zapsplat.com"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Zapsplat
+                            </a>
+                            <a
+                              href="https://mixkit.co"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Mixkit
+                            </a>
+                            <a
+                              href="https://pixabay.com/sound-effects"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Pixabay
+                            </a>
+                          </>
+                        )}
+
+                        {/* Music Generators */}
+                        {formData.soundType === 'music' && (
+                          <>
+                            <a
+                              href="https://suno.ai"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Suno AI
+                            </a>
+                            <a
+                              href="https://udio.com"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Udio
+                            </a>
+                            <a
+                              href="https://mubert.com"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Mubert
+                            </a>
+                            <a
+                              href="https://aiva.ai"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              AIVA
+                            </a>
+                            <a
+                              href="https://boomy.com"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Boomy
+                            </a>
+                            <a
+                              href="https://soundraw.io"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Soundraw
+                            </a>
+                          </>
+                        )}
+
+                        {/* Ambience Generators */}
+                        {formData.soundType === 'ambience' && (
+                          <>
+                            <a
+                              href="https://ambient-mixer.com"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Ambient Mixer
+                            </a>
+                            <a
+                              href="https://mynoise.net"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              MyNoise
+                            </a>
+                            <a
+                              href="https://noisli.com"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Noisli
+                            </a>
+                            <a
+                              href="https://freesound.org"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Freesound
+                            </a>
+                            <a
+                              href="https://soundraw.io"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Soundraw
+                            </a>
+                            <a
+                              href="https://pixabay.com/sound-effects"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Pixabay
+                            </a>
+                          </>
+                        )}
+
+                        {/* Default/General Audio Generators */}
+                        {!formData.soundType && (
+                          <>
+                            <a
+                              href="https://suno.ai"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Suno AI
+                            </a>
+                            <a
+                              href="https://udio.com"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Udio
+                            </a>
+                            <a
+                              href="https://mubert.com"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Mubert
+                            </a>
+                            <a
+                              href="https://soundraw.io"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Soundraw
+                            </a>
+                            <a
+                              href="https://aiva.ai"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              AIVA
+                            </a>
+                            <a
+                              href="https://boomy.com"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                color: '#00d4ff',
+                                padding: '6px 12px',
+                                borderRadius: '4px',
+                                fontSize: '12px',
+                                textDecoration: 'none',
+                                textAlign: 'center',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.1)';
+                              }}
+                              onMouseOut={e => {
+                                e.currentTarget.style.backgroundColor =
+                                  'rgba(255, 255, 255, 0.05)';
+                              }}
+                            >
+                              Boomy
+                            </a>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
