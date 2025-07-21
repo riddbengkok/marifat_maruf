@@ -47,21 +47,31 @@ export async function GET(req: NextRequest) {
       );
     }
     // Find user by firebaseUid or email
-    const user = await prisma.user.findFirst({
-      where: firebaseUid ? { firebaseUid } : { email },
-      include: { subscription: true },
-    });
+    let user = null;
+    if (firebaseUid) {
+      user = await prisma.user.findUnique({
+        where: { firebaseUid },
+      });
+    } else if (email) {
+      user = await prisma.user.findUnique({
+        where: { email },
+      });
+    }
     if (!user) {
       return NextResponse.json({ status: 'none' });
     }
-    if (!user.subscription) {
+    // Fetch subscription separately
+    const subscription = await prisma.subscription.findUnique({
+      where: { userId: user.id },
+    });
+    if (!subscription) {
       return NextResponse.json({ status: 'none' });
     }
     // Consider 'active' if status is 'active' and not expired
     const now = new Date();
     const isActive =
-      user.subscription.status === 'active' &&
-      (!user.subscription.endsAt || new Date(user.subscription.endsAt) > now);
+      subscription.status === 'active' &&
+      (!subscription.endsAt || new Date(subscription.endsAt) > now);
     return NextResponse.json({ status: isActive ? 'active' : 'inactive' });
   } catch (error) {
     return NextResponse.json(

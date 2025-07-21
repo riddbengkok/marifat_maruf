@@ -73,6 +73,7 @@ export default function AIStoryPromptGenerator() {
     technology: '',
     specialElements: '',
     additionalNotes: '',
+    mainCharacter: '',
   };
 
   const [formData, setFormData] = useState<StoryFormData>(() => {
@@ -258,7 +259,7 @@ export default function AIStoryPromptGenerator() {
 
   // Calculate completed sections and current step
   const completedSections = sectionFields.filter(section =>
-    isSectionComplete(section, formData)
+    isSectionComplete(section, formData as unknown as Record<string, string>)
   );
   const currentStep = Math.min(
     completedSections.length + 1,
