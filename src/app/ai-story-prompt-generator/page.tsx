@@ -3,16 +3,46 @@
 import GenerateButton from '@/components/PromptGenerator/GenerateButton';
 import Header from '@/components/PromptGenerator/Header';
 import Instructions from '@/components/PromptGenerator/Instructions';
+import ProgressIndicator from '@/components/PromptGenerator/ProgressIndicator';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
 import { StoryFormData } from '@/components/PromptGenerator/StoryFormData';
 import StoryPromptGeneratorForm from '@/components/PromptGenerator/StoryPromptGeneratorForm';
+import { useAuth } from '@/hooks/useAuth';
 import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
+import './PromptGenerator/PromptGenerator.css';
 
 // Dynamic import for Sidebar with SSR disabled
 const Sidebar = dynamic(() => import('@/components/Sidebar'), { ssr: false });
 
 const FORM_STORAGE_KEY = 'ai-story-prompt-form';
+const GEN_COUNT_KEY = 'ai-story-prompt-gen-count';
+const MAX_GEN_COUNT =
+  typeof process !== 'undefined' && process.env.NEXT_PUBLIC_MAX_GEN_COUNT
+    ? parseInt(process.env.NEXT_PUBLIC_MAX_GEN_COUNT, 10) || 4
+    : 4;
+
+// Define the mapping of form sections to their required fields
+const sectionFields = [
+  { name: 'Core Elements', fields: ['genre', 'setting', 'mainCharacter'] },
+  { name: 'Conflict & Theme', fields: ['conflict', 'theme', 'goal'] },
+  { name: 'Plot Structure', fields: ['beginning', 'middle', 'end', 'twist'] },
+  { name: 'Style & Tone', fields: ['tone', 'style', 'pov'] },
+  { name: 'Additional Details', fields: ['inspiration', 'customInstructions'] },
+];
+
+const progressSteps: string[] = sectionFields.map(
+  (s: { name: string }) => s.name
+);
+
+function isSectionComplete(
+  section: { fields: string[] },
+  formData: Record<string, string>
+): boolean {
+  return section.fields.every(
+    (field: string) => formData[field] && formData[field].trim() !== ''
+  );
+}
 
 export default function AIStoryPromptGenerator() {
   const [mounted, setMounted] = useState(false);
@@ -62,6 +92,21 @@ export default function AIStoryPromptGenerator() {
   const [showPrompt, setShowPrompt] = useState(false);
   const [copied, setCopied] = useState(false);
   const promptRef = useRef<HTMLDivElement>(null);
+  const [genCount, setGenCount] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(GEN_COUNT_KEY);
+      if (saved) {
+        const n = parseInt(saved, 10);
+        if (!isNaN(n)) return n;
+      }
+    }
+    return 0;
+  });
+  const [subjectError, setSubjectError] = useState<string | null>(null);
+  const { user } = useAuth();
+  const [subscriptionStatus, setSubscriptionStatus] = useState<
+    'active' | 'inactive' | 'none' | null
+  >(null);
 
   useEffect(() => {
     setMounted(true);
@@ -73,11 +118,43 @@ export default function AIStoryPromptGenerator() {
     }
   }, [formData]);
 
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      if (user?.uid) {
+        try {
+          const res = await fetch(`/api/auth/register?firebaseUid=${user.uid}`);
+          const data = await res.json();
+          setSubscriptionStatus(data.status || 'none');
+        } catch (e) {
+          setSubscriptionStatus('none');
+        }
+      } else {
+        setSubscriptionStatus(null);
+      }
+    };
+    fetchSubscription();
+  }, [user]);
+
   const onFormDataChange = (field: keyof StoryFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const generatePrompt = () => {
+    if (subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT) return;
+    // Check for required fields (genre, setting, mainCharacter)
+    if (!formData.genre.trim()) {
+      setSubjectError('Please enter a genre for your story');
+      return;
+    }
+    if (!formData.setting.trim()) {
+      setSubjectError('Please enter a setting for your story');
+      return;
+    }
+    if (!formData.mainCharacter.trim()) {
+      setSubjectError('Please enter a main character for your story');
+      return;
+    }
+    setSubjectError(null);
     const parts: string[] = [];
     if (formData.title) parts.push(`Title: ${formData.title}`);
     if (formData.mainIdea) parts.push(`Main Idea: ${formData.mainIdea}`);
@@ -122,6 +199,13 @@ export default function AIStoryPromptGenerator() {
     setGeneratedPrompt(prompt);
     setShowPrompt(true);
     setCopied(false);
+    setGenCount(prev => {
+      const next = prev + 1;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(GEN_COUNT_KEY, String(next));
+      }
+      return next;
+    });
   };
 
   const resetFormData = () => {
@@ -131,7 +215,9 @@ export default function AIStoryPromptGenerator() {
     setCopied(false);
     if (typeof window !== 'undefined') {
       localStorage.removeItem(FORM_STORAGE_KEY);
+      localStorage.removeItem(GEN_COUNT_KEY);
     }
+    setGenCount(0);
   };
 
   const copyToClipboard = async () => {
@@ -170,94 +256,147 @@ export default function AIStoryPromptGenerator() {
     );
   }
 
+  // Calculate completed sections and current step
+  const completedSections = sectionFields.filter(section =>
+    isSectionComplete(section, formData)
+  );
+  const currentStep = Math.min(
+    completedSections.length + 1,
+    progressSteps.length
+  );
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar />
-      <main
-        style={{
-          flex: 1,
-          marginLeft: '256px',
-          padding: '32px',
-          backgroundColor: '#000',
-          color: '#fff',
-          minHeight: '100vh',
-        }}
-      >
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <Header
-            title="AI Story Prompt Generator"
-            subtitle="Create detailed story prompts for ChatGPT, Gemini, and other AI tools"
-            icon="📖"
-          />
-          <Instructions
-            title="How to Use"
-            steps={[
-              'Enter your story idea and key parameters',
-              'Describe characters, setting, conflict, and desired structure',
-              'Add any special elements or twists',
-              'Generate your professional story prompt',
-              'Copy and use with AI story generators like ChatGPT or Gemini',
-            ]}
-          />
-          <StoryPromptGeneratorForm
-            formData={formData}
-            onFormDataChange={onFormDataChange}
-          />
-          <GenerateButton onClick={generatePrompt} onReset={resetFormData} />
-          {showPrompt && (
-            <div style={{ marginTop: '32px' }}>
-              <PromptDisplay
-                prompt={generatedPrompt}
-                onCopy={copyToClipboard}
-                copied={copied}
-              />
-              {/* Suggestion for ChatGPT/Gemini */}
-              <div
-                style={{
-                  marginTop: '24px',
-                  padding: '20px',
-                  background: 'rgba(255,255,255,0.03)',
-                  borderRadius: '10px',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  textAlign: 'center',
-                }}
+    <>
+      {/* Modal for subject error */}
+      {subjectError && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setSubjectError(null)}
+              aria-label="Close"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
               >
-                <div
-                  style={{
-                    fontSize: '15px',
-                    color: '#7dd8e0',
-                    marginBottom: '12px',
-                  }}
-                >
-                  Paste this prompt into <b>ChatGPT</b> or <b>Gemini</b> and
-                  ask:
-                  <br />
-                  <span style={{ color: '#fff', fontStyle: 'italic' }}>
-                    Write a story based on this prompt.
-                  </span>
-                </div>
-                <button
-                  onClick={copyAndOpenChatGPT}
-                  style={{
-                    background: 'linear-gradient(135deg, #7dd8e0, #6b9ac4)',
-                    color: '#000',
-                    fontWeight: 600,
-                    padding: '12px 28px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    boxShadow: '0 2px 12px rgba(125,216,224,0.15)',
-                    marginTop: '8px',
-                  }}
-                >
-                  Copy &amp; Open ChatGPT
-                </button>
-              </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <div className="flex items-center mb-2">
+              <svg
+                className="w-6 h-6 text-red-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0z"
+                />
+              </svg>
+              <span className="text-lg font-semibold text-red-600">Error</span>
             </div>
-          )}
+            <div className="text-gray-800">{subjectError}</div>
+          </div>
         </div>
-      </main>
-    </div>
+      )}
+      <div className="generator-flex-layout">
+        <Sidebar />
+        <main className="generator-main-content">
+          <div
+            className="generator-main"
+            style={{ maxWidth: '900px', margin: '0 auto' }}
+          >
+            <Header
+              title="AI Story Prompt Generator"
+              subtitle="Create detailed story prompts for ChatGPT, Gemini, and other AI tools"
+              icon="📖"
+            />
+            <Instructions
+              title="How to Use"
+              steps={[
+                'Enter your story idea and key parameters',
+                'Describe characters, setting, conflict, and desired structure',
+                'Add any special elements or twists',
+                'Generate your professional story prompt',
+                'Copy and use with AI story generators like ChatGPT or Gemini',
+              ]}
+            />
+            <StoryPromptGeneratorForm
+              formData={formData}
+              onFormDataChange={onFormDataChange}
+            />
+            <div
+              className="prompt-generation-count"
+              style={{
+                color:
+                  subscriptionStatus === 'active'
+                    ? '#7dd8e0'
+                    : genCount >= MAX_GEN_COUNT
+                      ? '#f4a261'
+                      : '#7dd8e0',
+              }}
+            >
+              {subscriptionStatus === 'active'
+                ? 'You have unlimited prompt generations.'
+                : genCount < MAX_GEN_COUNT
+                  ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
+                  : 'You have reached the maximum of 4 prompt generations. Please reset the form to continue.'}
+            </div>
+            <GenerateButton
+              onClick={generatePrompt}
+              onReset={resetFormData}
+              disabled={
+                subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT
+              }
+            />
+            {showPrompt && (
+              <div className="generator-prompt-section">
+                <PromptDisplay
+                  prompt={generatedPrompt}
+                  onCopy={copyToClipboard}
+                  copied={copied}
+                />
+                {/* Suggestion for ChatGPT/Gemini */}
+                <div className="story-suggestion-box">
+                  <div className="story-suggestion-box-desc">
+                    Paste this prompt into <b>ChatGPT</b> or <b>Gemini</b> and
+                    ask:
+                    <br />
+                    <span className="story-suggestion-box-italic">
+                      Write a story based on this prompt.
+                    </span>
+                  </div>
+                  <button
+                    onClick={copyAndOpenChatGPT}
+                    className="story-suggestion-btn"
+                  >
+                    Copy &amp; Open ChatGPT
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </main>
+        {/* Right vertical progress sidebar */}
+        <div className="generator-progress-sidebar">
+          <ProgressIndicator
+            currentStep={currentStep}
+            totalSteps={progressSteps.length}
+            steps={progressSteps}
+          />
+        </div>
+      </div>
+    </>
   );
 }

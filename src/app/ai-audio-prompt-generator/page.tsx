@@ -7,20 +7,107 @@ import GenerateButton from '@/components/PromptGenerator/GenerateButton';
 import Header from '@/components/PromptGenerator/Header';
 import Instructions from '@/components/PromptGenerator/Instructions';
 import LoadingSpinner from '@/components/PromptGenerator/LoadingSpinner';
+import ProgressIndicator from '@/components/PromptGenerator/ProgressIndicator';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
 import StructuredData from '@/components/SEO/StructuredData';
+import { useAuth } from '@/hooks/useAuth';
 import { useFormStorage } from '@/hooks/useFormStorage';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
+import '../../components/PromptGenerator/PromptGenerator.css';
 
 // Dynamic import for Sidebar with SSR disabled
 const Sidebar = dynamic(() => import('@/components/Sidebar'), { ssr: false });
+
+const GEN_COUNT_KEY = 'ai-audio-prompt-gen-count';
+const MAX_GEN_COUNT =
+  typeof process !== 'undefined' && process.env.NEXT_PUBLIC_MAX_GEN_COUNT
+    ? parseInt(process.env.NEXT_PUBLIC_MAX_GEN_COUNT, 10) || 4
+    : 4;
+
+// Define the mapping of form sections to their required fields
+const sectionFields: { name: string; fields: (keyof AudioFormData)[] }[] = [
+  {
+    name: 'Core Elements',
+    fields: ['subject', 'style', 'genre', 'soundType', 'mood'],
+  },
+  {
+    name: 'Audio Parameters',
+    fields: ['tempo', 'key', 'timeSignature', 'duration', 'audioQuality'],
+  },
+  {
+    name: 'Sound & Texture',
+    fields: [
+      'instruments',
+      'vocals',
+      'effects',
+      'soundDesign',
+      'textures',
+      'colors',
+      'materials',
+      'sensations',
+    ],
+  },
+  {
+    name: 'Mood & Atmosphere',
+    fields: ['atmosphere', 'emotions', 'energy', 'intensity'],
+  },
+  {
+    name: 'Environment & Context',
+    fields: ['setting', 'timeOfDay', 'season', 'location'],
+  },
+  { name: 'Technical', fields: ['model'] },
+];
+
+const progressSteps = sectionFields.map(s => s.name);
+
+function isSectionComplete(
+  section: { name: string; fields: (keyof AudioFormData)[] },
+  formData: AudioFormData
+): boolean {
+  return section.fields.every(
+    (field: keyof AudioFormData) =>
+      formData[field] && formData[field].trim() !== ''
+  );
+}
 
 export default function AIAudioPromptGenerator() {
   const [mounted, setMounted] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [genCount, setGenCount] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(GEN_COUNT_KEY);
+      if (saved) {
+        const n = parseInt(saved, 10);
+        if (!isNaN(n)) return n;
+      }
+    }
+    return 0;
+  });
+  const [subjectError, setSubjectError] = useState<string | null>(null);
+  const { user } = useAuth();
+  const [subscriptionStatus, setSubscriptionStatus] = useState<
+    'active' | 'inactive' | 'none' | null
+  >(null);
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      if (user?.uid) {
+        try {
+          const res = await fetch(`/api/auth/register?firebaseUid=${user.uid}`);
+          const data = await res.json();
+          setSubscriptionStatus(data.status || 'none');
+        } catch (e) {
+          setSubscriptionStatus('none');
+        }
+      } else {
+        setSubscriptionStatus(null);
+      }
+    };
+    fetchSubscription();
+  }, [user]);
 
   // Initial form data for audio prompts
   const initialFormData: AudioFormData = {
@@ -139,10 +226,12 @@ export default function AIAudioPromptGenerator() {
   }, []);
 
   const generatePrompt = () => {
+    if (subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT) return;
     if (!formData.subject.trim()) {
-      alert('Please enter a subject for your audio');
+      setSubjectError('Please enter a subject for your audio');
       return;
     }
+    setSubjectError(null);
 
     const parts: string[] = [];
 
@@ -431,6 +520,13 @@ export default function AIAudioPromptGenerator() {
     setGeneratedPrompt(finalPrompt);
     setShowPrompt(true);
     setCopied(false);
+    setGenCount(prev => {
+      const next = prev + 1;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(GEN_COUNT_KEY, String(next));
+      }
+      return next;
+    });
   };
 
   const copyToClipboard = async () => {
@@ -454,6 +550,14 @@ export default function AIAudioPromptGenerator() {
     }
   };
 
+  const resetFormDataWithCount = () => {
+    resetFormData();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(GEN_COUNT_KEY);
+    }
+    setGenCount(0);
+  };
+
   if (!mounted) {
     return (
       <div
@@ -471,6 +575,15 @@ export default function AIAudioPromptGenerator() {
     );
   }
 
+  // Calculate completed sections and current step
+  const completedSections = sectionFields.filter(section =>
+    isSectionComplete(section, formData)
+  );
+  const currentStep = Math.min(
+    completedSections.length + 1,
+    progressSteps.length
+  );
+
   return (
     <>
       <StructuredData
@@ -480,298 +593,368 @@ export default function AIAudioPromptGenerator() {
         url="https://hyperspace-next.vercel.app/ai-audio-prompt-generator"
       />
 
-      <div className="audio-generator-main">
-        <Sidebar />
-        <main className="audio-generator-content">
-          <div className="audio-generator-inner">
-            <Header
-              title="AI Audio Prompt Generator"
-              subtitle="Create professional audio prompts for AI generators"
-              icon="🎵"
-            />
-
-            <Instructions
-              title="How to Use"
-              steps={[
-                'Enter your main subject or concept',
-                'Select audio-specific parameters like tempo, key, and genre',
-                'Choose instrumentation and sound design elements',
-                'Add atmosphere and emotional details',
-                'Generate your professional audio prompt',
-                'Copy and use with AI audio generators like Suno, Udio, or Mubert',
-              ]}
-            />
-
-            <AudioPromptGeneratorForm
-              formData={formData}
-              onFormDataChange={updateFormData}
-            />
-
-            <GenerateButton onClick={generatePrompt} onReset={resetFormData} />
-
-            {showPrompt && (
-              <div style={{ marginTop: '32px' }}>
-                <PromptDisplay
-                  prompt={generatedPrompt}
-                  onCopy={copyToClipboard}
-                  copied={copied}
+      {/* Modal for subject error */}
+      {subjectError && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setSubjectError(null)}
+              aria-label="Close"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
                 />
+              </svg>
+            </button>
+            <div className="flex items-center mb-2">
+              <svg
+                className="w-6 h-6 text-red-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0z"
+                />
+              </svg>
+              <span className="text-lg font-semibold text-red-600">Error</span>
+            </div>
+            <div className="text-gray-800">{subjectError}</div>
+          </div>
+        </div>
+      )}
 
-                {/* Tips Section */}
-                <div className="audio-tips-section">
-                  <h3 className="audio-tips-title">
-                    💡 Tips for Better Results
-                  </h3>
-                  <div className="audio-tips-grid">
-                    {/* ChatGPT Enhancement */}
-                    <div>
-                      <h4 className="audio-tips-card-title">
-                        🤖 Enhance with ChatGPT
-                      </h4>
-                      <p className="audio-tips-card-desc">
-                        Copy your prompt and ask ChatGPT to enhance it with more
-                        details, musical terminology, and creative elements.
-                      </p>
-                      <button
-                        onClick={copyEnhancedPromptRequest}
-                        className="audio-tips-btn"
-                      >
-                        Copy Enhancement Request
-                      </button>
-                    </div>
-                    {/* AI Audio Generators */}
-                    <div>
-                      <h4 className="audio-tips-card-title">
-                        {formData.soundType === 'sound effect' &&
-                          '🔊 AI Sound Effect Generators'}
-                        {formData.soundType === 'music' &&
-                          '🎵 AI Music Generators'}
-                        {formData.soundType === 'ambience' &&
-                          '🌲 AI Ambience Generators'}
-                        {!formData.soundType &&
-                          '🎵 Popular AI Audio Generators'}
-                      </h4>
-                      <div className="audio-resources-grid">
-                        {/* Sound Effect Generators */}
-                        {formData.soundType === 'sound effect' && (
-                          <>
-                            <a
-                              href="https://elevenlabs.io"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              ElevenLabs
-                            </a>
-                            <a
-                              href="https://soundraw.io"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Soundraw
-                            </a>
-                            <a
-                              href="https://freesound.org"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Freesound
-                            </a>
-                            <a
-                              href="https://zapsplat.com"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Zapsplat
-                            </a>
-                            <a
-                              href="https://mixkit.co"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Mixkit
-                            </a>
-                            <a
-                              href="https://pixabay.com/sound-effects"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Pixabay
-                            </a>
-                          </>
-                        )}
-                        {/* Music Generators */}
-                        {formData.soundType === 'music' && (
-                          <>
-                            <a
-                              href="https://suno.ai"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Suno AI
-                            </a>
-                            <a
-                              href="https://udio.com"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Udio
-                            </a>
-                            <a
-                              href="https://mubert.com"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Mubert
-                            </a>
-                            <a
-                              href="https://aiva.ai"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              AIVA
-                            </a>
-                            <a
-                              href="https://boomy.com"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Boomy
-                            </a>
-                            <a
-                              href="https://soundraw.io"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Soundraw
-                            </a>
-                          </>
-                        )}
-                        {/* Ambience Generators */}
-                        {formData.soundType === 'ambience' && (
-                          <>
-                            <a
-                              href="https://ambient-mixer.com"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Ambient Mixer
-                            </a>
-                            <a
-                              href="https://my-noise.com"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              MyNoise
-                            </a>
-                            <a
-                              href="https://noisli.com"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Noisli
-                            </a>
-                            <a
-                              href="https://freesound.org"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Freesound
-                            </a>
-                            <a
-                              href="https://soundraw.io"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Soundraw
-                            </a>
-                            <a
-                              href="https://pixabay.com/sound-effects"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Pixabay
-                            </a>
-                          </>
-                        )}
-                        {/* Default/General Audio Generators */}
-                        {!formData.soundType && (
-                          <>
-                            <a
-                              href="https://suno.ai"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Suno AI
-                            </a>
-                            <a
-                              href="https://udio.com"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Udio
-                            </a>
-                            <a
-                              href="https://mubert.com"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Mubert
-                            </a>
-                            <a
-                              href="https://soundraw.io"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Soundraw
-                            </a>
-                            <a
-                              href="https://aiva.ai"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              AIVA
-                            </a>
-                            <a
-                              href="https://boomy.com"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="audio-resource-link"
-                            >
-                              Boomy
-                            </a>
-                          </>
-                        )}
-                      </div>
+      <div className="generator-flex-layout">
+        <Sidebar />
+        <main className="generator-main-content">
+          <Header
+            title="AI Audio Prompt Generator"
+            subtitle="Create professional audio prompts for AI generators"
+            icon="🎵"
+          />
+
+          <Instructions
+            title="How to Use"
+            steps={[
+              'Enter your main subject or concept',
+              'Select audio-specific parameters like tempo, key, and genre',
+              'Choose instrumentation and sound design elements',
+              'Add atmosphere and emotional details',
+              'Generate your professional audio prompt',
+              'Copy and use with AI audio generators like Suno, Udio, or Mubert',
+            ]}
+          />
+
+          <AudioPromptGeneratorForm
+            formData={formData}
+            onFormDataChange={updateFormData}
+          />
+
+          <div
+            className="prompt-generation-count"
+            style={{
+              color:
+                subscriptionStatus === 'active'
+                  ? '#7dd8e0'
+                  : genCount >= MAX_GEN_COUNT
+                    ? '#f4a261'
+                    : '#7dd8e0',
+            }}
+          >
+            {subscriptionStatus === 'active'
+              ? `You have unlimited prompt generations.`
+              : genCount < MAX_GEN_COUNT
+                ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
+                : `You have reached the maximum of ${MAX_GEN_COUNT} prompt generations. Please reset the form to continue.`}
+          </div>
+          <GenerateButton
+            onClick={generatePrompt}
+            onReset={resetFormDataWithCount}
+            disabled={
+              subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT
+            }
+          />
+
+          {showPrompt && (
+            <div className="generator-prompt-section">
+              <PromptDisplay
+                prompt={generatedPrompt}
+                onCopy={copyToClipboard}
+                copied={copied}
+              />
+
+              {/* Tips Section */}
+              <div className="audio-tips-section">
+                <h3 className="audio-tips-title">💡 Tips for Better Results</h3>
+                <div className="audio-tips-grid">
+                  {/* ChatGPT Enhancement */}
+                  <div>
+                    <h4 className="audio-tips-card-title">
+                      🤖 Enhance with ChatGPT
+                    </h4>
+                    <p className="audio-tips-card-desc">
+                      Copy your prompt and ask ChatGPT to enhance it with more
+                      details, musical terminology, and creative elements.
+                    </p>
+                    <button
+                      onClick={copyEnhancedPromptRequest}
+                      className="audio-tips-btn"
+                    >
+                      Copy Enhancement Request
+                    </button>
+                  </div>
+                  {/* AI Audio Generators */}
+                  <div>
+                    <h4 className="audio-tips-card-title">
+                      {formData.soundType === 'sound effect' &&
+                        '🔊 AI Sound Effect Generators'}
+                      {formData.soundType === 'music' &&
+                        '🎵 AI Music Generators'}
+                      {formData.soundType === 'ambience' &&
+                        '🌲 AI Ambience Generators'}
+                      {!formData.soundType && '🎵 Popular AI Audio Generators'}
+                    </h4>
+                    <div className="audio-resources-grid">
+                      {/* Sound Effect Generators */}
+                      {formData.soundType === 'sound effect' && (
+                        <>
+                          <a
+                            href="https://elevenlabs.io"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            ElevenLabs
+                          </a>
+                          <a
+                            href="https://soundraw.io"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Soundraw
+                          </a>
+                          <a
+                            href="https://freesound.org"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Freesound
+                          </a>
+                          <a
+                            href="https://zapsplat.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Zapsplat
+                          </a>
+                          <a
+                            href="https://mixkit.co"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Mixkit
+                          </a>
+                          <a
+                            href="https://pixabay.com/sound-effects"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Pixabay
+                          </a>
+                        </>
+                      )}
+                      {/* Music Generators */}
+                      {formData.soundType === 'music' && (
+                        <>
+                          <a
+                            href="https://suno.ai"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Suno AI
+                          </a>
+                          <a
+                            href="https://udio.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Udio
+                          </a>
+                          <a
+                            href="https://mubert.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Mubert
+                          </a>
+                          <a
+                            href="https://aiva.ai"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            AIVA
+                          </a>
+                          <a
+                            href="https://boomy.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Boomy
+                          </a>
+                          <a
+                            href="https://soundraw.io"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Soundraw
+                          </a>
+                        </>
+                      )}
+                      {/* Ambience Generators */}
+                      {formData.soundType === 'ambience' && (
+                        <>
+                          <a
+                            href="https://ambient-mixer.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Ambient Mixer
+                          </a>
+                          <a
+                            href="https://my-noise.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            MyNoise
+                          </a>
+                          <a
+                            href="https://noisli.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Noisli
+                          </a>
+                          <a
+                            href="https://freesound.org"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Freesound
+                          </a>
+                          <a
+                            href="https://soundraw.io"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Soundraw
+                          </a>
+                          <a
+                            href="https://pixabay.com/sound-effects"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Pixabay
+                          </a>
+                        </>
+                      )}
+                      {/* Default/General Audio Generators */}
+                      {!formData.soundType && (
+                        <>
+                          <a
+                            href="https://suno.ai"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Suno AI
+                          </a>
+                          <a
+                            href="https://udio.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Udio
+                          </a>
+                          <a
+                            href="https://mubert.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Mubert
+                          </a>
+                          <a
+                            href="https://soundraw.io"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Soundraw
+                          </a>
+                          <a
+                            href="https://aiva.ai"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            AIVA
+                          </a>
+                          <a
+                            href="https://boomy.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="audio-resource-link"
+                          >
+                            Boomy
+                          </a>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </main>
+        {/* Right vertical progress sidebar */}
+        <div className="generator-progress-sidebar">
+          <ProgressIndicator
+            currentStep={currentStep}
+            totalSteps={progressSteps.length}
+            steps={progressSteps}
+          />
+        </div>
       </div>
     </>
   );

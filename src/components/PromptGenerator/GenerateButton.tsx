@@ -8,11 +8,13 @@ import ResetButton from './ResetButton';
 interface GenerateButtonProps {
   onClick: () => void;
   onReset?: () => void;
+  disabled?: boolean;
 }
 
 export default function GenerateButton({
   onClick,
   onReset,
+  disabled = false,
 }: GenerateButtonProps) {
   const { user, signInWithGoogle } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +40,7 @@ export default function GenerateButton({
 
       <button
         onClick={handleClick}
-        disabled={isLoading}
+        disabled={isLoading || disabled}
         className="btn-primary"
       >
         {isLoading && <div className="loading-spinner"></div>}

@@ -1,4 +1,5 @@
 export interface StoryFormData {
+  [x: string]: any;
   // Core Elements
   title: string;
   mainIdea: string;

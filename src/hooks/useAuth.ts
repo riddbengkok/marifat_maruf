@@ -24,7 +24,22 @@ export function useAuth() {
     try {
       setLoading(true);
       const result = await signInWithPopup(auth, googleProvider);
-      return result.user;
+      // Always upsert user in the database after login
+      const user = result.user;
+      try {
+        await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: user.email,
+            name: user.displayName,
+            firebaseUid: user.uid,
+          }),
+        });
+      } catch (err) {
+        console.error('Failed to register user in database:', err);
+      }
+      return user;
     } catch (error) {
       console.error('Error signing in with Google:', error);
       throw error;

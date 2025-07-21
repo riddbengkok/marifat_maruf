@@ -1,13 +1,39 @@
 'use client';
 
+import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import GoogleLoginButton from './Auth/GoogleLoginButton';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { user } = useAuth();
+  const [subscriptionStatus, setSubscriptionStatus] = useState<
+    'active' | 'inactive' | 'none' | null
+  >(null);
+  const [subLoading, setSubLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      if (user?.uid) {
+        setSubLoading(true);
+        try {
+          const res = await fetch(`/api/auth/register?firebaseUid=${user.uid}`);
+          const data = await res.json();
+          setSubscriptionStatus(data.status || 'none');
+        } catch (e) {
+          setSubscriptionStatus('none');
+        } finally {
+          setSubLoading(false);
+        }
+      } else {
+        setSubscriptionStatus(null);
+      }
+    };
+    fetchSubscription();
+  }, [user]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -56,7 +82,7 @@ const Sidebar = () => {
       {/* Sidebar */}
       <section
         id="sidebar"
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-black/80 backdrop-blur-md border-r border-white/20 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 left-0 z-40 w-64 sidebar-bg backdrop-blur-md border-r border-white/20 transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
       >
@@ -311,6 +337,31 @@ const Sidebar = () => {
                 variant="outline"
                 className="w-full"
               />
+              {user && (
+                <div className="mt-3 flex justify-center min-h-[32px]">
+                  {subLoading ? (
+                    <span className="inline-flex items-center gap-2 text-xs font-semibold text-gray-400">
+                      <span className="w-2.5 h-2.5 rounded-full bg-gray-300 animate-pulse"></span>
+                      Checking subscription...
+                    </span>
+                  ) : subscriptionStatus === 'active' ? (
+                    <span className="inline-flex items-center gap-2 text-xs font-semibold text-gray-700">
+                      <span className="w-2.5 h-2.5 rounded-full bg-green-400"></span>
+                      Active Subscription
+                    </span>
+                  ) : subscriptionStatus === 'inactive' ? (
+                    <span className="inline-flex items-center gap-2 text-xs font-semibold text-gray-500">
+                      <span className="w-2.5 h-2.5 rounded-full bg-gray-400"></span>
+                      Inactive Subscription
+                    </span>
+                  ) : subscriptionStatus === 'none' ? (
+                    <span className="inline-flex items-center gap-2 text-xs font-semibold text-gray-400">
+                      <span className="w-2.5 h-2.5 rounded-full bg-orange-400"></span>
+                      No Subscription
+                    </span>
+                  ) : null}
+                </div>
+              )}
             </div>
           </div>
 

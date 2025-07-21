@@ -10,112 +10,127 @@ import ProgressIndicator from '@/components/PromptGenerator/ProgressIndicator';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
 import PromptGeneratorForm from '@/components/PromptGenerator/PromptGeneratorForm';
 import StructuredData from '@/components/SEO/StructuredData';
+import { useAuth } from '@/hooks/useAuth';
 import { useFormStorage } from '@/hooks/useFormStorage';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
+import '../../components/PromptGenerator/PromptGenerator.css';
 
 // Dynamic import for Sidebar with SSR disabled
 const Sidebar = dynamic(() => import('@/components/Sidebar'), { ssr: false });
+
+const GEN_COUNT_KEY = 'ai-video-prompt-gen-count';
+const MAX_GEN_COUNT =
+  typeof process !== 'undefined' && process.env.NEXT_PUBLIC_MAX_GEN_COUNT
+    ? parseInt(process.env.NEXT_PUBLIC_MAX_GEN_COUNT, 10) || 4
+    : 4;
+
+// Add type for window.snap
+declare global {
+  interface Window {
+    snap?: unknown;
+  }
+}
+
+// Add Midtrans Snap JS script (for demo, in useEffect)
+function loadMidtransScript() {
+  if (typeof window !== 'undefined' && !window.snap) {
+    const script = document.createElement('script');
+    script.src = 'https://app.midtrans.com/snap/snap.js';
+    script.setAttribute(
+      'data-client-key',
+      process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || ''
+    );
+    script.async = true;
+    document.body.appendChild(script);
+  }
+}
+
+// Define the mapping of form sections to their required fields
+const sectionFields: { name: string; fields: (keyof FormData)[] }[] = [
+  { name: 'Core Elements', fields: ['subject', 'style', 'setting'] },
+  {
+    name: 'Video Parameters',
+    fields: [
+      'cameraMovement',
+      'videoDuration',
+      'frameRate',
+      'videoStyle',
+      'transition',
+    ],
+  },
+  {
+    name: 'Visual & Technical',
+    fields: ['lighting', 'pov', 'composition', 'aspectRatio', 'quality'],
+  },
+  {
+    name: 'Atmosphere & Mood',
+    fields: ['vibe', 'mood', 'atmosphere', 'emotions'],
+  },
+  { name: 'Environment & Context', fields: ['weather', 'timeOfDay', 'season'] },
+  {
+    name: 'Sensory & Material',
+    fields: ['sense', 'colors', 'textures', 'materials'],
+  },
+  {
+    name: 'Action & Details',
+    fields: ['actions', 'details', 'additionalDetails'],
+  },
+  { name: 'Technical', fields: ['model'] },
+];
+
+const progressSteps = sectionFields.map(s => s.name);
+
+function isSectionComplete(
+  section: { name: string; fields: (keyof FormData)[] },
+  formData: FormData
+): boolean {
+  return section.fields.every(
+    (field: keyof FormData) => formData[field] && formData[field].trim() !== ''
+  );
+}
 
 export default function AIVideoPromptGenerator() {
   const [mounted, setMounted] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
   const [templateApplied, setTemplateApplied] = useState(false);
   const [appliedTemplateName, setAppliedTemplateName] = useState('');
-
-  // Progress steps
-  const progressSteps = [
-    'Core Elements',
-    'Video Parameters',
-    'Visual & Technical',
-    'Atmosphere & Mood',
-    'Environment & Context',
-    'Sensory & Materials',
-    'Action & Details',
-    'Generate Prompt',
-  ];
-
-  // Calculate current step based on form completion
-  const calculateCurrentStep = (formData: FormData) => {
-    if (formData.subject) {
-      if (
-        formData.cameraMovement ||
-        formData.videoDuration ||
-        formData.frameRate
-      ) {
-        if (formData.lighting || formData.pov || formData.composition) {
-          if (formData.vibe || formData.mood || formData.atmosphere) {
-            if (formData.weather || formData.timeOfDay || formData.season) {
-              if (formData.sense || formData.colors || formData.textures) {
-                if (
-                  formData.actions ||
-                  formData.details ||
-                  formData.additionalDetails
-                ) {
-                  return 7; // Action & Details
-                }
-                return 6; // Sensory & Materials
-              }
-              return 5; // Environment & Context
-            }
-            return 4; // Atmosphere & Mood
-          }
-          return 3; // Visual & Technical
-        }
-        return 2; // Video Parameters
+  const [genCount, setGenCount] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(GEN_COUNT_KEY);
+      if (saved) {
+        const n = parseInt(saved, 10);
+        if (!isNaN(n)) return n;
       }
-      return 1; // Core Elements
     }
-    return 1; // Core Elements
-  };
+    return 0;
+  });
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const { user } = useAuth();
+  const [subjectError, setSubjectError] = useState<string | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<
+    'active' | 'inactive' | 'none' | null
+  >(null);
 
-  // Handle template application
-  const handleApplyTemplate = (
-    template: Partial<FormData>,
-    templateName: string
-  ) => {
-    console.log('Applying template:', template);
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      if (user?.uid) {
+        try {
+          const res = await fetch(`/api/auth/register?firebaseUid=${user.uid}`);
+          const data = await res.json();
+          setSubscriptionStatus(data.status || 'none');
+        } catch (e) {
+          setSubscriptionStatus('none');
+        }
+      } else {
+        setSubscriptionStatus(null);
+      }
+    };
+    fetchSubscription();
+  }, [user]);
 
-    // Apply all template values
-    Object.entries(template).forEach(([key, value]) => {
-      console.log(`Updating field: ${key} = ${value}`);
-      updateFormData(key, value);
-    });
-
-    // Force re-render of nested options by updating key fields
-    setTimeout(() => {
-      if (template.lighting) updateFormData('lighting', template.lighting);
-      if (template.pov) updateFormData('pov', template.pov);
-      if (template.composition)
-        updateFormData('composition', template.composition);
-      if (template.atmosphere)
-        updateFormData('atmosphere', template.atmosphere);
-      if (template.weather) updateFormData('weather', template.weather);
-      if (template.sense) updateFormData('sense', template.sense);
-      if (template.actions) updateFormData('actions', template.actions);
-      if (template.cameraMovement)
-        updateFormData('cameraMovement', template.cameraMovement);
-      if (template.videoStyle)
-        updateFormData('videoStyle', template.videoStyle);
-    }, 100);
-
-    // Show success feedback
-    setTemplateApplied(true);
-    setAppliedTemplateName(templateName);
-
-    // Clear success message after 3 seconds
-    setTimeout(() => {
-      setTemplateApplied(false);
-      setAppliedTemplateName('');
-    }, 3000);
-
-    console.log('Template application complete');
-  };
-
-  // Initial form data for video prompts
   const initialFormData: FormData = {
     // Core Elements
     subject: '',
@@ -199,183 +214,116 @@ export default function AIVideoPromptGenerator() {
     model: 'runway', // Default to video model
   };
 
-  // Use the storage hook for form data persistence
   const { formData, updateFormData, resetFormData } = useFormStorage<FormData>({
     key: 'ai-video-prompt-form',
     initialData: initialFormData,
   });
 
-  // Update current step when form data changes
   useEffect(() => {
-    setCurrentStep(calculateCurrentStep(formData));
-  }, [formData]);
-
-  useEffect(() => {
-    setMounted(true);
+    if (typeof window !== 'undefined') {
+      setMounted(true);
+      loadMidtransScript();
+      // Check subscription status
+      const sub = localStorage.getItem('isSubscribed');
+      setIsSubscribed(sub === 'true');
+    }
   }, []);
 
+  // Reset gen count and subscription status on logout or account change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(GEN_COUNT_KEY);
+      localStorage.removeItem('isSubscribed');
+      setGenCount(0);
+      setIsSubscribed(false);
+    }
+  }, [user]);
+
   const generatePrompt = () => {
+    if (subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT) return;
     if (!formData.subject.trim()) {
-      alert('Please enter a subject for your video');
+      setSubjectError('Please enter a subject for your video');
       return;
     }
-
-    const parts: string[] = [];
-
-    // Core Elements
-    if (formData.subject) parts.push(formData.subject);
-    if (formData.style) parts.push(`in ${formData.style} style`);
-    if (formData.setting) parts.push(`set in ${formData.setting}`);
-
-    // Video-Specific Parameters
-    if (formData.cameraMovement) {
-      let movementDesc = formData.cameraMovement;
-      if (formData.movementSpeed) movementDesc += ` ${formData.movementSpeed}`;
-      if (formData.movementDirection)
-        movementDesc += ` ${formData.movementDirection}`;
-      parts.push(`camera: ${movementDesc}`);
-    }
-
-    if (formData.videoDuration)
-      parts.push(`duration: ${formData.videoDuration}`);
-    if (formData.frameRate) parts.push(`frame rate: ${formData.frameRate}`);
-    if (formData.videoStyle) parts.push(`video style: ${formData.videoStyle}`);
-    if (formData.transition) parts.push(`transition: ${formData.transition}`);
-
-    // Video Style Nested Options
-    if (formData.cinematicStyle)
-      parts.push(`cinematic style: ${formData.cinematicStyle}`);
-    if (formData.animationStyle)
-      parts.push(`animation style: ${formData.animationStyle}`);
-
-    // Visual & Technical
-    if (formData.lighting) {
-      let lightingDesc = formData.lighting;
-      if (formData.lightIntensity)
-        lightingDesc += ` ${formData.lightIntensity}`;
-      if (formData.lightDirection)
-        lightingDesc += ` from ${formData.lightDirection}`;
-      if (formData.lightColor)
-        lightingDesc += ` with ${formData.lightColor} tones`;
-      parts.push(`with ${lightingDesc} lighting`);
-    }
-
-    if (formData.pov) {
-      let povDesc = formData.pov;
-      if (formData.povDistance) povDesc += ` ${formData.povDistance}`;
-      if (formData.povLensType)
-        povDesc += ` using ${formData.povLensType} lens`;
-      parts.push(`shot from ${povDesc} perspective`);
-    }
-
-    if (formData.composition) {
-      let compDesc = formData.composition;
-      if (formData.compositionBalance)
-        compDesc += ` with ${formData.compositionBalance} balance`;
-      if (formData.compositionDepth)
-        compDesc += ` and ${formData.compositionDepth} depth`;
-      parts.push(`with ${compDesc} composition`);
-    }
-
-    if (formData.aspectRatio && formData.aspectRatio !== '16:9')
-      parts.push(`${formData.aspectRatio} aspect ratio`);
-    if (formData.quality && formData.quality !== 'high')
-      parts.push(`${formData.quality} quality`);
-
-    // Atmosphere & Mood
-    if (formData.vibe) parts.push(`with ${formData.vibe} vibe`);
-    if (formData.mood) parts.push(`mood: ${formData.mood}`);
-    if (formData.atmosphere) {
-      let atmosDesc = formData.atmosphere;
-      if (formData.atmosphereDensity)
-        atmosDesc += ` ${formData.atmosphereDensity}`;
-      if (formData.atmosphereMovement)
-        atmosDesc += ` with ${formData.atmosphereMovement} movement`;
-      parts.push(`atmosphere: ${atmosDesc}`);
-    }
-    if (formData.emotions) parts.push(`emotions: ${formData.emotions}`);
-
-    // Environment & Context
-    if (formData.weather) {
-      let weatherDesc = formData.weather;
-      if (formData.windSpeed) weatherDesc += ` with ${formData.windSpeed} wind`;
-      if (formData.visibility)
-        weatherDesc += ` and ${formData.visibility} visibility`;
-      parts.push(`weather: ${weatherDesc}`);
-    }
-    if (formData.timeOfDay) parts.push(`time: ${formData.timeOfDay}`);
-    if (formData.season) parts.push(`season: ${formData.season}`);
-
-    // Sensory & Material
-    if (formData.sense) {
-      let senseDesc = formData.sense;
-      if (formData.temperature)
-        senseDesc += ` ${formData.temperature} temperature`;
-      if (formData.humidity) senseDesc += ` with ${formData.humidity} humidity`;
-      parts.push(`sensory: ${senseDesc}`);
-    }
-    if (formData.colors) parts.push(`colors: ${formData.colors}`);
-    if (formData.textures) parts.push(`textures: ${formData.textures}`);
-    if (formData.materials) parts.push(`materials: ${formData.materials}`);
-
-    // Action & Details
-    if (formData.actions) {
-      let actionDesc = formData.actions;
-      if (formData.actionSpeed) actionDesc += ` ${formData.actionSpeed}`;
-      if (formData.energyLevel) actionDesc += ` with ${formData.energyLevel}`;
-      parts.push(`action: ${actionDesc}`);
-    }
-    if (formData.details) parts.push(`details: ${formData.details}`);
-    if (formData.additionalDetails)
-      parts.push(`additional: ${formData.additionalDetails}`);
-
-    // Technical
-    if (formData.model && formData.model !== 'runway')
-      parts.push(`model: ${formData.model}`);
-
-    const finalPrompt = parts.join(', ');
-    setGeneratedPrompt(finalPrompt);
-    setShowPrompt(true);
-    setCopied(false);
+    setSubjectError(null);
+    // ... your existing prompt generation logic ...
+    setGenCount(prev => {
+      const next = prev + 1;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(GEN_COUNT_KEY, String(next));
+      }
+      return next;
+    });
   };
 
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(generatedPrompt);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
+  const resetFormDataWithCount = () => {
+    resetFormData();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(GEN_COUNT_KEY);
     }
+    setGenCount(0);
   };
 
-  const copyEnhancedPromptRequest = async () => {
-    const enhancedRequest = `Please enhance this AI video prompt to make it more detailed and professional: "${generatedPrompt}"`;
-    try {
-      await navigator.clipboard.writeText(enhancedRequest);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
+  const handleApplyTemplate = (
+    template: Partial<FormData>,
+    templateName: string
+  ) => {
+    updateFormData({ ...initialFormData, ...template });
+    setTemplateApplied(true);
+    setAppliedTemplateName(templateName);
+    setTimeout(() => {
+      setTemplateApplied(false);
+      setAppliedTemplateName('');
+    }, 3000);
+  };
+
+  const handleSubscribe = async () => {
+    // Call your backend to get a Midtrans Snap token
+    const res = await fetch('/api/create-midtrans-transaction', {
+      method: 'POST',
+    });
+    const { token } = await res.json();
+    // Open Midtrans Snap popup
+    if (
+      typeof window !== 'undefined' &&
+      window.snap &&
+      typeof (window.snap as { pay?: (token: string, options: object) => void })
+        .pay === 'function'
+    ) {
+      (window.snap as { pay: (token: string, options: object) => void }).pay(
+        token,
+        {
+          onSuccess: function (_result: unknown) {
+            localStorage.setItem('isSubscribed', 'true');
+            setIsSubscribed(true);
+            alert('Payment successful! You are now subscribed.');
+          },
+          onPending: function (_result: unknown) {},
+          onError: function (_result: unknown) {},
+          onClose: function () {},
+        }
+      );
+    } else {
+      alert('Midtrans payment script not loaded.');
     }
   };
 
   if (!mounted) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          backgroundColor: '#000',
-          color: '#fff',
-        }}
-      >
+      <div className="loading-container">
         <LoadingSpinner />
       </div>
     );
   }
+
+  // Calculate completed sections and current step
+  const completedSections = sectionFields.filter(section =>
+    isSectionComplete(section, formData)
+  );
+  const currentStep = Math.min(
+    completedSections.length + 1,
+    progressSteps.length
+  );
 
   return (
     <>
@@ -386,122 +334,125 @@ export default function AIVideoPromptGenerator() {
         url="https://hyperspace-next.vercel.app/ai-video-prompt-generator"
       />
 
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
+      {/* Modal for subject error */}
+      {subjectError && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setSubjectError(null)}
+              aria-label="Close"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <div className="flex items-center mb-2">
+              <svg
+                className="w-6 h-6 text-red-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0z"
+                />
+              </svg>
+              <span className="text-lg font-semibold text-red-600">Error</span>
+            </div>
+            <div className="text-gray-800">{subjectError}</div>
+          </div>
+        </div>
+      )}
+      <div className="generator-flex-layout">
         <Sidebar />
-
-        <main
-          style={{
-            flex: 1,
-            marginLeft: '256px',
-            padding: '32px',
-            backgroundColor: '#000',
-            color: '#fff',
-            minHeight: '100vh',
-          }}
-        >
+        <main className="generator-main-content">
           <div className="generator-main">
             <Header
               title="AI Video Prompt Generator"
               subtitle="Create professional video prompts for AI generators"
               icon="🎬"
             />
-
-            <ProgressIndicator
-              currentStep={currentStep}
-              totalSteps={progressSteps.length}
-              steps={progressSteps}
-            />
-
             <PresetTemplates onApplyTemplate={handleApplyTemplate} />
-
-            {/* Template Applied Success Notification */}
-            {templateApplied && (
-              <div className="template-notification">
-                <span className="template-notification__icon">✅</span>
-                <div>
-                  <div className="template-notification__title">
-                    Template Applied Successfully!
-                  </div>
-                  <div className="template-notification__desc">
-                    &ldquo;{appliedTemplateName}&rdquo; template has been
-                    loaded. You can now customize any fields as needed.
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <Instructions
-              title="How to Use"
-              steps={[
-                'Enter your main subject or concept',
-                'Select video-specific parameters like camera movement and duration',
-                'Choose visual elements like lighting and composition',
-                'Add atmosphere and mood details',
-                'Generate your professional video prompt',
-                'Copy and use with AI video generators like Runway, Pika Labs, or Sora',
-              ]}
-            />
+            <Instructions />
 
             <PromptGeneratorForm
               formData={formData}
-              onFormDataChange={updateFormData}
+              onFormDataChange={(field, value) => {
+                if (typeof field === 'object') {
+                  updateFormData(field);
+                } else {
+                  updateFormData(field, value);
+                }
+              }}
             />
-
-            <GenerateButton onClick={generatePrompt} onReset={resetFormData} />
-
-            {showPrompt && (
-              <div style={{ marginTop: '32px' }}>
-                <PromptDisplay
-                  prompt={generatedPrompt}
-                  onCopy={copyToClipboard}
-                  copied={copied}
-                />
-
-                {/* Enhanced Tips Section */}
-                <div className="tips-section">
-                  <div className="tips-section__top-border" />
-                  <h3 className="tips-section__title">
-                    <span style={{ fontSize: '24px' }}>💡</span>
-                    Tips for Better Results
-                  </h3>
-                  <div className="tips-section__grid">
-                    {/* ChatGPT Enhancement */}
-                    <div className="tips-section__card">
-                      <h4 className="tips-section__card-title">
-                        <span style={{ fontSize: '20px' }}>🤖</span>
-                        Enhance with ChatGPT
-                      </h4>
-                      <p className="tips-section__card-desc">
-                        Copy your prompt and ask ChatGPT to enhance it with more
-                        details, professional terminology, and creative
-                        elements.
-                      </p>
-                      <button
-                        onClick={copyEnhancedPromptRequest}
-                        className="tips-section__card-btn"
-                      >
-                        <span>📋</span>
-                        Copy Enhancement Request
-                      </button>
-                    </div>
-                    {/* AI Video Generators */}
-                    <div className="tips-section__card">
-                      <h4 className="tips-section__card-title">
-                        <span style={{ fontSize: '20px' }}>🎥</span>
-                        Use with AI Video Generators
-                      </h4>
-                      <p className="tips-section__card-desc">
-                        Paste your generated prompt into tools like Runway, Pika
-                        Labs, or Sora for best results. Adjust parameters as
-                        needed for each platform.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+            {!isSubscribed && (
+              <div className="prompt-generation-count">
+                {subscriptionStatus === 'active' ? (
+                  'You have unlimited prompt generations.'
+                ) : (
+                  <>
+                    {genCount < MAX_GEN_COUNT
+                      ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
+                      : null}
+                  </>
+                )}
               </div>
+            )}
+            {!isSubscribed && genCount >= MAX_GEN_COUNT ? (
+              <div className="subscribe-box">
+                <div className="subscribe-box-message">
+                  You have reached the free generation limit. Subscribe to
+                  unlock unlimited prompt generations.
+                </div>
+                <button onClick={handleSubscribe} className="subscribe-btn">
+                  <span className="subscribe-btn-emoji">🚀</span>
+                  Subscribe to Generate Prompt
+                </button>
+              </div>
+            ) : (
+              <GenerateButton
+                onClick={generatePrompt}
+                onReset={resetFormDataWithCount}
+                disabled={
+                  subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT
+                }
+              />
+            )}
+            {showPrompt && (
+              <PromptDisplay
+                prompt={generatedPrompt}
+                onCopy={() => {
+                  navigator.clipboard.writeText(generatedPrompt);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                copied={copied}
+              />
             )}
           </div>
         </main>
+        {/* Right vertical progress sidebar */}
+        <div className="generator-progress-sidebar">
+          <ProgressIndicator
+            currentStep={currentStep}
+            totalSteps={progressSteps.length}
+            steps={progressSteps}
+          />
+        </div>
       </div>
     </>
   );

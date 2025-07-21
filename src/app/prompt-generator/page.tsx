@@ -6,11 +6,14 @@ import Header from '@/components/PromptGenerator/Header';
 import ImagePromptGeneratorForm from '@/components/PromptGenerator/ImagePromptGeneratorForm';
 import Instructions from '@/components/PromptGenerator/Instructions';
 import LoadingSpinner from '@/components/PromptGenerator/LoadingSpinner';
+import ProgressIndicator from '@/components/PromptGenerator/ProgressIndicator';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
 import StructuredData from '@/components/SEO/StructuredData';
+import { useAuth } from '@/hooks/useAuth';
 import { useFormStorage } from '@/hooks/useFormStorage';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
+import '../../components/PromptGenerator/PromptGenerator.css';
 
 // Dynamically import Sidebar to prevent SSR issues
 const Sidebar = dynamic(() => import('@/components/Sidebar'), {
@@ -32,11 +35,83 @@ const Sidebar = dynamic(() => import('@/components/Sidebar'), {
   ),
 });
 
+const GEN_COUNT_KEY = 'ai-image-prompt-gen-count';
+const MAX_GEN_COUNT =
+  typeof process !== 'undefined' && process.env.NEXT_PUBLIC_MAX_GEN_COUNT
+    ? parseInt(process.env.NEXT_PUBLIC_MAX_GEN_COUNT, 10) || 4
+    : 4;
+
+// Define the mapping of form sections to their required fields
+const sectionFields = [
+  { name: 'Core Elements', fields: ['subject', 'style', 'setting'] },
+  {
+    name: 'Visual & Technical',
+    fields: ['lighting', 'pov', 'composition', 'aspectRatio', 'quality'],
+  },
+  {
+    name: 'Atmosphere & Mood',
+    fields: ['vibe', 'mood', 'atmosphere', 'emotions'],
+  },
+  { name: 'Environment & Context', fields: ['weather', 'timeOfDay', 'season'] },
+  {
+    name: 'Sensory & Material',
+    fields: ['sense', 'colors', 'textures', 'materials'],
+  },
+  {
+    name: 'Action & Details',
+    fields: ['actions', 'details', 'additionalDetails'],
+  },
+  { name: 'Technical', fields: ['model'] },
+];
+
+const progressSteps = sectionFields.map((s: { name: string }) => s.name);
+
+function isSectionComplete(
+  section: { fields: string[] },
+  formData: Record<string, string>
+): boolean {
+  return section.fields.every(
+    (field: string) => formData[field] && formData[field].trim() !== ''
+  );
+}
+
 export default function PromptGenerator() {
   const [mounted, setMounted] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [genCount, setGenCount] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(GEN_COUNT_KEY);
+      if (saved) {
+        const n = parseInt(saved, 10);
+        if (!isNaN(n)) return n;
+      }
+    }
+    return 0;
+  });
+  const [subjectError, setSubjectError] = useState<string | null>(null);
+  const { user } = useAuth();
+  const [subscriptionStatus, setSubscriptionStatus] = useState<
+    'active' | 'inactive' | 'none' | null
+  >(null);
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      if (user?.uid) {
+        try {
+          const res = await fetch(`/api/auth/register?firebaseUid=${user.uid}`);
+          const data = await res.json();
+          setSubscriptionStatus(data.status || 'none');
+        } catch (e) {
+          setSubscriptionStatus('none');
+        }
+      } else {
+        setSubscriptionStatus(null);
+      }
+    };
+    fetchSubscription();
+  }, [user]);
 
   // Initial form data for image prompts
   const initialFormData: ImageFormData = {
@@ -120,10 +195,12 @@ export default function PromptGenerator() {
   }, []);
 
   const generatePrompt = () => {
+    if (subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT) return;
     if (!formData.subject.trim()) {
-      alert('Please enter a subject for your image');
+      setSubjectError('Please enter a subject for your image');
       return;
     }
+    setSubjectError(null);
 
     const parts: string[] = [];
 
@@ -221,6 +298,13 @@ export default function PromptGenerator() {
     setGeneratedPrompt(finalPrompt);
     setShowPrompt(true);
     setCopied(false);
+    setGenCount(prev => {
+      const next = prev + 1;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(GEN_COUNT_KEY, String(next));
+      }
+      return next;
+    });
   };
 
   const copyToClipboard = async () => {
@@ -244,6 +328,14 @@ export default function PromptGenerator() {
     }
   };
 
+  const resetFormDataWithCount = () => {
+    resetFormData();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(GEN_COUNT_KEY);
+    }
+    setGenCount(0);
+  };
+
   if (!mounted) {
     return (
       <div
@@ -261,8 +353,60 @@ export default function PromptGenerator() {
     );
   }
 
+  // Calculate completed sections and current step
+  const completedSections = sectionFields.filter(section =>
+    isSectionComplete(section, formData as unknown as Record<string, string>)
+  );
+  const currentStep = Math.min(
+    completedSections.length + 1,
+    progressSteps.length
+  );
+
   return (
     <>
+      {/* Modal for subject error */}
+      {subjectError && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setSubjectError(null)}
+              aria-label="Close"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <div className="flex items-center mb-2">
+              <svg
+                className="w-6 h-6 text-red-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0z"
+                />
+              </svg>
+              <span className="text-lg font-semibold text-red-600">Error</span>
+            </div>
+            <div className="text-gray-800">{subjectError}</div>
+          </div>
+        </div>
+      )}
       <StructuredData
         type="image-generator"
         title="AI Image Prompt Generator - Create Stunning Image Prompts"
@@ -270,36 +414,27 @@ export default function PromptGenerator() {
         url="https://hyperspace-next.vercel.app/prompt-generator"
       />
 
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <div className="generator-flex-layout">
         <Sidebar />
-
-        <main
-          style={{
-            flex: 1,
-            marginLeft: '256px',
-            padding: '32px',
-            backgroundColor: '#000',
-            color: '#fff',
-            minHeight: '100vh',
-          }}
-        >
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <main className="generator-main-content">
+          <div
+            className="generator-main"
+            style={{ maxWidth: '1200px', margin: '0 auto' }}
+          >
             <Header
               title="AI Image Prompt Generator"
               subtitle="Create professional image prompts for AI generators"
-              icon="🎨"
+              icon="🖼️"
             />
 
             <Instructions
               title="How to Use"
               steps={[
                 'Enter your main subject or concept',
-                'Select visual elements like lighting and composition',
-                'Choose atmosphere and mood details',
-                'Add environment and context information',
-                'Select sensory and material qualities',
+                'Select visual and technical parameters',
+                'Add atmosphere and details',
                 'Generate your professional image prompt',
-                'Copy and use with AI image generators like DALL-E, Midjourney, or Stable Diffusion',
+                'Copy and use with AI image generators',
               ]}
             />
 
@@ -308,10 +443,35 @@ export default function PromptGenerator() {
               onFormDataChange={updateFormData}
             />
 
-            <GenerateButton onClick={generatePrompt} onReset={resetFormData} />
+            <div
+              className="prompt-generation-count"
+              style={{
+                marginBottom: '16px',
+                color:
+                  subscriptionStatus === 'active'
+                    ? '#7dd8e0'
+                    : genCount >= MAX_GEN_COUNT
+                      ? '#f4a261'
+                      : '#7dd8e0',
+                fontWeight: 500,
+              }}
+            >
+              {subscriptionStatus === 'active'
+                ? `You have unlimited prompt generations.`
+                : genCount < MAX_GEN_COUNT
+                  ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
+                  : `You have reached the maximum of ${MAX_GEN_COUNT} prompt generations. Please reset the form to continue.`}
+            </div>
+            <GenerateButton
+              onClick={generatePrompt}
+              onReset={resetFormDataWithCount}
+              disabled={
+                subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT
+              }
+            />
 
             {showPrompt && (
-              <div style={{ marginTop: '32px' }}>
+              <div className="generator-prompt-section">
                 <PromptDisplay
                   prompt={generatedPrompt}
                   onCopy={copyToClipboard}
@@ -319,77 +479,25 @@ export default function PromptGenerator() {
                 />
 
                 {/* Tips Section */}
-                <div
-                  style={{
-                    marginTop: '24px',
-                    padding: '24px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                  }}
-                >
-                  <h3
-                    style={{
-                      fontSize: '20px',
-                      fontWeight: 'bold',
-                      marginBottom: '16px',
-                      color: '#00d4ff',
-                    }}
-                  >
+                <div className="tips-section">
+                  <h3 className="tips-section-title">
                     💡 Tips for Better Results
                   </h3>
 
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '24px',
-                    }}
-                  >
+                  <div className="tips-section-grid">
                     {/* ChatGPT Enhancement */}
                     <div>
-                      <h4
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: 'semibold',
-                          marginBottom: '12px',
-                          color: '#fff',
-                        }}
-                      >
+                      <h4 className="tips-section-card-title">
                         🤖 Enhance with ChatGPT
                       </h4>
-                      <p
-                        style={{
-                          fontSize: '14px',
-                          color: '#ccc',
-                          marginBottom: '16px',
-                          lineHeight: '1.5',
-                        }}
-                      >
+                      <p className="tips-section-card-desc">
                         Copy your prompt and ask ChatGPT to enhance it with more
                         details, professional terminology, and creative
                         elements.
                       </p>
                       <button
                         onClick={copyEnhancedPromptRequest}
-                        style={{
-                          backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                          border: '1px solid rgba(0, 212, 255, 0.3)',
-                          color: '#00d4ff',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s',
-                        }}
-                        onMouseOver={e => {
-                          e.currentTarget.style.backgroundColor =
-                            'rgba(0, 212, 255, 0.2)';
-                        }}
-                        onMouseOut={e => {
-                          e.currentTarget.style.backgroundColor =
-                            'rgba(0, 212, 255, 0.1)';
-                        }}
+                        className="tips-section-btn"
                       >
                         Copy Enhancement Request
                       </button>
@@ -397,46 +505,16 @@ export default function PromptGenerator() {
 
                     {/* AI Image Generators */}
                     <div>
-                      <h4
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: 'semibold',
-                          marginBottom: '12px',
-                          color: '#fff',
-                        }}
-                      >
+                      <h4 className="tips-section-card-title">
                         🎨 Popular AI Image Generators
                       </h4>
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: '1fr 1fr',
-                          gap: '8px',
-                        }}
-                      >
+                      <div className="tips-section-card-grid">
+                        {/* Each link below should use a class for styling */}
                         <a
                           href="https://openai.com/dall-e-2"
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
+                          className="tips-section-link"
                         >
                           DALL-E
                         </a>
@@ -444,25 +522,7 @@ export default function PromptGenerator() {
                           href="https://www.midjourney.com"
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
+                          className="tips-section-link"
                         >
                           Midjourney
                         </a>
@@ -470,25 +530,7 @@ export default function PromptGenerator() {
                           href="https://stability.ai"
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
+                          className="tips-section-link"
                         >
                           Stable Diffusion
                         </a>
@@ -496,25 +538,7 @@ export default function PromptGenerator() {
                           href="https://firefly.adobe.com"
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
+                          className="tips-section-link"
                         >
                           Adobe Firefly
                         </a>
@@ -522,25 +546,7 @@ export default function PromptGenerator() {
                           href="https://leonardo.ai"
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
+                          className="tips-section-link"
                         >
                           Leonardo AI
                         </a>
@@ -548,25 +554,7 @@ export default function PromptGenerator() {
                           href="https://www.bing.com/create"
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            color: '#00d4ff',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            textDecoration: 'none',
-                            textAlign: 'center',
-                            transition: 'all 0.2s',
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.1)';
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.backgroundColor =
-                              'rgba(255, 255, 255, 0.05)';
-                          }}
+                          className="tips-section-link"
                         >
                           Bing Image Creator
                         </a>
@@ -578,6 +566,14 @@ export default function PromptGenerator() {
             )}
           </div>
         </main>
+        {/* Right vertical progress sidebar */}
+        <div className="generator-progress-sidebar">
+          <ProgressIndicator
+            currentStep={currentStep}
+            totalSteps={progressSteps.length}
+            steps={progressSteps}
+          />
+        </div>
       </div>
     </>
   );
