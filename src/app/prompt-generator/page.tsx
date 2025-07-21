@@ -443,25 +443,27 @@ export default function PromptGenerator() {
               onFormDataChange={updateFormData}
             />
 
-            <div
-              className="prompt-generation-count"
-              style={{
-                marginBottom: '16px',
-                color:
-                  subscriptionStatus === 'active'
-                    ? '#7dd8e0'
-                    : genCount >= MAX_GEN_COUNT
-                      ? '#f4a261'
-                      : '#7dd8e0',
-                fontWeight: 500,
-              }}
-            >
-              {subscriptionStatus === 'active'
-                ? `You have unlimited prompt generations.`
-                : genCount < MAX_GEN_COUNT
-                  ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
-                  : `You have reached the maximum of ${MAX_GEN_COUNT} prompt generations. Please reset the form to continue.`}
-            </div>
+            {user && (
+              <div
+                className="prompt-generation-count"
+                style={{
+                  marginBottom: '16px',
+                  color:
+                    subscriptionStatus === 'active'
+                      ? '#7dd8e0'
+                      : genCount >= MAX_GEN_COUNT
+                        ? '#f4a261'
+                        : '#7dd8e0',
+                  fontWeight: 500,
+                }}
+              >
+                {subscriptionStatus === 'active'
+                  ? `You have unlimited prompt generations.`
+                  : genCount < MAX_GEN_COUNT
+                    ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
+                    : `You have reached the maximum of ${MAX_GEN_COUNT} prompt generations. Please reset the form to continue.`}
+              </div>
+            )}
             <GenerateButton
               onClick={generatePrompt}
               onReset={resetFormDataWithCount}

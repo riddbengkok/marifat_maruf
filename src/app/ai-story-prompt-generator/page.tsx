@@ -337,23 +337,15 @@ export default function AIStoryPromptGenerator() {
               formData={formData}
               onFormDataChange={onFormDataChange}
             />
-            <div
-              className="prompt-generation-count"
-              style={{
-                color:
-                  subscriptionStatus === 'active'
-                    ? '#7dd8e0'
-                    : genCount >= MAX_GEN_COUNT
-                      ? '#f4a261'
-                      : '#7dd8e0',
-              }}
-            >
-              {subscriptionStatus === 'active'
-                ? 'You have unlimited prompt generations.'
-                : genCount < MAX_GEN_COUNT
-                  ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
-                  : 'You have reached the maximum of 4 prompt generations. Please reset the form to continue.'}
-            </div>
+            {user && (
+              <div className="prompt-generation-count">
+                {subscriptionStatus === 'active'
+                  ? 'You have unlimited prompt generations.'
+                  : genCount < MAX_GEN_COUNT
+                    ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
+                    : 'You have reached the maximum of 4 prompt generations. Please reset the form to continue.'}
+              </div>
+            )}
             <GenerateButton
               onClick={generatePrompt}
               onReset={resetFormData}

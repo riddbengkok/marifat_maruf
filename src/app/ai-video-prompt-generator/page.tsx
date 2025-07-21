@@ -399,17 +399,13 @@ export default function AIVideoPromptGenerator() {
                 }
               }}
             />
-            {!isSubscribed && (
+            {user && (
               <div className="prompt-generation-count">
-                {subscriptionStatus === 'active' ? (
-                  'You have unlimited prompt generations.'
-                ) : (
-                  <>
-                    {genCount < MAX_GEN_COUNT
-                      ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
-                      : null}
-                  </>
-                )}
+                {subscriptionStatus === 'active'
+                  ? 'You have unlimited prompt generations.'
+                  : genCount < MAX_GEN_COUNT
+                    ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
+                    : 'You have reached the free generation limit. Subscribe to unlock unlimited prompt generations.'}
               </div>
             )}
             {!isSubscribed && genCount >= MAX_GEN_COUNT ? (
