@@ -10,7 +10,7 @@ import StoryPromptGeneratorForm from '@/components/PromptGenerator/StoryPromptGe
 import { useAuth } from '@/hooks/useAuth';
 import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
-import './PromptGenerator/PromptGenerator.css';
+import '../../components/PromptGenerator/PromptGenerator.css';
 
 // Dynamic import for Sidebar with SSR disabled
 const Sidebar = dynamic(() => import('@/components/Sidebar'), { ssr: false });
