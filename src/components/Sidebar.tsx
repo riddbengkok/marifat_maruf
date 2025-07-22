@@ -348,7 +348,7 @@ const Sidebar = () => {
 
   // Page context
   const isFeaturesPage = pathname === '/features';
-  const isPromptGeneratorPage = pathname === '/prompt-generator';
+  const isPromptGeneratorPage = pathname === '/ai-image-prompt-generator';
   const isVideoPromptGeneratorPage = pathname === '/ai-video-prompt-generator';
   const isAudioPromptGeneratorPage = pathname === '/ai-audio-prompt-generator';
 
@@ -567,7 +567,7 @@ const Sidebar = () => {
                     <>
                       <li>
                         <Link
-                          href="/prompt-generator"
+                          href="/ai-image-prompt-generator"
                           className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
                           onClick={() => setIsOpen(false)}
                         >
@@ -588,7 +588,7 @@ const Sidebar = () => {
                     <>
                       <li>
                         <Link
-                          href="/prompt-generator"
+                          href="/ai-image-prompt-generator"
                           className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
                           onClick={() => setIsOpen(false)}
                         >
@@ -669,7 +669,7 @@ const Sidebar = () => {
                   </li>
                   <li>
                     <Link
-                      href="/prompt-generator"
+                      href="/ai-image-prompt-generator"
                       className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
                       onClick={() => setIsOpen(false)}
                     >

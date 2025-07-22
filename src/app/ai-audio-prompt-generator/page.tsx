@@ -590,7 +590,7 @@ export default function AIAudioPromptGenerator() {
         type="audio-generator"
         title="AI Audio Prompt Generator - Create Professional Audio Prompts"
         description="Generate high-quality AI audio prompts with our advanced tool. Create musical, ambient, and sound design prompts for Suno, Udio, and other AI audio generators."
-        url="https://hyperspace-next.vercel.app/ai-audio-prompt-generator"
+        url="https://marifat-maruf.vercel.app/ai-audio-prompt-generator"
       />
 
       {/* Modal for subject error */}

@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 // Base metadata for the site
 export const baseMetadata: Metadata = {
-  metadataBase: new URL('https://hyperspace-next.vercel.app'),
+  metadataBase: new URL('https://marifat-maruf.vercel.app'),
   title: {
     default: 'Marifat - Frontend Web Developer & AI Tools',
     template: '%s | Marifat',
@@ -33,7 +33,7 @@ export const baseMetadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://hyperspace-next.vercel.app',
+    url: 'https://marifat-maruf.vercel.app',
     siteName: 'Marifat',
     title: 'Marifat - Frontend Web Developer & AI Tools',
     description:
@@ -130,7 +130,7 @@ export const aiVideoPromptGeneratorMetadata: Metadata = {
     title: 'AI Video Prompt Generator - Create Professional Video Prompts',
     description:
       'Generate high-quality AI video prompts with our advanced tool. Create cinematic, commercial, and artistic video prompts for Runway, Pika Labs, Sora, and other AI video generators.',
-    url: 'https://hyperspace-next.vercel.app/ai-video-prompt-generator',
+    url: 'https://marifat-maruf.vercel.app/ai-video-prompt-generator',
   },
   twitter: {
     ...baseMetadata.twitter,
@@ -139,7 +139,7 @@ export const aiVideoPromptGeneratorMetadata: Metadata = {
       'Generate high-quality AI video prompts with our advanced tool. Create cinematic, commercial, and artistic video prompts for Runway, Pika Labs, Sora, and other AI video generators.',
   },
   alternates: {
-    canonical: 'https://hyperspace-next.vercel.app/ai-video-prompt-generator',
+    canonical: 'https://marifat-maruf.vercel.app/ai-video-prompt-generator',
   },
 };
 
@@ -168,7 +168,7 @@ export const imagePromptGeneratorMetadata: Metadata = {
     title: 'AI Image Prompt Generator - Create Stunning Image Prompts',
     description:
       'Generate professional AI image prompts with our comprehensive tool. Create artistic, realistic, and creative image prompts for DALL-E, Midjourney, Stable Diffusion, and other AI image generators.',
-    url: 'https://hyperspace-next.vercel.app/prompt-generator',
+    url: 'https://marifat-maruf.vercel.app/ai-image-prompt-generator',
   },
   twitter: {
     ...baseMetadata.twitter,
@@ -177,7 +177,7 @@ export const imagePromptGeneratorMetadata: Metadata = {
       'Generate professional AI image prompts with our comprehensive tool. Create artistic, realistic, and creative image prompts for DALL-E, Midjourney, Stable Diffusion, and other AI image generators.',
   },
   alternates: {
-    canonical: 'https://hyperspace-next.vercel.app/prompt-generator',
+    canonical: 'https://marifat-maruf.vercel.app/ai-image-prompt-generator',
   },
 };
 
@@ -204,7 +204,7 @@ export const portfolioMetadata: Metadata = {
     title: 'Portfolio - Web Development Projects & Skills',
     description:
       'Explore my portfolio of web development projects, technical skills, and professional experience.',
-    url: 'https://hyperspace-next.vercel.app/portfolio',
+    url: 'https://marifat-maruf.vercel.app/portfolio',
   },
   twitter: {
     ...baseMetadata.twitter,
@@ -213,7 +213,7 @@ export const portfolioMetadata: Metadata = {
       'Explore my portfolio of web development projects, technical skills, and professional experience.',
   },
   alternates: {
-    canonical: 'https://hyperspace-next.vercel.app/portfolio',
+    canonical: 'https://marifat-maruf.vercel.app/portfolio',
   },
 };
 
@@ -238,7 +238,7 @@ export const featuresMetadata: Metadata = {
     title: 'Features - AI Tools & Web Development Services',
     description:
       'Discover our AI prompt generators, web development services, and creative tools.',
-    url: 'https://hyperspace-next.vercel.app/features',
+    url: 'https://marifat-maruf.vercel.app/features',
   },
   twitter: {
     ...baseMetadata.twitter,
@@ -247,6 +247,6 @@ export const featuresMetadata: Metadata = {
       'Discover our AI prompt generators, web development services, and creative tools.',
   },
   alternates: {
-    canonical: 'https://hyperspace-next.vercel.app/features',
+    canonical: 'https://marifat-maruf.vercel.app/features',
   },
 };

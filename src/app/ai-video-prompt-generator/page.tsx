@@ -348,7 +348,7 @@ export default function AIVideoPromptGenerator() {
         type="video-generator"
         title="AI Video Prompt Generator - Create Professional Video Prompts"
         description="Generate high-quality AI video prompts with our advanced tool. Create cinematic, commercial, and artistic video prompts for Runway, Pika Labs, Sora, and other AI video generators."
-        url="https://hyperspace-next.vercel.app/ai-video-prompt-generator"
+        url="https://marifat-maruf.vercel.app/ai-video-prompt-generator"
       />
 
       {/* Modal for subject error */}

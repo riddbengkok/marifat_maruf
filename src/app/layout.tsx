@@ -31,7 +31,7 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#000000" />
         <meta
           name="google-site-verification"
-          content="XInmL2TthX8e4l9fRcn16-tjUSkfA7PxDggMi_XC6y0"
+          content="qTs96G3m8zwMMRkemxEc49-JSlK8NR4ATKwdciR9nG4"
         />
       </head>
       <body className={`${sourceSans.variable} ${sourceCode.variable}`}>

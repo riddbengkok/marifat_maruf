@@ -30,17 +30,17 @@ export default function StructuredData({
       author: {
         '@type': 'Person',
         name: 'Marifat Maruf',
-        url: 'https://hyperspace-next.vercel.app',
+        url: 'https://marifat-maruf.vercel.app',
       },
       creator: {
         '@type': 'Person',
         name: 'Marifat Maruf',
-        url: 'https://hyperspace-next.vercel.app',
+        url: 'https://marifat-maruf.vercel.app',
       },
       publisher: {
         '@type': 'Person',
         name: 'Marifat Maruf',
-        url: 'https://hyperspace-next.vercel.app',
+        url: 'https://marifat-maruf.vercel.app',
       },
       dateCreated: '2024-01-01',
       dateModified: new Date().toISOString().split('T')[0],
@@ -67,7 +67,7 @@ export default function StructuredData({
             'Professional prompt templates',
           ],
           screenshot:
-            'https://hyperspace-next.vercel.app/images/video-generator-screenshot.jpg',
+            'https://marifat-maruf.vercel.app/images/video-generator-screenshot.jpg',
           softwareVersion: '1.0.0',
         };
 
@@ -89,7 +89,7 @@ export default function StructuredData({
             'Multiple AI model support',
           ],
           screenshot:
-            'https://hyperspace-next.vercel.app/images/image-generator-screenshot.jpg',
+            'https://marifat-maruf.vercel.app/images/image-generator-screenshot.jpg',
           softwareVersion: '1.0.0',
         };
 
@@ -111,7 +111,7 @@ export default function StructuredData({
             'Multiple AI model support',
           ],
           screenshot:
-            'https://hyperspace-next.vercel.app/images/audio-generator-screenshot.jpg',
+            'https://marifat-maruf.vercel.app/images/audio-generator-screenshot.jpg',
           softwareVersion: '1.0.0',
         };
 
@@ -123,7 +123,7 @@ export default function StructuredData({
           jobTitle: 'Frontend Web Developer',
           description:
             'Professional web developer specializing in React, Vue.js, TypeScript, and modern web technologies.',
-          url: 'https://hyperspace-next.vercel.app',
+          url: 'https://marifat-maruf.vercel.app',
           sameAs: [
             'https://github.com/marifatmaruf',
             'https://linkedin.com/in/marifatmaruf',
@@ -160,19 +160,19 @@ export default function StructuredData({
           name: 'Marifat - Frontend Web Developer & AI Tools',
           description:
             'Professional portfolio and AI prompt generator tools for creating high-quality prompts for AI image and video generation.',
-          url: 'https://hyperspace-next.vercel.app',
+          url: 'https://marifat-maruf.vercel.app',
           author: {
             '@type': 'Person',
             name: 'Marifat Maruf',
             jobTitle: 'Frontend Web Developer',
-            url: 'https://hyperspace-next.vercel.app',
+            url: 'https://marifat-maruf.vercel.app',
           },
           potentialAction: {
             '@type': 'SearchAction',
             target: {
               '@type': 'EntryPoint',
               urlTemplate:
-                'https://hyperspace-next.vercel.app/search?q={search_term_string}',
+                'https://marifat-maruf.vercel.app/search?q={search_term_string}',
             },
             'query-input': 'required name=search_term_string',
           },

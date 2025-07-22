@@ -411,7 +411,7 @@ export default function PromptGenerator() {
         type="image-generator"
         title="AI Image Prompt Generator - Create Stunning Image Prompts"
         description="Generate professional AI image prompts with our comprehensive tool. Create artistic, realistic, and creative image prompts for DALL-E, Midjourney, Stable Diffusion, and other AI image generators."
-        url="https://hyperspace-next.vercel.app/prompt-generator"
+        url="https://marifat-maruf.vercel.app/ai-image-prompt-generator"
       />
 
       <div className="generator-flex-layout">

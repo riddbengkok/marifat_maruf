@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
 const Spotlights = () => {
@@ -33,6 +34,7 @@ const Spotlights = () => {
         'Enables you to generate cinematic, commercial, or artistic video prompts for AI video tools (like Runway, Pika Labs, or Sora).',
       image: '/images/pic01.jpg', // Replace with a relevant image if available
       position: 'center center',
+      link: '/ai-video-prompt-generator',
     },
     {
       id: 2,
@@ -41,6 +43,7 @@ const Spotlights = () => {
         'Helps you craft detailed, creative prompts for AI image generation tools (like DALL-E, Midjourney, or Stable Diffusion).',
       image: '/images/pic02.jpg', // Replace with a relevant image if available
       position: 'top center',
+      link: '/ai-image-prompt-generator',
     },
     {
       id: 3,
@@ -49,6 +52,7 @@ const Spotlights = () => {
         'Lets you create prompts for AI audio/music generation, including soundscapes, voiceovers, and music tracks.',
       image: '/images/pic03.jpg', // Replace with a relevant image if available
       position: 'center center',
+      link: '/ai-audio-prompt-generator',
     },
     {
       id: 3,
@@ -57,6 +61,7 @@ const Spotlights = () => {
         'Assists in generating story or script prompts for AI writing tools.',
       image: '/images/pic03.jpg', // Replace with a relevant image if available
       position: 'center center',
+      link: '/ai-script-prompt-generator',
     },
   ];
 
@@ -95,9 +100,12 @@ const Spotlights = () => {
                 {spotlight.description}
               </p>
               <div className="actions">
-                <button className="button bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                <Link
+                  href={spotlight.link}
+                  className="button bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
                   Learn more
-                </button>
+                </Link>
               </div>
             </div>
           </div>

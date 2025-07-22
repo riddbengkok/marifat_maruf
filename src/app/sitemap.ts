@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://hyperspace-next.vercel.app';
+  const baseUrl = 'https://marifat-maruf.vercel.app';
 
   return [
     {
@@ -17,7 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/prompt-generator`,
+      url: `${baseUrl}/ai-image-prompt-generator`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.9,
