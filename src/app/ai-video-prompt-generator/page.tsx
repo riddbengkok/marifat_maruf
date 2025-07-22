@@ -25,18 +25,31 @@ const MAX_GEN_COUNT =
     ? parseInt(process.env.NEXT_PUBLIC_MAX_GEN_COUNT, 10) || 4
     : 4;
 
-// Add type for window.snap
+// --- Type Declarations ---
 declare global {
   interface Window {
-    snap?: unknown;
+    snap?: {
+      pay: (
+        token: string,
+        options?: {
+          onSuccess?: (result: unknown) => void;
+          onPending?: (result: unknown) => void;
+          onError?: (result: unknown) => void;
+          onClose?: () => void;
+        }
+      ) => void;
+    };
   }
 }
 
-// Add Midtrans Snap JS script (for demo, in useEffect)
+// --- Utility: Load Midtrans Snap.js ---
 function loadMidtransScript() {
   if (typeof window !== 'undefined' && !window.snap) {
     const script = document.createElement('script');
-    script.src = 'https://app.midtrans.com/snap/snap.js';
+    script.src =
+      process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === 'true'
+        ? 'https://app.midtrans.com/snap/snap.js'
+        : 'https://app.sandbox.midtrans.com/snap/snap.js';
     script.setAttribute(
       'data-client-key',
       process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || ''
@@ -46,7 +59,7 @@ function loadMidtransScript() {
   }
 }
 
-// Define the mapping of form sections to their required fields
+// --- Section Fields Mapping ---
 const sectionFields: { name: string; fields: (keyof FormData)[] }[] = [
   { name: 'Core Elements', fields: ['subject', 'style', 'setting'] },
   {
@@ -90,7 +103,9 @@ function isSectionComplete(
   );
 }
 
+// --- Main Component ---
 export default function AIVideoPromptGenerator() {
+  // --- State ---
   const [mounted, setMounted] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
@@ -114,6 +129,7 @@ export default function AIVideoPromptGenerator() {
     'active' | 'inactive' | 'none' | null
   >(null);
 
+  // --- Effects ---
   useEffect(() => {
     const fetchSubscription = async () => {
       if (user?.uid) {
@@ -131,6 +147,27 @@ export default function AIVideoPromptGenerator() {
     fetchSubscription();
   }, [user]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setMounted(true);
+      loadMidtransScript();
+      // Check subscription status
+      const sub = localStorage.getItem('isSubscribed');
+      setIsSubscribed(sub === 'true');
+    }
+  }, []);
+
+  // Reset gen count and subscription status on logout or account change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(GEN_COUNT_KEY);
+      localStorage.removeItem('isSubscribed');
+      setGenCount(0);
+      setIsSubscribed(false);
+    }
+  }, [user]);
+
+  // --- Form Data Management ---
   const initialFormData: FormData = {
     // Core Elements
     subject: '',
@@ -219,26 +256,7 @@ export default function AIVideoPromptGenerator() {
     initialData: initialFormData,
   });
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setMounted(true);
-      loadMidtransScript();
-      // Check subscription status
-      const sub = localStorage.getItem('isSubscribed');
-      setIsSubscribed(sub === 'true');
-    }
-  }, []);
-
-  // Reset gen count and subscription status on logout or account change
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(GEN_COUNT_KEY);
-      localStorage.removeItem('isSubscribed');
-      setGenCount(0);
-      setIsSubscribed(false);
-    }
-  }, [user]);
-
+  // --- Handlers ---
   const generatePrompt = () => {
     if (subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT) return;
     if (!formData.subject.trim()) {
@@ -277,6 +295,7 @@ export default function AIVideoPromptGenerator() {
     }, 3000);
   };
 
+  // --- Midtrans Payment Handler ---
   const handleSubscribe = async () => {
     // Call your backend to get a Midtrans Snap token
     const res = await fetch('/api/create-midtrans-transaction', {
@@ -287,27 +306,24 @@ export default function AIVideoPromptGenerator() {
     if (
       typeof window !== 'undefined' &&
       window.snap &&
-      typeof (window.snap as { pay?: (token: string, options: object) => void })
-        .pay === 'function'
+      typeof window.snap.pay === 'function'
     ) {
-      (window.snap as { pay: (token: string, options: object) => void }).pay(
-        token,
-        {
-          onSuccess: function (_result: unknown) {
-            localStorage.setItem('isSubscribed', 'true');
-            setIsSubscribed(true);
-            alert('Payment successful! You are now subscribed.');
-          },
-          onPending: function (_result: unknown) {},
-          onError: function (_result: unknown) {},
-          onClose: function () {},
-        }
-      );
+      window.snap.pay(token, {
+        onSuccess: function (_result: unknown) {
+          localStorage.setItem('isSubscribed', 'true');
+          setIsSubscribed(true);
+          alert('Payment successful! You are now subscribed.');
+        },
+        onPending: function (_result: unknown) {},
+        onError: function (_result: unknown) {},
+        onClose: function () {},
+      });
     } else {
       alert('Midtrans payment script not loaded.');
     }
   };
 
+  // --- Early return for SSR ---
   if (!mounted) {
     return (
       <div className="loading-container">
@@ -316,7 +332,7 @@ export default function AIVideoPromptGenerator() {
     );
   }
 
-  // Calculate completed sections and current step
+  // --- Progress Calculation ---
   const completedSections = sectionFields.filter(section =>
     isSectionComplete(section, formData)
   );
@@ -325,6 +341,7 @@ export default function AIVideoPromptGenerator() {
     progressSteps.length
   );
 
+  // --- Render ---
   return (
     <>
       <StructuredData

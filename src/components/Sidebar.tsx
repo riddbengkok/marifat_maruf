@@ -3,10 +3,40 @@
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import GoogleLoginButton from './Auth/GoogleLoginButton';
 
+declare global {
+  interface Window {
+    snap?: {
+      pay: (
+        token: string,
+        options?: {
+          onSuccess?: (result: unknown) => void;
+          onPending?: (result: unknown) => void;
+          onError?: (result: unknown) => void;
+          onClose?: () => void;
+        }
+      ) => void;
+    };
+  }
+}
+
+// Snap.js loader utility
+function loadSnapJs(clientKey: string, isProduction: boolean) {
+  if (typeof window !== 'undefined' && !window.snap) {
+    const script = document.createElement('script');
+    script.src = isProduction
+      ? 'https://app.midtrans.com/snap/snap.js'
+      : 'https://app.sandbox.midtrans.com/snap/snap.js';
+    script.setAttribute('data-client-key', clientKey);
+    script.async = true;
+    document.body.appendChild(script);
+  }
+}
+
 const Sidebar = () => {
+  // State
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const { user } = useAuth();
@@ -14,27 +44,281 @@ const Sidebar = () => {
     'active' | 'inactive' | 'none' | null
   >(null);
   const [subLoading, setSubLoading] = useState(false);
+  // Modal state
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [pendingOrderToken, setPendingOrderToken] = useState<string>('');
+  const [pendingOrderId, setPendingOrderId] = useState<string>('');
+  const snapShownRef = useRef(false);
 
-  useEffect(() => {
-    const fetchSubscription = async () => {
-      if (user?.uid) {
-        setSubLoading(true);
-        try {
-          const res = await fetch(`/api/auth/register?firebaseUid=${user.uid}`);
-          const data = await res.json();
-          setSubscriptionStatus(data.status || 'none');
-        } catch (e) {
-          setSubscriptionStatus('none');
-        } finally {
-          setSubLoading(false);
+  // Function to re-fetch subscription status
+  const refetchSubscriptionStatus = async () => {
+    if (user?.email) {
+      setSubLoading(true);
+      try {
+        const res = await fetch(
+          `/api/auth/register?email=${encodeURIComponent(user.email)}`
+        );
+        const data = await res.json();
+        setSubscriptionStatus(
+          (data.status as 'active' | 'inactive' | 'none') || 'none'
+        );
+      } catch (e) {
+        setSubscriptionStatus('none');
+      } finally {
+        setSubLoading(false);
+      }
+    }
+  };
+
+  // Helper to get/set Snap token in localStorage
+  const getStoredSnapToken = () => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('snap_token') || null;
+    }
+    return null;
+  };
+  const setStoredSnapToken = (token: string | null) => {
+    if (typeof window !== 'undefined') {
+      if (token) {
+        localStorage.setItem('snap_token', token);
+      } else {
+        localStorage.removeItem('snap_token');
+      }
+    }
+  };
+
+  async function handleSubscribePayment(
+    user: { email?: string | null } | null
+  ) {
+    try {
+      const email = user?.email ?? undefined;
+      if (!email) {
+        alert('User email not found or not registered.');
+        return;
+      }
+      // Check for existing order_id in localStorage
+      let orderId: string = localStorage.getItem('snap_order_id') || '';
+      let snapToken: string = getStoredSnapToken() || '';
+      if (!orderId) {
+        // No order_id, create new Snap transaction
+        const res = await fetch('/api/subscription', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            customer_details: {
+              first_name: 'John',
+              last_name: 'Doe',
+              email: email,
+              phone: '08123456789',
+            },
+            item_details: [
+              {
+                id: 'sub001',
+                price: 10000,
+                quantity: 1,
+                name: 'Subscription',
+              },
+            ],
+          }),
+        });
+        const data = await res.json();
+        if (data.token && data.order_id) {
+          snapToken = data.token;
+          orderId = data.order_id;
+          setStoredSnapToken(snapToken);
+          localStorage.setItem('snap_order_id', orderId);
+        } else {
+          alert(
+            'Failed to get payment token: ' + (data.error || 'Unknown error')
+          );
+          return;
+        }
+        // Show Snap
+        if (window.snap && window.snap.pay) {
+          window.snap.pay(snapToken, {
+            onSuccess: async function (result: unknown) {
+              setShowSuccessModal(true);
+              console.log('Success:', result);
+              try {
+                const orderId =
+                  typeof result === 'object' && result && 'order_id' in result
+                    ? (result as { order_id: string }).order_id
+                    : '';
+                if (orderId) {
+                  await fetch('/api/subscription', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      order_id: orderId,
+                      transaction_status: 'paid',
+                      plan: 'pro',
+                    }),
+                  });
+                }
+              } catch (e) {
+                console.error(
+                  'Failed to update order/subscription after payment:',
+                  e
+                );
+              }
+              await refetchSubscriptionStatus();
+              setStoredSnapToken('');
+              localStorage.removeItem('snap_order_id');
+            },
+            onPending: function (result: unknown) {
+              alert('Payment Pending!');
+              console.log('Pending:', result);
+            },
+            onError: function (result: unknown) {
+              alert('Payment Error!');
+              console.log('Error:', result);
+            },
+            onClose: function () {
+              alert('Payment popup closed without finishing the payment');
+            },
+          });
+        } else {
+          alert('Midtrans Snap.js is not loaded.');
+        }
+        return;
+      }
+      // If order_id exists, check its status
+      const orderIdNum = orderId.replace('order-', '');
+      const orderRes = await fetch(`/api/order-status?id=${orderIdNum}`);
+      const orderData = await orderRes.json();
+      if (orderData.status === 'pending') {
+        // Show Snap with stored token
+        if (!snapToken) {
+          alert('No Snap token available. Please try again.');
+          return;
+        }
+        if (window.snap && window.snap.pay) {
+          window.snap.pay(snapToken, {
+            onSuccess: async function (result: unknown) {
+              setShowSuccessModal(true);
+              console.log('Success:', result);
+              try {
+                const orderId =
+                  typeof result === 'object' && result && 'order_id' in result
+                    ? (result as { order_id: string }).order_id
+                    : '';
+                if (orderId) {
+                  await fetch('/api/subscription', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      order_id: orderId,
+                      transaction_status: 'paid',
+                      plan: 'pro',
+                    }),
+                  });
+                }
+              } catch (e) {
+                console.error(
+                  'Failed to update order/subscription after payment:',
+                  e
+                );
+              }
+              await refetchSubscriptionStatus();
+              setStoredSnapToken('');
+              localStorage.removeItem('snap_order_id');
+            },
+            onPending: function (result: unknown) {
+              alert('Payment Pending!');
+              console.log('Pending:', result);
+            },
+            onError: function (result: unknown) {
+              alert('Payment Error!');
+              console.log('Error:', result);
+            },
+            onClose: function () {
+              alert('Payment popup closed without finishing the payment');
+            },
+          });
+        } else {
+          alert('Midtrans Snap.js is not loaded.');
         }
       } else {
-        setSubscriptionStatus(null);
+        // Not pending, clear and create new Snap transaction
+        setStoredSnapToken('');
+        localStorage.removeItem('snap_order_id');
+        await handleSubscribePayment(user); // Recursively call to create new transaction
       }
-    };
-    fetchSubscription();
+    } catch (err) {
+      let message = 'Unknown error';
+      if (err instanceof Error) message = err.message;
+      else if (typeof err === 'string') message = err;
+      alert('Error: ' + message);
+    }
+  }
+
+  // Fetch latest pending order and token for the user
+  const fetchPendingOrderToken = async () => {
+    if (user?.email) {
+      const res = await fetch('/api/subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user.email,
+          customer_details: {
+            first_name: 'John',
+            last_name: 'Doe',
+            email: user.email,
+            phone: '08123456789',
+          },
+          item_details: [
+            {
+              id: 'sub001',
+              price: 10000,
+              quantity: 1,
+              name: 'Subscription',
+            },
+          ],
+        }),
+      });
+      const data = await res.json();
+      if (data.token && data.order_id) {
+        // Check order status
+        const orderIdNum = data.order_id.replace('order-', '');
+        const orderRes = await fetch(`/api/order-status?id=${orderIdNum}`);
+        const orderData = await orderRes.json();
+        if (orderData.status === 'pending') {
+          setPendingOrderToken(data.token);
+          setPendingOrderId(data.order_id);
+        } else {
+          setPendingOrderToken('');
+          setPendingOrderId('');
+        }
+      }
+    }
+  };
+
+  // On mount or user change, check for pending order
+  useEffect(() => {
+    snapShownRef.current = false;
+    fetchPendingOrderToken();
   }, [user]);
 
+  // Remove the useEffect that triggers Snap automatically for pending orders
+  // Only call handleSubscribePayment when the user clicks the Subscribe button
+
+  // Environment
+  const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '';
+  const isProduction =
+    process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === 'true';
+
+  // Fetch subscription status
+  useEffect(() => {
+    refetchSubscriptionStatus();
+  }, [user]);
+
+  // Load Snap.js
+  useEffect(() => {
+    loadSnapJs(clientKey, isProduction);
+  }, [clientKey, isProduction]);
+
+  // Navigation helpers
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -43,13 +327,79 @@ const Sidebar = () => {
     setIsOpen(false);
   };
 
+  // Page context
   const isFeaturesPage = pathname === '/features';
   const isPromptGeneratorPage = pathname === '/prompt-generator';
   const isVideoPromptGeneratorPage = pathname === '/ai-video-prompt-generator';
   const isAudioPromptGeneratorPage = pathname === '/ai-audio-prompt-generator';
 
+  // Render
   return (
     <>
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-sm w-full text-center relative border border-gray-200 dark:border-gray-700">
+            <button
+              className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              onClick={() => setShowSuccessModal(false)}
+              aria-label="Close"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <div className="flex flex-col items-center">
+              <div className="mb-4">
+                <svg
+                  className="w-12 h-12 text-gray-700 dark:text-gray-200 mx-auto"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 12l2 2l4-4"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                Payment Success
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4 text-sm">
+                Your payment was successful and your subscription is now{' '}
+                <span className="font-semibold">active</span>.
+              </p>
+              <button
+                className="mt-2 px-5 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded transition hover:bg-gray-800 dark:hover:bg-gray-200 text-sm font-medium"
+                onClick={() => setShowSuccessModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Mobile menu button */}
       <button
         className="fixed top-4 right-4 z-50 lg:hidden p-2 rounded-md bg-black/20 backdrop-blur-sm border border-white/20"
@@ -102,6 +452,7 @@ const Sidebar = () => {
             </Link>
           </div>
 
+          {/* Navigation */}
           <nav className="flex-1">
             <ul className="space-y-4">
               {isFeaturesPage ? (
@@ -369,6 +720,16 @@ const Sidebar = () => {
           <div className="pt-4 border-t border-white/20">
             <p className="text-sm text-gray-400">© 2024 Marifat Maruf</p>
           </div>
+
+          {/* Subscribe Button */}
+          <li className="pt-4 border-t border-white/20">
+            <button
+              className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block bg-gradient-to-r from-cyan-400 to-blue-500 py-2 px-4 rounded-lg mt-4"
+              onClick={() => handleSubscribePayment(user)}
+            >
+              Subscribe (Dummy)
+            </button>
+          </li>
         </div>
       </section>
 
