@@ -11,7 +11,11 @@ export async function GET(req: NextRequest) {
     if (!email) {
       return NextResponse.json({ error: 'Missing email' }, { status: 400 });
     }
-    const user = await prisma.user.findUnique({ where: { email } });
+    // Only select promptGenCount for type safety
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { promptGenCount: true },
+    });
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -29,7 +33,11 @@ export async function POST(req: NextRequest) {
     if (!email) {
       return NextResponse.json({ error: 'Missing email' }, { status: 400 });
     }
-    const user = await prisma.user.findUnique({ where: { email } });
+    // Only select promptGenCount for type safety
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { promptGenCount: true },
+    });
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -38,6 +46,7 @@ export async function POST(req: NextRequest) {
       const updated = await prisma.user.update({
         where: { email },
         data: { promptGenCount: { decrement: 1 } },
+        select: { promptGenCount: true },
       });
       return NextResponse.json({ count: updated.promptGenCount });
     } else {

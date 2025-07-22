@@ -346,11 +346,92 @@ const Sidebar = () => {
     setIsOpen(false);
   };
 
+  // Generator links and icons (move outside component for reuse)
+  const GENERATOR_LINKS = [
+    {
+      href: '/ai-image-prompt-generator',
+      label: 'AI Image Prompt Generator',
+      icon: (
+        <svg
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          viewBox="0 0 24 24"
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+          <path d="M21 15l-5-5-4 4-7 7" />
+        </svg>
+      ),
+    },
+    {
+      href: '/ai-video-prompt-generator',
+      label: 'AI Video Prompt Generator',
+      icon: (
+        <svg
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          viewBox="0 0 24 24"
+        >
+          <rect x="3" y="5" width="15" height="14" rx="2" />
+          <polygon points="16 7 22 12 16 17 16 7" />
+        </svg>
+      ),
+    },
+    {
+      href: '/ai-audio-prompt-generator',
+      label: 'AI Audio Prompt Generator',
+      icon: (
+        <svg
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          viewBox="0 0 24 24"
+        >
+          <rect x="3" y="11" width="4" height="10" rx="1" />
+          <rect x="9" y="7" width="4" height="14" rx="1" />
+          <rect x="15" y="3" width="4" height="18" rx="1" />
+        </svg>
+      ),
+    },
+    {
+      href: '/ai-story-prompt-generator',
+      label: 'AI Story Prompt Generator',
+      icon: (
+        <svg
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          viewBox="0 0 24 24"
+        >
+          <rect x="4" y="4" width="16" height="16" rx="2" />
+          <path d="M8 8h8M8 12h8M8 16h4" />
+        </svg>
+      ),
+    },
+  ];
+
+  // Brand/title lookup for cleaner logic
+  const PAGE_TITLES: Record<string, string> = {
+    '/features': 'Features',
+    '/ai-image-prompt-generator': 'Image Prompt Generator',
+    '/ai-video-prompt-generator': 'Video Prompt Generator',
+    '/ai-audio-prompt-generator': 'Audio Prompt Generator',
+    '/ai-story-prompt-generator': 'Story Prompt Generator',
+  };
+
   // Page context
   const isFeaturesPage = pathname === '/features';
-  const isPromptGeneratorPage = pathname === '/ai-image-prompt-generator';
-  const isVideoPromptGeneratorPage = pathname === '/ai-video-prompt-generator';
-  const isAudioPromptGeneratorPage = pathname === '/ai-audio-prompt-generator';
+  const isGeneratorPage = GENERATOR_LINKS.some(link => link.href === pathname);
 
   // Render
   return (
@@ -459,21 +540,13 @@ const Sidebar = () => {
           {/* Logo/Brand */}
           <div className="mb-8">
             <Link href="/" className="text-2xl font-bold text-gradient">
-              {isFeaturesPage
-                ? 'Features'
-                : isPromptGeneratorPage
-                  ? 'Image Prompt Generator'
-                  : isVideoPromptGeneratorPage
-                    ? 'Video Prompt Generator'
-                    : isAudioPromptGeneratorPage
-                      ? 'Audio Prompt Generator'
-                      : 'Portfolio'}
+              {PAGE_TITLES[pathname] || 'Portfolio'}
             </Link>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1">
-            <ul className="space-y-4">
+            <ul className="space-y-2">
               {isFeaturesPage ? (
                 // Features page navigation
                 <>
@@ -519,10 +592,8 @@ const Sidebar = () => {
                     </Link>
                   </li>
                 </>
-              ) : isPromptGeneratorPage ||
-                isVideoPromptGeneratorPage ||
-                isAudioPromptGeneratorPage ? (
-                // Prompt Generator pages navigation
+              ) : isGeneratorPage ? (
+                // Generator pages navigation
                 <>
                   <li className="pt-4 border-t border-white/20">
                     <Link
@@ -542,70 +613,33 @@ const Sidebar = () => {
                       View Features →
                     </Link>
                   </li>
-                  {isPromptGeneratorPage ? (
-                    <>
-                      <li>
-                        <Link
-                          href="/ai-video-prompt-generator"
-                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
-                          onClick={() => setIsOpen(false)}
+                  {/* Generator links, unified and mapped */}
+                  {GENERATOR_LINKS.map(link => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className={`flex items-start gap-2 px-3 py-2 rounded border transition-colors text-base ${
+                          pathname === link.href
+                            ? 'border-cyan-400 bg-cyan-900/10 text-cyan-200 font-semibold'
+                            : 'border-transparent text-gray-300 hover:border-cyan-700 hover:bg-cyan-900/10 hover:text-cyan-100'
+                        }`}
+                        onClick={() => setIsOpen(false)}
+                        aria-current={
+                          pathname === link.href ? 'page' : undefined
+                        }
+                      >
+                        <span
+                          className="inline-block mt-0.5"
+                          aria-hidden="true"
                         >
-                          Video Prompt Generator →
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/ai-audio-prompt-generator"
-                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          Audio Prompt Generator →
-                        </Link>
-                      </li>
-                    </>
-                  ) : isVideoPromptGeneratorPage ? (
-                    <>
-                      <li>
-                        <Link
-                          href="/ai-image-prompt-generator"
-                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          Image Prompt Generator →
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/ai-audio-prompt-generator"
-                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          Audio Prompt Generator →
-                        </Link>
-                      </li>
-                    </>
-                  ) : (
-                    <>
-                      <li>
-                        <Link
-                          href="/ai-image-prompt-generator"
-                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          Image Prompt Generator →
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/ai-video-prompt-generator"
-                          className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          Video Prompt Generator →
-                        </Link>
-                      </li>
-                    </>
-                  )}
+                          {link.icon}
+                        </span>
+                        <span className="leading-tight text-sm text-left">
+                          {link.label}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
                 </>
               ) : (
                 // Portfolio page navigation (root)
@@ -667,33 +701,104 @@ const Sidebar = () => {
                       View Features →
                     </Link>
                   </li>
-                  <li>
-                    <Link
-                      href="/ai-image-prompt-generator"
-                      className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      AI Image Prompt Generator →
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/ai-video-prompt-generator"
-                      className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      AI Video Prompt Generator →
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/ai-audio-prompt-generator"
-                      className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      AI Audio Prompt Generator →
-                    </Link>
-                  </li>
+                  {/* AI Generator Links - Minimal, outline icons, no arrow, highlight active */}
+                  {[
+                    {
+                      href: '/ai-image-prompt-generator',
+                      label: 'AI Image Prompt Generator',
+                      icon: (
+                        <svg
+                          width="20"
+                          height="20"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.7"
+                          viewBox="0 0 24 24"
+                        >
+                          <rect x="3" y="3" width="18" height="18" rx="2" />
+                          <circle cx="8.5" cy="8.5" r="1.5" />
+                          <path d="M21 15l-5-5-4 4-7 7" />
+                        </svg>
+                      ),
+                    },
+                    {
+                      href: '/ai-video-prompt-generator',
+                      label: 'AI Video Prompt Generator',
+                      icon: (
+                        <svg
+                          width="20"
+                          height="20"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.7"
+                          viewBox="0 0 24 24"
+                        >
+                          <rect x="3" y="5" width="15" height="14" rx="2" />
+                          <polygon points="16 7 22 12 16 17 16 7" />
+                        </svg>
+                      ),
+                    },
+                    {
+                      href: '/ai-audio-prompt-generator',
+                      label: 'AI Audio Prompt Generator',
+                      icon: (
+                        <svg
+                          width="20"
+                          height="20"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.7"
+                          viewBox="0 0 24 24"
+                        >
+                          <rect x="3" y="11" width="4" height="10" rx="1" />
+                          <rect x="9" y="7" width="4" height="14" rx="1" />
+                          <rect x="15" y="3" width="4" height="18" rx="1" />
+                        </svg>
+                      ),
+                    },
+                    {
+                      href: '/ai-story-prompt-generator',
+                      label: 'AI Story Prompt Generator',
+                      icon: (
+                        <svg
+                          width="20"
+                          height="20"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.7"
+                          viewBox="0 0 24 24"
+                        >
+                          <rect x="4" y="4" width="16" height="16" rx="2" />
+                          <path d="M8 8h8M8 12h8M8 16h4" />
+                        </svg>
+                      ),
+                    },
+                  ].map(link => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className={`flex items-start gap-2 px-3 py-2 rounded border transition-colors text-base ${
+                          pathname === link.href
+                            ? 'border-cyan-400 bg-cyan-900/10 text-cyan-200 font-semibold'
+                            : 'border-transparent text-gray-300 hover:border-cyan-700 hover:bg-cyan-900/10 hover:text-cyan-100'
+                        }`}
+                        onClick={() => setIsOpen(false)}
+                        aria-current={
+                          pathname === link.href ? 'page' : undefined
+                        }
+                      >
+                        <span
+                          className="inline-block mt-0.5"
+                          aria-hidden="true"
+                        >
+                          {link.icon}
+                        </span>
+                        <span className="leading-tight text-sm text-left">
+                          {link.label}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
                 </>
               )}
             </ul>
