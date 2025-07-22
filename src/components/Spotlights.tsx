@@ -32,7 +32,7 @@ const Spotlights = () => {
       title: 'AI Video Prompt Generator',
       description:
         'Enables you to generate cinematic, commercial, or artistic video prompts for AI video tools (like Runway, Pika Labs, or Sora).',
-      image: '/images/pic01.jpg', // Replace with a relevant image if available
+      image: '/images/ai-prompt-image-coffe.png', // Replace with a relevant image if available
       position: 'center center',
       link: '/ai-video-prompt-generator',
     },
@@ -41,7 +41,7 @@ const Spotlights = () => {
       title: 'AI Image Prompt Generator',
       description:
         'Helps you craft detailed, creative prompts for AI image generation tools (like DALL-E, Midjourney, or Stable Diffusion).',
-      image: '/images/pic02.jpg', // Replace with a relevant image if available
+      image: '/images/ai-prompt-image-crocodile.png', // Replace with a relevant image if available
       position: 'top center',
       link: '/ai-image-prompt-generator',
     },
@@ -50,16 +50,16 @@ const Spotlights = () => {
       title: 'AI Audio Prompt Generator',
       description:
         'Lets you create prompts for AI audio/music generation, including soundscapes, voiceovers, and music tracks.',
-      image: '/images/pic03.jpg', // Replace with a relevant image if available
+      image: '/images/ai-prompt-image-sound.png', // Replace with a relevant image if available
       position: 'center center',
       link: '/ai-audio-prompt-generator',
     },
     {
-      id: 3,
+      id: 4, // Changed from 3 to 4 to ensure uniqueness
       title: 'AI Script/Story Prompt Generator (Coming Soon)',
       description:
         'Assists in generating story or script prompts for AI writing tools.',
-      image: '/images/pic03.jpg', // Replace with a relevant image if available
+      image: '/images/ai-prompt-video-story.png', // Replace with a relevant image if available
       position: 'center center',
       link: '/ai-script-prompt-generator',
     },
@@ -69,7 +69,7 @@ const Spotlights = () => {
     <section
       id="one"
       ref={sectionRef}
-      className="wrapper style2 spotlights fade-up py-20"
+      className="wrapper style2 spotlights fade-up"
     >
       {spotlights.map(spotlight => (
         <section

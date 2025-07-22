@@ -12,17 +12,10 @@ import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import '../../components/PromptGenerator/PromptGenerator.css';
 
-// Dynamic import for Sidebar with SSR disabled
 const Sidebar = dynamic(() => import('@/components/Sidebar'), { ssr: false });
 
-const FORM_STORAGE_KEY = 'ai-story-prompt-form';
-const GEN_COUNT_KEY = 'ai-story-prompt-gen-count';
-const MAX_GEN_COUNT =
-  typeof process !== 'undefined' && process.env.NEXT_PUBLIC_MAX_GEN_COUNT
-    ? parseInt(process.env.NEXT_PUBLIC_MAX_GEN_COUNT, 10) || 4
-    : 4;
+const FORM_STORAGE_KEY = 'ai-script-prompt-form';
 
-// Define the mapping of form sections to their required fields
 const sectionFields = [
   { name: 'Core Elements', fields: ['genre', 'setting', 'mainCharacter'] },
   { name: 'Conflict & Theme', fields: ['conflict', 'theme', 'goal'] },
@@ -31,9 +24,7 @@ const sectionFields = [
   { name: 'Additional Details', fields: ['inspiration', 'customInstructions'] },
 ];
 
-const progressSteps: string[] = sectionFields.map(
-  (s: { name: string }) => s.name
-);
+const progressSteps = sectionFields.map((s: { name: string }) => s.name);
 
 function isSectionComplete(
   section: { fields: string[] },
@@ -44,7 +35,7 @@ function isSectionComplete(
   );
 }
 
-export default function AIStoryPromptGenerator() {
+export default function AIScriptPromptGenerator() {
   const [mounted, setMounted] = useState(false);
   const initialFormData: StoryFormData = {
     title: '',
@@ -110,7 +101,6 @@ export default function AIStoryPromptGenerator() {
     }
   }, [formData]);
 
-  // Fetch prompt count from backend on login
   useEffect(() => {
     const fetchPromptCount = async () => {
       if (user?.email) {
@@ -151,16 +141,16 @@ export default function AIStoryPromptGenerator() {
     if (subscriptionStatus !== 'active' && genCount <= 0) return;
     // Check for required fields (genre, setting, mainCharacter or protagonistName)
     if (!formData.genre.trim()) {
-      setSubjectError('Please enter a genre for your story');
+      setSubjectError('Please enter a genre for your script');
       return;
     }
     if (!formData.setting.trim()) {
-      setSubjectError('Please enter a setting for your story');
+      setSubjectError('Please enter a setting for your script');
       return;
     }
     if (!formData.mainCharacter.trim() && !formData.protagonistName.trim()) {
       setSubjectError(
-        'Please enter a main character or protagonist name for your story'
+        'Please enter a main character or protagonist name for your script'
       );
       return;
     }
@@ -205,7 +195,7 @@ export default function AIStoryPromptGenerator() {
       parts.push(`Special Elements: ${formData.specialElements}`);
     if (formData.additionalNotes)
       parts.push(`Additional Notes: ${formData.additionalNotes}`);
-    const prompt = `create an interesting full story based on the specifications below:\n\n${parts.join('\n')}`;
+    const prompt = `create a detailed script or screenplay based on the specifications below:\n\n${parts.join('\n')}`;
     setGeneratedPrompt(prompt);
     setShowPrompt(true);
     setCopied(false);
@@ -329,18 +319,18 @@ export default function AIStoryPromptGenerator() {
             style={{ maxWidth: '900px', margin: '0 auto' }}
           >
             <Header
-              title="AI Story Prompt Generator"
-              subtitle="Create detailed story prompts for ChatGPT, Gemini, and other AI tools"
-              icon="📖"
+              title="AI Script Prompt Generator"
+              subtitle="Create detailed script or screenplay prompts for ChatGPT, Gemini, and other AI tools"
+              icon="🎬"
             />
             <Instructions
               title="How to Use"
               steps={[
-                'Enter your story idea and key parameters',
+                'Enter your script idea and key parameters',
                 'Describe characters, setting, conflict, and desired structure',
                 'Add any special elements or twists',
-                'Generate your professional story prompt',
-                'Copy and use with AI story generators like ChatGPT or Gemini',
+                'Generate your professional script prompt',
+                'Copy and use with AI script generators like ChatGPT or Gemini',
               ]}
             />
             <StoryPromptGeneratorForm
@@ -375,7 +365,7 @@ export default function AIStoryPromptGenerator() {
                     ask:
                     <br />
                     <span className="story-suggestion-box-italic">
-                      Write a story based on this prompt.
+                      Write a script based on this prompt.
                     </span>
                   </div>
                   <button
