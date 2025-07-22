@@ -80,21 +80,28 @@ export default function PromptGenerator() {
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [genCount, setGenCount] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(GEN_COUNT_KEY);
-      if (saved) {
-        const n = parseInt(saved, 10);
-        if (!isNaN(n)) return n;
-      }
-    }
-    return 0;
-  });
+  const [genCount, setGenCount] = useState<number>(0);
   const [subjectError, setSubjectError] = useState<string | null>(null);
   const { user } = useAuth();
   const [subscriptionStatus, setSubscriptionStatus] = useState<
     'active' | 'inactive' | 'none' | null
   >(null);
+
+  // Fetch prompt count from backend on login
+  useEffect(() => {
+    const fetchPromptCount = async () => {
+      if (user?.email) {
+        try {
+          const res = await fetch(
+            `/api/prompt-usage?email=${encodeURIComponent(user.email)}`
+          );
+          const data = await res.json();
+          if (typeof data.count === 'number') setGenCount(data.count);
+        } catch {}
+      }
+    };
+    fetchPromptCount();
+  }, [user]);
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -194,8 +201,8 @@ export default function PromptGenerator() {
     setMounted(true);
   }, []);
 
-  const generatePrompt = () => {
-    if (subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT) return;
+  const generatePrompt = async () => {
+    if (subscriptionStatus !== 'active' && genCount <= 0) return;
     if (!formData.subject.trim()) {
       setSubjectError('Please enter a subject for your image');
       return;
@@ -298,13 +305,18 @@ export default function PromptGenerator() {
     setGeneratedPrompt(finalPrompt);
     setShowPrompt(true);
     setCopied(false);
-    setGenCount(prev => {
-      const next = prev + 1;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(GEN_COUNT_KEY, String(next));
-      }
-      return next;
-    });
+    // Decrement count in backend
+    if (user?.email && subscriptionStatus !== 'active') {
+      try {
+        const res = await fetch('/api/prompt-usage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: user.email }),
+        });
+        const data = await res.json();
+        if (typeof data.count === 'number') setGenCount(data.count);
+      } catch {}
+    }
   };
 
   const copyToClipboard = async () => {
@@ -330,10 +342,8 @@ export default function PromptGenerator() {
 
   const resetFormDataWithCount = () => {
     resetFormData();
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(GEN_COUNT_KEY);
-    }
-    setGenCount(0);
+    setGenCount(0); // Optionally, you may want to reset in backend too
+    setShowPrompt(false); // Ensure prompt is hidden after reset
   };
 
   if (!mounted) {
@@ -444,32 +454,36 @@ export default function PromptGenerator() {
             />
 
             {user && (
-              <div
-                className="prompt-generation-count"
-                style={{
-                  marginBottom: '16px',
-                  color:
-                    subscriptionStatus === 'active'
-                      ? '#7dd8e0'
-                      : genCount >= MAX_GEN_COUNT
-                        ? '#f4a261'
-                        : '#7dd8e0',
-                  fontWeight: 500,
-                }}
-              >
-                {subscriptionStatus === 'active'
-                  ? `You have unlimited prompt generations.`
-                  : genCount < MAX_GEN_COUNT
-                    ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
-                    : `You have reached the maximum of ${MAX_GEN_COUNT} prompt generations. Please reset the form to continue.`}
-              </div>
+              <>
+                <div
+                  className="prompt-generation-count"
+                  style={{
+                    marginBottom: '16px',
+                    color:
+                      subscriptionStatus === 'active'
+                        ? '#7dd8e0'
+                        : genCount === 0
+                          ? '#f4a261'
+                          : '#7dd8e0',
+                    fontWeight: 500,
+                  }}
+                >
+                  {subscriptionStatus === 'active'
+                    ? `You have unlimited prompt generations.`
+                    : genCount > 0
+                      ? `You have ${genCount} prompt generations left.`
+                      : `You have reached your prompt generation limit.`}
+                </div>
+                {/* Debug UI for prompt count */}
+                <div
+                  style={{ fontSize: '12px', color: '#888', marginBottom: 8 }}
+                ></div>
+              </>
             )}
             <GenerateButton
               onClick={generatePrompt}
               onReset={resetFormDataWithCount}
-              disabled={
-                subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT
-              }
+              disabled={subscriptionStatus !== 'active' && genCount <= 0}
             />
 
             {showPrompt && (
@@ -479,93 +493,91 @@ export default function PromptGenerator() {
                   onCopy={copyToClipboard}
                   copied={copied}
                 />
+                r{' '}
+              </div>
+            )}
 
-                {/* Tips Section */}
-                <div className="tips-section">
-                  <h3 className="tips-section-title">
-                    💡 Tips for Better Results
-                  </h3>
+            {/* Tips Section */}
+            <div className="tips-section">
+              <h3 className="tips-section-title">💡 Tips for Better Results</h3>
 
-                  <div className="tips-section-grid">
-                    {/* ChatGPT Enhancement */}
-                    <div>
-                      <h4 className="tips-section-card-title">
-                        🤖 Enhance with ChatGPT
-                      </h4>
-                      <p className="tips-section-card-desc">
-                        Copy your prompt and ask ChatGPT to enhance it with more
-                        details, professional terminology, and creative
-                        elements.
-                      </p>
-                      <button
-                        onClick={copyEnhancedPromptRequest}
-                        className="tips-section-btn"
-                      >
-                        Copy Enhancement Request
-                      </button>
-                    </div>
+              <div className="tips-section-grid">
+                {/* ChatGPT Enhancement */}
+                <div>
+                  <h4 className="tips-section-card-title">
+                    🤖 Enhance with ChatGPT
+                  </h4>
+                  <p className="tips-section-card-desc">
+                    Copy your prompt and ask ChatGPT to enhance it with more
+                    details, professional terminology, and creative elements.
+                  </p>
+                  <button
+                    onClick={copyEnhancedPromptRequest}
+                    className="tips-section-btn"
+                  >
+                    Copy Enhancement Request
+                  </button>
+                </div>
 
-                    {/* AI Image Generators */}
-                    <div>
-                      <h4 className="tips-section-card-title">
-                        🎨 Popular AI Image Generators
-                      </h4>
-                      <div className="tips-section-card-grid">
-                        {/* Each link below should use a class for styling */}
-                        <a
-                          href="https://openai.com/dall-e-2"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="tips-section-link"
-                        >
-                          DALL-E
-                        </a>
-                        <a
-                          href="https://www.midjourney.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="tips-section-link"
-                        >
-                          Midjourney
-                        </a>
-                        <a
-                          href="https://stability.ai"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="tips-section-link"
-                        >
-                          Stable Diffusion
-                        </a>
-                        <a
-                          href="https://firefly.adobe.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="tips-section-link"
-                        >
-                          Adobe Firefly
-                        </a>
-                        <a
-                          href="https://leonardo.ai"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="tips-section-link"
-                        >
-                          Leonardo AI
-                        </a>
-                        <a
-                          href="https://www.bing.com/create"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="tips-section-link"
-                        >
-                          Bing Image Creator
-                        </a>
-                      </div>
-                    </div>
+                {/* AI Image Generators */}
+                <div>
+                  <h4 className="tips-section-card-title">
+                    🎨 Popular AI Image Generators
+                  </h4>
+                  <div className="tips-section-card-grid">
+                    {/* Each link below should use a class for styling */}
+                    <a
+                      href="https://openai.com/dall-e-2"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="tips-section-link"
+                    >
+                      DALL-E
+                    </a>
+                    <a
+                      href="https://www.midjourney.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="tips-section-link"
+                    >
+                      Midjourney
+                    </a>
+                    <a
+                      href="https://stability.ai"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="tips-section-link"
+                    >
+                      Stable Diffusion
+                    </a>
+                    <a
+                      href="https://firefly.adobe.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="tips-section-link"
+                    >
+                      Adobe Firefly
+                    </a>
+                    <a
+                      href="https://leonardo.ai"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="tips-section-link"
+                    >
+                      Leonardo AI
+                    </a>
+                    <a
+                      href="https://www.bing.com/create"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="tips-section-link"
+                    >
+                      Bing Image Creator
+                    </a>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </main>
         {/* Right vertical progress sidebar */}

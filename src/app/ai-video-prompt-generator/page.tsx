@@ -112,16 +112,7 @@ export default function AIVideoPromptGenerator() {
   const [copied, setCopied] = useState(false);
   const [templateApplied, setTemplateApplied] = useState(false);
   const [appliedTemplateName, setAppliedTemplateName] = useState('');
-  const [genCount, setGenCount] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(GEN_COUNT_KEY);
-      if (saved) {
-        const n = parseInt(saved, 10);
-        if (!isNaN(n)) return n;
-      }
-    }
-    return 0;
-  });
+  const [genCount, setGenCount] = useState<number>(0);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const { user } = useAuth();
   const [subjectError, setSubjectError] = useState<string | null>(null);
@@ -156,6 +147,22 @@ export default function AIVideoPromptGenerator() {
       setIsSubscribed(sub === 'true');
     }
   }, []);
+
+  // Fetch prompt count from backend on login
+  useEffect(() => {
+    const fetchPromptCount = async () => {
+      if (user?.email) {
+        try {
+          const res = await fetch(
+            `/api/prompt-usage?email=${encodeURIComponent(user.email)}`
+          );
+          const data = await res.json();
+          if (typeof data.count === 'number') setGenCount(data.count);
+        } catch {}
+      }
+    };
+    fetchPromptCount();
+  }, [user]);
 
   // Reset gen count and subscription status on logout or account change
   useEffect(() => {
@@ -257,29 +264,138 @@ export default function AIVideoPromptGenerator() {
   });
 
   // --- Handlers ---
-  const generatePrompt = () => {
-    if (subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT) return;
+  const generatePrompt = async () => {
+    if (subscriptionStatus !== 'active' && genCount <= 0) return;
     if (!formData.subject.trim()) {
       setSubjectError('Please enter a subject for your video');
       return;
     }
     setSubjectError(null);
-    // ... your existing prompt generation logic ...
-    setGenCount(prev => {
-      const next = prev + 1;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(GEN_COUNT_KEY, String(next));
-      }
-      return next;
-    });
+
+    // Prompt generation logic (similar to image, but for video)
+    const parts: string[] = [];
+    // Core Elements
+    if (formData.subject) parts.push(formData.subject);
+    if (formData.style) parts.push(`in ${formData.style} style`);
+    if (formData.setting) parts.push(`set in ${formData.setting}`);
+    // Video Parameters
+    if (formData.cameraMovement) {
+      let moveDesc = formData.cameraMovement;
+      if (formData.movementSpeed) moveDesc += ` (${formData.movementSpeed})`;
+      if (formData.movementDirection)
+        moveDesc += ` moving ${formData.movementDirection}`;
+      parts.push(`camera movement: ${moveDesc}`);
+    }
+    if (formData.videoDuration)
+      parts.push(`duration: ${formData.videoDuration}`);
+    if (formData.frameRate) parts.push(`frame rate: ${formData.frameRate}`);
+    if (formData.videoStyle) {
+      let styleDesc = formData.videoStyle;
+      if (formData.cinematicStyle)
+        styleDesc += `, cinematic: ${formData.cinematicStyle}`;
+      if (formData.animationStyle)
+        styleDesc += `, animation: ${formData.animationStyle}`;
+      parts.push(`video style: ${styleDesc}`);
+    }
+    if (formData.transition) parts.push(`transition: ${formData.transition}`);
+    // Visual & Technical
+    if (formData.lighting) {
+      let lightingDesc = formData.lighting;
+      if (formData.lightIntensity)
+        lightingDesc += ` ${formData.lightIntensity}`;
+      if (formData.lightDirection)
+        lightingDesc += ` from ${formData.lightDirection}`;
+      if (formData.lightColor)
+        lightingDesc += ` with ${formData.lightColor} tones`;
+      parts.push(`with ${lightingDesc} lighting`);
+    }
+    if (formData.pov) {
+      let povDesc = formData.pov;
+      if (formData.povDistance) povDesc += ` ${formData.povDistance}`;
+      if (formData.povLensType)
+        povDesc += ` using ${formData.povLensType} lens`;
+      parts.push(`shot from ${povDesc} perspective`);
+    }
+    if (formData.composition) {
+      let compDesc = formData.composition;
+      if (formData.compositionBalance)
+        compDesc += ` with ${formData.compositionBalance} balance`;
+      if (formData.compositionDepth)
+        compDesc += ` and ${formData.compositionDepth} depth`;
+      parts.push(`with ${compDesc} composition`);
+    }
+    if (formData.aspectRatio && formData.aspectRatio !== '16:9')
+      parts.push(`${formData.aspectRatio} aspect ratio`);
+    if (formData.quality && formData.quality !== 'high')
+      parts.push(`${formData.quality} quality`);
+    // Atmosphere & Mood
+    if (formData.vibe) parts.push(`with ${formData.vibe} vibe`);
+    if (formData.mood) parts.push(`mood: ${formData.mood}`);
+    if (formData.atmosphere) {
+      let atmosDesc = formData.atmosphere;
+      if (formData.atmosphereDensity)
+        atmosDesc += ` ${formData.atmosphereDensity}`;
+      if (formData.atmosphereMovement)
+        atmosDesc += ` with ${formData.atmosphereMovement} movement`;
+      parts.push(`atmosphere: ${atmosDesc}`);
+    }
+    if (formData.emotions) parts.push(`emotions: ${formData.emotions}`);
+    // Environment & Context
+    if (formData.weather) {
+      let weatherDesc = formData.weather;
+      if (formData.windSpeed) weatherDesc += ` with ${formData.windSpeed} wind`;
+      if (formData.visibility)
+        weatherDesc += ` and ${formData.visibility} visibility`;
+      parts.push(`weather: ${weatherDesc}`);
+    }
+    if (formData.timeOfDay) parts.push(`time: ${formData.timeOfDay}`);
+    if (formData.season) parts.push(`season: ${formData.season}`);
+    // Sensory & Material
+    if (formData.sense) {
+      let senseDesc = formData.sense;
+      if (formData.temperature)
+        senseDesc += ` ${formData.temperature} temperature`;
+      if (formData.humidity) senseDesc += ` with ${formData.humidity} humidity`;
+      parts.push(`sensory: ${senseDesc}`);
+    }
+    if (formData.colors) parts.push(`colors: ${formData.colors}`);
+    if (formData.textures) parts.push(`textures: ${formData.textures}`);
+    if (formData.materials) parts.push(`materials: ${formData.materials}`);
+    // Action & Details
+    if (formData.actions) {
+      let actionDesc = formData.actions;
+      if (formData.actionSpeed) actionDesc += ` ${formData.actionSpeed}`;
+      if (formData.energyLevel) actionDesc += ` with ${formData.energyLevel}`;
+      parts.push(`action: ${actionDesc}`);
+    }
+    if (formData.details) parts.push(`details: ${formData.details}`);
+    if (formData.additionalDetails)
+      parts.push(`additional: ${formData.additionalDetails}`);
+    // Technical
+    if (formData.model && formData.model !== 'runway')
+      parts.push(`model: ${formData.model}`);
+    const finalPrompt = parts.join(', ');
+    setGeneratedPrompt(finalPrompt);
+    setShowPrompt(true);
+    setCopied(false);
+    // Decrement count in backend
+    if (user?.email && subscriptionStatus !== 'active') {
+      try {
+        const res = await fetch('/api/prompt-usage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: user.email }),
+        });
+        const data = await res.json();
+        if (typeof data.count === 'number') setGenCount(data.count);
+      } catch {}
+    }
   };
 
   const resetFormDataWithCount = () => {
     resetFormData();
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(GEN_COUNT_KEY);
-    }
-    setGenCount(0);
+    setGenCount(0); // Optionally, you may want to reset in backend too
+    setShowPrompt(false);
   };
 
   const handleApplyTemplate = (
@@ -420,12 +536,12 @@ export default function AIVideoPromptGenerator() {
               <div className="prompt-generation-count">
                 {subscriptionStatus === 'active'
                   ? 'You have unlimited prompt generations.'
-                  : genCount < MAX_GEN_COUNT
-                    ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
-                    : 'You have reached the free generation limit. Subscribe to unlock unlimited prompt generations.'}
+                  : genCount > 0
+                    ? `You have ${genCount} prompt generations left.`
+                    : 'You have reached your prompt generation limit.'}
               </div>
             )}
-            {!isSubscribed && genCount >= MAX_GEN_COUNT ? (
+            {!isSubscribed && genCount <= 0 ? (
               <div className="subscribe-box">
                 <div className="subscribe-box-message">
                   You have reached the free generation limit. Subscribe to
@@ -440,21 +556,21 @@ export default function AIVideoPromptGenerator() {
               <GenerateButton
                 onClick={generatePrompt}
                 onReset={resetFormDataWithCount}
-                disabled={
-                  subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT
-                }
+                disabled={subscriptionStatus !== 'active' && genCount <= 0}
               />
             )}
             {showPrompt && (
-              <PromptDisplay
-                prompt={generatedPrompt}
-                onCopy={() => {
-                  navigator.clipboard.writeText(generatedPrompt);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 2000);
-                }}
-                copied={copied}
-              />
+              <div className="generator-prompt-section">
+                <PromptDisplay
+                  prompt={generatedPrompt}
+                  onCopy={() => {
+                    navigator.clipboard.writeText(generatedPrompt);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  copied={copied}
+                />
+              </div>
             )}
           </div>
         </main>

@@ -44,7 +44,11 @@ export default function GenerateButton({
         className="btn-primary"
       >
         {isLoading && <div className="loading-spinner"></div>}
-        {user ? '🚀 Generate Prompt' : '🔐 Sign in Google to Generate Prompt'}
+        {user
+          ? disabled
+            ? '🚀 Subscribe to get unlimited access only IDR 6k'
+            : '🚀 Generate Prompt'
+          : '🔐 Sign in Google to Generate Prompt'}
       </button>
 
       <div className="button-container-right">

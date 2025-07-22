@@ -76,21 +76,28 @@ export default function AIAudioPromptGenerator() {
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [genCount, setGenCount] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(GEN_COUNT_KEY);
-      if (saved) {
-        const n = parseInt(saved, 10);
-        if (!isNaN(n)) return n;
-      }
-    }
-    return 0;
-  });
+  const [genCount, setGenCount] = useState<number>(0);
   const [subjectError, setSubjectError] = useState<string | null>(null);
   const { user } = useAuth();
   const [subscriptionStatus, setSubscriptionStatus] = useState<
     'active' | 'inactive' | 'none' | null
   >(null);
+
+  // Fetch prompt count from backend on login
+  useEffect(() => {
+    const fetchPromptCount = async () => {
+      if (user?.email) {
+        try {
+          const res = await fetch(
+            `/api/prompt-usage?email=${encodeURIComponent(user.email)}`
+          );
+          const data = await res.json();
+          if (typeof data.count === 'number') setGenCount(data.count);
+        } catch {}
+      }
+    };
+    fetchPromptCount();
+  }, [user]);
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -225,8 +232,8 @@ export default function AIAudioPromptGenerator() {
     setMounted(true);
   }, []);
 
-  const generatePrompt = () => {
-    if (subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT) return;
+  const generatePrompt = async () => {
+    if (subscriptionStatus !== 'active' && genCount <= 0) return;
     if (!formData.subject.trim()) {
       setSubjectError('Please enter a subject for your audio');
       return;
@@ -520,13 +527,18 @@ export default function AIAudioPromptGenerator() {
     setGeneratedPrompt(finalPrompt);
     setShowPrompt(true);
     setCopied(false);
-    setGenCount(prev => {
-      const next = prev + 1;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(GEN_COUNT_KEY, String(next));
-      }
-      return next;
-    });
+    // Decrement count in backend
+    if (user?.email && subscriptionStatus !== 'active') {
+      try {
+        const res = await fetch('/api/prompt-usage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: user.email }),
+        });
+        const data = await res.json();
+        if (typeof data.count === 'number') setGenCount(data.count);
+      } catch {}
+    }
   };
 
   const copyToClipboard = async () => {
@@ -552,10 +564,8 @@ export default function AIAudioPromptGenerator() {
 
   const resetFormDataWithCount = () => {
     resetFormData();
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(GEN_COUNT_KEY);
-    }
-    setGenCount(0);
+    setGenCount(0); // Optionally, you may want to reset in backend too
+    setShowPrompt(false);
   };
 
   if (!mounted) {
@@ -670,24 +680,22 @@ export default function AIAudioPromptGenerator() {
                 color:
                   subscriptionStatus === 'active'
                     ? '#7dd8e0'
-                    : genCount >= MAX_GEN_COUNT
+                    : genCount === 0
                       ? '#f4a261'
                       : '#7dd8e0',
               }}
             >
               {subscriptionStatus === 'active'
                 ? `You have unlimited prompt generations.`
-                : genCount < MAX_GEN_COUNT
-                  ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
-                  : `You have reached the maximum of ${MAX_GEN_COUNT} prompt generations. Please reset the form to continue.`}
+                : genCount > 0
+                  ? `You have ${genCount} prompt generations left.`
+                  : `You have reached your prompt generation limit.`}
             </div>
           )}
           <GenerateButton
             onClick={generatePrompt}
             onReset={resetFormDataWithCount}
-            disabled={
-              subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT
-            }
+            disabled={subscriptionStatus !== 'active' && genCount <= 0}
           />
 
           {showPrompt && (

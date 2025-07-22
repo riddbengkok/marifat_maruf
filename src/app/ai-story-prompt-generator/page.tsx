@@ -93,16 +93,7 @@ export default function AIStoryPromptGenerator() {
   const [showPrompt, setShowPrompt] = useState(false);
   const [copied, setCopied] = useState(false);
   const promptRef = useRef<HTMLDivElement>(null);
-  const [genCount, setGenCount] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(GEN_COUNT_KEY);
-      if (saved) {
-        const n = parseInt(saved, 10);
-        if (!isNaN(n)) return n;
-      }
-    }
-    return 0;
-  });
+  const [genCount, setGenCount] = useState<number>(0);
   const [subjectError, setSubjectError] = useState<string | null>(null);
   const { user } = useAuth();
   const [subscriptionStatus, setSubscriptionStatus] = useState<
@@ -118,6 +109,22 @@ export default function AIStoryPromptGenerator() {
       localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formData));
     }
   }, [formData]);
+
+  // Fetch prompt count from backend on login
+  useEffect(() => {
+    const fetchPromptCount = async () => {
+      if (user?.email) {
+        try {
+          const res = await fetch(
+            `/api/prompt-usage?email=${encodeURIComponent(user.email)}`
+          );
+          const data = await res.json();
+          if (typeof data.count === 'number') setGenCount(data.count);
+        } catch {}
+      }
+    };
+    fetchPromptCount();
+  }, [user]);
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -140,8 +147,8 @@ export default function AIStoryPromptGenerator() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const generatePrompt = () => {
-    if (subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT) return;
+  const generatePrompt = async () => {
+    if (subscriptionStatus !== 'active' && genCount <= 0) return;
     // Check for required fields (genre, setting, mainCharacter)
     if (!formData.genre.trim()) {
       setSubjectError('Please enter a genre for your story');
@@ -200,13 +207,18 @@ export default function AIStoryPromptGenerator() {
     setGeneratedPrompt(prompt);
     setShowPrompt(true);
     setCopied(false);
-    setGenCount(prev => {
-      const next = prev + 1;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(GEN_COUNT_KEY, String(next));
-      }
-      return next;
-    });
+    // Decrement count in backend
+    if (user?.email && subscriptionStatus !== 'active') {
+      try {
+        const res = await fetch('/api/prompt-usage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: user.email }),
+        });
+        const data = await res.json();
+        if (typeof data.count === 'number') setGenCount(data.count);
+      } catch {}
+    }
   };
 
   const resetFormData = () => {
@@ -214,10 +226,6 @@ export default function AIStoryPromptGenerator() {
     setShowPrompt(false);
     setGeneratedPrompt('');
     setCopied(false);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(FORM_STORAGE_KEY);
-      localStorage.removeItem(GEN_COUNT_KEY);
-    }
     setGenCount(0);
   };
 
@@ -341,17 +349,15 @@ export default function AIStoryPromptGenerator() {
               <div className="prompt-generation-count">
                 {subscriptionStatus === 'active'
                   ? 'You have unlimited prompt generations.'
-                  : genCount < MAX_GEN_COUNT
-                    ? `You have ${MAX_GEN_COUNT - genCount} prompt generations left.`
-                    : 'You have reached the maximum of 4 prompt generations. Please reset the form to continue.'}
+                  : genCount > 0
+                    ? `You have ${genCount} prompt generations left.`
+                    : 'You have reached your prompt generation limit.'}
               </div>
             )}
             <GenerateButton
               onClick={generatePrompt}
               onReset={resetFormData}
-              disabled={
-                subscriptionStatus !== 'active' && genCount >= MAX_GEN_COUNT
-              }
+              disabled={subscriptionStatus !== 'active' && genCount <= 0}
             />
             {showPrompt && (
               <div className="generator-prompt-section">
