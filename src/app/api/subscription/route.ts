@@ -42,10 +42,16 @@ async function generateMidtransToken({
     ? 'https://app.midtrans.com/snap/v1'
     : 'https://app.sandbox.midtrans.com/snap/v1';
 
+  // Get subscribe price from env
+  const subscribePrice =
+    typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE
+      ? parseInt(process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE, 10)
+      : 10000;
+
   const parameter = {
     transaction_details: {
       order_id,
-      gross_amount: 10000, // Fixed gross amount as requested
+      gross_amount: subscribePrice, // Use env price
     },
     customer_details,
     item_details,

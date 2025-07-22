@@ -28,27 +28,35 @@ const Spotlights = () => {
   const spotlights = [
     {
       id: 1,
-      title: 'Sed ipsum dolor',
+      title: 'AI Video Prompt Generator',
       description:
-        'Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.',
-      image: '/images/pic01.jpg',
+        'Enables you to generate cinematic, commercial, or artistic video prompts for AI video tools (like Runway, Pika Labs, or Sora).',
+      image: '/images/pic01.jpg', // Replace with a relevant image if available
       position: 'center center',
     },
     {
       id: 2,
-      title: 'Feugiat consequat',
+      title: 'AI Image Prompt Generator',
       description:
-        'Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.',
-      image: '/images/pic02.jpg',
+        'Helps you craft detailed, creative prompts for AI image generation tools (like DALL-E, Midjourney, or Stable Diffusion).',
+      image: '/images/pic02.jpg', // Replace with a relevant image if available
       position: 'top center',
     },
     {
       id: 3,
-      title: 'Ultricies aliquam',
+      title: 'AI Audio Prompt Generator',
       description:
-        'Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.',
-      image: '/images/pic03.jpg',
-      position: '25% 25%',
+        'Lets you create prompts for AI audio/music generation, including soundscapes, voiceovers, and music tracks.',
+      image: '/images/pic03.jpg', // Replace with a relevant image if available
+      position: 'center center',
+    },
+    {
+      id: 3,
+      title: 'AI Script/Story Prompt Generator (Coming Soon)',
+      description:
+        'Assists in generating story or script prompts for AI writing tools.',
+      image: '/images/pic03.jpg', // Replace with a relevant image if available
+      position: 'center center',
     },
   ];
 

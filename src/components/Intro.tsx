@@ -50,29 +50,22 @@ const Intro = () => {
 
       <div className="inner relative z-10 text-center px-4 lg:px-8">
         <h1 className="text-hyperspace-h1 font-bold mb-6 text-gradient">
-          Hyperspace
+          Effortless AI Prompt Generation
         </h1>
         <p className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-          Just another fine responsive site template designed by{' '}
-          <a
-            href="http://html5up.net"
-            className="text-cyan-300 hover:text-cyan-200 transition-colors duration-200 underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            HTML5 UP
-          </a>
-          <br />
-          and released for free under the{' '}
-          <a
-            href="http://html5up.net/license"
-            className="text-cyan-300 hover:text-cyan-200 transition-colors duration-200 underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Creative Commons
-          </a>
-          .
+          supports important things that help you maximize digital potential in
+          the AI era{' '}
+          <span className="text-base text-gray-400 block mt-4">
+            <span className="font-semibold text-white">images</span>,{' '}
+            <span className="font-semibold text-white">videos</span>,{' '}
+            <span className="font-semibold text-white">audio</span>, and{' '}
+            <span className="font-semibold text-white">scripts</span> prompt
+            generator.
+            <br />
+            <span className="block mt-2">
+              All with a modern, user-friendly interface and instant feedback.
+            </span>
+          </span>
         </p>
         <div className="actions space-x-4">
           <button

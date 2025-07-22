@@ -26,66 +26,66 @@ const Features = () => {
   }, []);
 
   const features = [
-    {
-      id: 1,
-      title: 'AI Image Prompt Generator',
-      description:
-        'Create detailed, professional prompts for AI image generation tools like DALL-E, Midjourney, and Stable Diffusion. Generate stunning visuals with our comprehensive form-based interface.',
-      icon: (
-        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fillRule="evenodd"
-            d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-            clipRule="evenodd"
-          />
-        </svg>
-      ),
-      link: '/prompt-generator',
-      image: '/images/prompt-generator-screenshot.jpg',
-      technologies: ['React', 'Next.js', 'AI Integration', 'Form Design'],
-    },
-    {
-      id: 2,
-      title: 'AI Video Prompt Generator',
-      description:
-        'Generate comprehensive prompts for AI video generation platforms. Create detailed scene descriptions, camera movements, and visual effects for stunning video content.',
-      icon: (
-        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fillRule="evenodd"
-            d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z"
-            clipRule="evenodd"
-          />
-          <path d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 01-2-2v-2z" />
-        </svg>
-      ),
-      link: '/ai-video-prompt-generator',
-      image: '/images/video-prompt-generator-screenshot.jpg',
-      technologies: ['Vue.js', 'Laravel', 'Video AI', 'Advanced Forms'],
-    },
-    {
-      id: 3,
-      title: 'AI Audio Prompt Generator',
-      description:
-        'Create detailed audio prompts for AI music generation tools. Generate musical compositions with specific genres, instruments, effects, and emotional qualities.',
-      icon: (
-        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fillRule="evenodd"
-            d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.793L4.5 14H2a1 1 0 01-1-1V7a1 1 0 011-1h2.5l3.883-3.793a1 1 0 011.617.793zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z"
-            clipRule="evenodd"
-          />
-        </svg>
-      ),
-      link: '/ai-audio-prompt-generator',
-      image: '/images/audio-prompt-generator-screenshot.jpg',
-      technologies: ['Next.js', 'TypeScript', 'Audio AI', 'Music Generation'],
-    },
+    // {
+    //   id: 1,
+    //   title: 'AI Image Prompt Generator',
+    //   description:
+    //     'Create detailed, professional prompts for AI image generation tools like DALL-E, Midjourney, and Stable Diffusion. Generate stunning visuals with our comprehensive form-based interface.',
+    //   icon: (
+    //     <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+    //       <path
+    //         fillRule="evenodd"
+    //         d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+    //         clipRule="evenodd"
+    //       />
+    //     </svg>
+    //   ),
+    //   link: '/prompt-generator',
+    //   image: '/images/prompt-generator-screenshot.jpg',
+    //   technologies: ['React', 'Next.js', 'AI Integration', 'Form Design'],
+    // },
+    // {
+    //   id: 2,
+    //   title: 'AI Video Prompt Generator',
+    //   description:
+    //     'Generate comprehensive prompts for AI video generation platforms. Create detailed scene descriptions, camera movements, and visual effects for stunning video content.',
+    //   icon: (
+    //     <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+    //       <path
+    //         fillRule="evenodd"
+    //         d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z"
+    //         clipRule="evenodd"
+    //       />
+    //       <path d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 01-2-2v-2z" />
+    //     </svg>
+    //   ),
+    //   link: '/ai-video-prompt-generator',
+    //   image: '/images/video-prompt-generator-screenshot.jpg',
+    //   technologies: ['Vue.js', 'Laravel', 'Video AI', 'Advanced Forms'],
+    // },
+    // {
+    //   id: 3,
+    //   title: 'AI Audio Prompt Generator',
+    //   description:
+    //     'Create detailed audio prompts for AI music generation tools. Generate musical compositions with specific genres, instruments, effects, and emotional qualities.',
+    //   icon: (
+    //     <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+    //       <path
+    //         fillRule="evenodd"
+    //         d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.793L4.5 14H2a1 1 0 01-1-1V7a1 1 0 011-1h2.5l3.883-3.793a1 1 0 011.617.793zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z"
+    //         clipRule="evenodd"
+    //       />
+    //     </svg>
+    //   ),
+    //   link: '/ai-audio-prompt-generator',
+    //   image: '/images/audio-prompt-generator-screenshot.jpg',
+    //   technologies: ['Next.js', 'TypeScript', 'Audio AI', 'Music Generation'],
+    // },
     {
       id: 4,
-      title: 'Professional Portfolio',
+      title: 'A Lot of portfolio doing frontend project',
       description:
-        'Showcase your work with a modern, responsive portfolio website. Features project galleries, skills visualization, and professional contact forms.',
+        'have a lot of experience building professional websites, responsive web apps react/next/vue, professional dashboard pages, seo friendly web pages',
       icon: (
         <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
           <path
@@ -168,7 +168,7 @@ const Features = () => {
     >
       <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
         <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
-          Our Services & Tools
+          Our Services
         </h2>
         <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
           Discover our comprehensive suite of AI-powered tools and professional
