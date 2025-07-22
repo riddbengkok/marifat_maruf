@@ -87,6 +87,12 @@ const Sidebar = () => {
     }
   };
 
+  // Get subscribe price from env
+  const subscribePrice =
+    typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE
+      ? parseInt(process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE, 10)
+      : 10000;
+
   async function handleSubscribePayment(
     user: { email?: string | null } | null
   ) {
@@ -115,7 +121,7 @@ const Sidebar = () => {
             item_details: [
               {
                 id: 'sub001',
-                price: 10000,
+                price: subscribePrice,
                 quantity: 1,
                 name: 'Subscription',
               },
@@ -270,7 +276,7 @@ const Sidebar = () => {
           item_details: [
             {
               id: 'sub001',
-              price: 10000,
+              price: subscribePrice,
               quantity: 1,
               name: 'Subscription',
             },
@@ -718,16 +724,17 @@ const Sidebar = () => {
 
           {/* Footer */}
           <div className="pt-4 border-t border-white/20">
-            <p className="text-sm text-gray-400">© 2024 Marifat Maruf</p>
+            <p className="text-sm text-gray-400">© 2025 Marifat Maruf</p>
           </div>
 
           {/* Subscribe Button */}
-          <li className="pt-4 border-t border-white/20">
+          <li className="pt-4 border-t border-white/20 flex justify-center">
             <button
-              className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium block bg-gradient-to-r from-cyan-400 to-blue-500 py-2 px-4 rounded-lg mt-4"
+              className="mt-4 px-4 py-2 text-sm font-semibold rounded-md shadow bg-gradient-to-r from-gray-900 to-gray-700 text-white hover:from-gray-800 hover:to-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-400 transition-all border border-cyan-500"
+              style={{ letterSpacing: '0.04em' }}
               onClick={() => handleSubscribePayment(user)}
             >
-              Subscribe (Dummy)
+              Subscribe
             </button>
           </li>
         </div>

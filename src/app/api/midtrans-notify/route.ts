@@ -65,6 +65,8 @@ export async function POST(req: NextRequest) {
           plan: 'pro',
           startedAt: now,
           endsAt,
+          paymentProvider: 'midtrans',
+          paymentRef: order_id,
         },
         create: {
           userId: order.user.id,
@@ -72,6 +74,8 @@ export async function POST(req: NextRequest) {
           plan: 'pro',
           startedAt: now,
           endsAt,
+          paymentProvider: 'midtrans',
+          paymentRef: order_id,
         },
       });
       await prisma.order.update({
