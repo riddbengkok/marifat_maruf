@@ -180,8 +180,21 @@ const Sidebar = () => {
               alert('Payment Error!');
               console.log('Error:', result);
             },
-            onClose: function () {
+            onClose: async function () {
               alert('Payment popup closed without finishing the payment');
+              // Remove order if payment was canceled
+              if (orderId) {
+                const orderIdNum = orderId.replace('order-', '');
+                try {
+                  await fetch(`/api/subscription?id=${orderIdNum}`, {
+                    method: 'DELETE',
+                  });
+                } catch (e) {
+                  console.error('Failed to delete order after cancel:', e);
+                }
+                setStoredSnapToken('');
+                localStorage.removeItem('snap_order_id');
+              }
             },
           });
         } else {

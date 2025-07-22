@@ -208,3 +208,21 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    if (!id) {
+      return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+    }
+    const orderIdNum = parseInt(id);
+    await prisma.order.delete({ where: { id: orderIdNum } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    let message = 'Failed to delete order';
+    if (error instanceof Error) message = error.message;
+    else if (typeof error === 'string') message = error;
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
