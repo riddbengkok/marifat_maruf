@@ -481,7 +481,7 @@ export default function Home() {
                 My technical skills span across frontend and backend
                 technologies, with a focus on modern Frontend web development
                 frameworks. I have a strong understanding of the entire Frontend
-                web development process.
+                web development process, debuging and optimizing the code.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
