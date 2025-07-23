@@ -2,6 +2,14 @@
 
 import ProjectModal from '@/components/ProjectModal';
 import Sidebar from '@/components/Sidebar';
+import {
+  achievements,
+  certifications,
+  education,
+  experience,
+  projects,
+  skills,
+} from '@/lib/projectsData';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -62,295 +70,6 @@ const Portfolio = () => {
       observer.disconnect();
     };
   }, []);
-
-  const projects = [
-    {
-      id: 1,
-      title: 'User Transfer Report',
-      description:
-        'Comprehensive user transfer reporting system with detailed analytics and data visualization for financial transactions.',
-      image: '/images/rifat.jpg',
-      technologies: ['Vue.js', 'Laravel', 'Figma', 'MySQL'],
-      link: 'https://www.figma.com/design/H9S7zoLuAu2A2zRJdtbGcK/user-transfer-report---vue-laravel?node-id=0-1&p=f&t=7lHb8MkXkTdsN6c4-0',
-      category: 'Full Stack',
-      placeholderColor: 'from-blue-500 to-cyan-500',
-    },
-    {
-      id: 2,
-      title: 'Component Edit System',
-      description:
-        'Advanced component editing interface with real-time updates and seamless integration for Vue.js to Next.js migration.',
-      image: '/images/pic02.jpg',
-      technologies: ['Vue.js', 'Laravel', 'Next.js', 'TypeScript'],
-      link: 'https://www.figma.com/design/UVAWI2hdWcewkIkBrzPXfG/component-edit---vue-laravel---migrate-to-next-js?node-id=0-1&p=f&t=kZ0EtWRCJzIjdBbM-0',
-      category: 'Frontend Development',
-      placeholderColor: 'from-purple-500 to-pink-500',
-    },
-    {
-      id: 3,
-      title: 'KoinBill Add Product',
-      description:
-        'Product management system for KoinBill platform with intuitive interface for adding and managing digital products.',
-      image: '/images/pic03.jpg',
-      technologies: ['Vue.js', 'Laravel', 'Figma', 'REST API'],
-      link: 'https://www.figma.com/design/PXZ0CzMlDkcz0e0MFsYcU5/koinbill-add-product---vue-laravel?node-id=0-1&p=f&t=PjjMGpQ76Cx02qYC-0',
-      category: 'Web Development',
-      placeholderColor: 'from-green-500 to-teal-500',
-    },
-    {
-      id: 4,
-      title: 'Porto Incoming Cash',
-      description:
-        'Financial management system for tracking incoming cash flows with comprehensive reporting and analytics dashboard.',
-      image: '/images/pic04.jpg',
-      technologies: ['Vue.js', 'Laravel', 'Figma', 'Chart.js'],
-      link: 'https://www.figma.com/design/Gqvd1cQ6Hx7CFdHOmPXnuT/porto-incoming-cash---vue-laravel?node-id=0-1&p=f&t=nh7GO9KtKUD80Dto-0',
-      category: 'Full Stack',
-      placeholderColor: 'from-orange-500 to-red-500',
-    },
-    {
-      id: 5,
-      title: 'Coupon Campaign System',
-      description:
-        'Dynamic coupon campaign management platform with automated distribution and tracking capabilities.',
-      image: '/images/pic05.jpg',
-      technologies: ['Laravel', 'Next.js', 'Figma', 'MySQL'],
-      link: 'https://www.figma.com/design/jGNmXrFO969siHWTZ0xTCv/Coupon-Campaign---Migrate-laravel-to-next-js?node-id=0-1&p=f&t=DTzg33eAhIPfNRex-0',
-      category: 'Backend Development',
-      placeholderColor: 'from-indigo-500 to-purple-500',
-    },
-    {
-      id: 6,
-      title: 'KScore Dashboard',
-      description:
-        'Credit scoring and financial assessment dashboard with real-time data processing and user-friendly interface.',
-      image: '/images/pic06.jpg',
-      technologies: ['React.js', 'Figma', 'JavaScript', 'CSS3'],
-      link: 'https://www.figma.com/design/Vk6voJBCWH0jANJLwaFYvx/Kscore--react-js?node-id=0-1&p=f&t=IQ8537kVuc7ajgBw-0',
-      category: 'Frontend Development',
-      placeholderColor: 'from-yellow-500 to-orange-500',
-    },
-  ];
-
-  const skills = [
-    {
-      name: 'Vue.js & Nuxt.js',
-      level: 95,
-      color: 'from-green-400 to-emerald-500',
-    },
-    {
-      name: 'React.js & Next.js',
-      level: 95,
-      color: 'from-orange-400 to-blue-500',
-    },
-    { name: 'HTML & CSS', level: 95, color: 'from-blue-400 to-emerald-500' },
-    {
-      name: 'TypeScript & JavaScript',
-      level: 90,
-      color: 'from-yellow-400 to-orange-500',
-    },
-    { name: 'Laravel & PHP', level: 75, color: 'from-red-400 to-pink-500' },
-    {
-      name: 'MySQL & Database',
-      level: 70,
-      color: 'from-purple-400 to-indigo-500',
-    },
-    {
-      name: 'UI/UX Design & Figma',
-      level: 65,
-      color: 'from-pink-400 to-rose-500',
-    },
-    { name: 'Git', level: 75, color: 'from-orange-400 to-red-500' },
-    { name: 'Docker', level: 65, color: 'from-indigo-400 to-purple-500' },
-  ];
-
-  const experience = [
-    // {
-    //   company: "Remote",
-    //   position: "Frontend Web Developer",
-    //   duration: "May 2025 - Present",
-    //   location: "Daerah Istimewa Yogyakarta, Indonesia · Hybrid",
-    //   description: "Currently working as a Frontend Web Developer with expertise in React.js, Next.js, Vue.js, WordPress, and Laravel. Specializing in modern frontend development and creating responsive web applications.",
-    //   technologies: ["React.js", "Next.js", "Vue.js", "WordPress", "Laravel"],
-    //   achievements: [
-    //     "Developing modern frontend applications using React.js and Next.js",
-    //     "Creating responsive and user-friendly web interfaces",
-    //     "Working with WordPress and Laravel for full-stack solutions",
-    //     "Collaborating in a hybrid work environment"
-    //   ]
-    // },
-    {
-      company: 'PT. Lunaria Annua Teknologi',
-      position: 'Frontend Web Developer',
-      duration: 'May 2019 - May 2025 · 6 yrs 1 mo',
-      location: 'Yogyakarta, Indonesia',
-      description:
-        'Started as a fullstack developer working with Laravel and Ruby on Rails. Transitioned to focus on frontend development, becoming an expert in Frontend technologies like HTML, CSS, React.js,Next.js, Vue.js and Nuxt.js. Enjoyed the specialization and continued to develop skills in frontend technologies.',
-      technologies: [
-        'HTML',
-        'CSS',
-        'React.js',
-        'Next.js',
-        'Vue.js',
-        'Nuxt.js',
-        'Laravel',
-        'Ruby on Rails',
-      ],
-      achievements: [
-        'Gained 6+ years of experience in web development specializing in frontend development',
-        'very familiar working together in a team',
-        'Developed expertise in React.js, Next.js, Vue.js, Nuxt.js frameworks and other frontend technologies ,with tools like Git, Cursor, Docker, Vercel, Confluence, Jira, and other tools',
-        'familiar with Laravel,prisma,Next.js for backend integration',
-      ],
-    },
-    {
-      company: 'Upwork',
-      position: 'Professional Freelancer',
-      duration: 'Nov 2015 - May 2019 · 3 yrs 7 mos',
-      location: 'Yogyakarta Area, Yogyakarta, Indonesia',
-      description:
-        'Worked as a professional freelancer providing PHP and frontend web development services to various clients through the Upwork platform.',
-      technologies: ['PHP', 'Frontend Development', 'Web Development'],
-      achievements: [
-        'Successfully completed multiple freelance projects',
-        'Built client relationships and maintained high satisfaction',
-        'Developed skills in PHP and frontend technologies',
-        'Gained experience in remote work and project management',
-      ],
-    },
-    {
-      company: 'Printerous',
-      position: 'Software Programmer',
-      duration: 'Jan 2019 - Apr 2019 · 4 mos',
-      location: 'Greater Jakarta Area, Indonesia',
-      description:
-        'Worked as a backend developer using Ruby on Rails and JavaScript. Gained experience in backend development and software programming.',
-      technologies: ['Ruby on Rails', 'JavaScript', 'Backend Development'],
-      achievements: [
-        'Developed backend solutions using Ruby on Rails',
-        'Worked with JavaScript for dynamic functionality',
-        'Gained experience in backend development practices',
-        'Contributed to software development projects',
-      ],
-    },
-    {
-      company: 'PT. Mediatechindo (PT. Media Digitech Indonesia)',
-      position: 'Frontend Developer',
-      duration: 'Jun 2017 - Jan 2019 · 1 yr 8 mos',
-      location: 'Yogyakarta Area, Yogyakarta, Indonesia',
-      description:
-        'Worked as a frontend developer, Laravel developer, WordPress developer. Specialized in PHP, JavaScript, PSD to HTML conversion, and other frontend technologies.',
-      technologies: [
-        'Laravel',
-        'WordPress',
-        'PHP',
-        'JavaScript',
-        'PSD to HTML',
-      ],
-      achievements: [
-        'Developed frontend applications using multiple technologies',
-        'Worked with Laravel framework for web applications',
-        'Created WordPress themes and plugins',
-        'Converted PSD designs to functional HTML/CSS',
-      ],
-    },
-    {
-      company: '8villages',
-      position: 'Frontend Developer',
-      duration: 'May 2016 - Nov 2016 · 7 mos',
-      location: 'Greater Jakarta Area, Indonesia',
-      description:
-        'Worked as a frontend developer using CodeIgniter, Yii, Firebase, PHP, Laravel, Bootstrap, and other frontend technologies.',
-      technologies: [
-        'CodeIgniter',
-        'Yii',
-        'Firebase',
-        'PHP',
-        'Laravel',
-        'Bootstrap',
-      ],
-      achievements: [
-        'Developed web applications using CodeIgniter and Yii frameworks',
-        'Integrated Firebase for real-time functionality',
-        'Worked with PHP and Laravel for backend integration',
-        'Used Bootstrap for responsive design',
-      ],
-    },
-    {
-      company: 'Airbinder',
-      position: 'Web Programmer',
-      duration: 'Feb 2015 - Oct 2016 · 1 yr 9 mos',
-      location: 'Remote',
-      description:
-        'Worked as a web programmer developing web applications and solutions.',
-      technologies: ['Web Programming', 'Web Development'],
-      achievements: [
-        'Developed web applications and solutions',
-        'Gained experience in web programming',
-        'Worked on various web development projects',
-      ],
-    },
-    {
-      company: 'Freelancer',
-      position: 'Programmer',
-      duration: 'Aug 2013 - May 2016 · 2 yrs 10 mos',
-      location: 'Yogyakarta Province, Indonesia',
-      description:
-        'Started career as a freelance programmer, gaining foundational experience in programming and software development.',
-      technologies: ['Programming', 'Software Development'],
-      achievements: [
-        'Started professional programming career',
-        'Gained foundational programming experience',
-        'Developed skills in software development',
-        'Built initial client base and projects',
-      ],
-    },
-  ];
-
-  const education = [
-    {
-      institution: 'Universitas Bina Bangsa',
-      degree: 'Bachelor of Computer Science',
-      duration: '2018 - 2022',
-      location: 'Serang, Indonesia',
-      description:
-        'Focused on software engineering, web development, and database management systems.',
-      relevantCourses: [
-        'Web Development',
-        'Database Systems',
-        'Software Engineering',
-        'Data Structures',
-      ],
-    },
-  ];
-
-  const certifications = [
-    {
-      name: 'Vue.js Developer Certification',
-      issuer: 'Vue.js Official',
-      year: '2023',
-      description: 'Advanced Vue.js development and best practices',
-    },
-    {
-      name: 'Laravel Framework Certification',
-      issuer: 'Laravel Official',
-      year: '2022',
-      description: 'Laravel framework mastery and advanced features',
-    },
-    {
-      name: 'AWS Certified Developer',
-      issuer: 'Amazon Web Services',
-      year: '2022',
-      description: 'Cloud development and deployment on AWS platform',
-    },
-  ];
-
-  const achievements = [
-    '12+ years of experience in web development and programming',
-    'Specialized in frontend development with React.js and Vue.js',
-    'Worked with multiple frameworks including Laravel, Ruby on Rails, and WordPress',
-    'Successfully transitioned from fullstack to specialized frontend development',
-  ];
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -866,31 +585,44 @@ const Portfolio = () => {
               Notable accomplishments and milestones throughout my professional
               journey.
             </p>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {achievements.map((achievement, index) => (
-                <div
-                  key={index}
-                  className="glass-effect rounded-xl p-6 text-center group hover:transform hover:scale-105 transition-all duration-300"
-                >
-                  <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <svg
-                      className="w-8 h-8 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                      />
-                    </svg>
+              {achievements.map((achievement, index) =>
+                typeof achievement === 'string' ? (
+                  <div
+                    key={index}
+                    className="glass-effect rounded-xl p-6 text-center group hover:transform hover:scale-105 transition-all duration-300"
+                  >
+                    <p className="text-gray-300 leading-relaxed">
+                      {achievement}
+                    </p>
                   </div>
-                  <p className="text-gray-300 leading-relaxed">{achievement}</p>
-                </div>
-              ))}
+                ) : (
+                  <div
+                    key={index}
+                    className="glass-effect rounded-xl p-6 text-center group hover:transform hover:scale-105 transition-all duration-300"
+                  >
+                    <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <svg
+                        className="w-8 h-8 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-4">
+                      {achievement.title}
+                    </h3>
+                    <p className="text-gray-300">{achievement.description}</p>
+                  </div>
+                )
+              )}
             </div>
           </div>
         </section>
