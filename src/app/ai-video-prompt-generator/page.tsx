@@ -1,5 +1,6 @@
 'use client';
 
+import { handleSubscribePayment } from '@/components/Auth/handleSubscribePayment';
 import { FormData } from '@/components/PromptGenerator/FormData';
 import GenerateButton from '@/components/PromptGenerator/GenerateButton';
 import Header from '@/components/PromptGenerator/Header';
@@ -9,11 +10,13 @@ import PresetTemplates from '@/components/PromptGenerator/PresetTemplates';
 import ProgressIndicator from '@/components/PromptGenerator/ProgressIndicator';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
 import PromptGeneratorForm from '@/components/PromptGenerator/PromptGeneratorForm';
+import SubscribePrompt from '@/components/PromptGenerator/SubscribePrompt';
 import StructuredData from '@/components/SEO/StructuredData';
+import { SidebarContext } from '@/components/Sidebar';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormStorage } from '@/hooks/useFormStorage';
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import '../../components/PromptGenerator/PromptGenerator.css';
 
 // Dynamic import for Sidebar with SSR disabled
@@ -119,6 +122,7 @@ export default function AIVideoPromptGenerator() {
   const [subscriptionStatus, setSubscriptionStatus] = useState<
     'active' | 'inactive' | 'none' | null
   >(null);
+  const { isOpen, sidebarExpanded } = useContext(SidebarContext);
 
   // --- Effects ---
   useEffect(() => {
@@ -439,6 +443,12 @@ export default function AIVideoPromptGenerator() {
     }
   };
 
+  // --- Subscription Payment Logic (copied from Sidebar) ---
+  const subscribePrice =
+    typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE
+      ? parseInt(process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE, 10)
+      : 10000;
+
   // --- Early return for SSR ---
   if (!mounted) {
     return (
@@ -512,7 +522,9 @@ export default function AIVideoPromptGenerator() {
       )}
       <div className="generator-flex-layout">
         <Sidebar />
-        <main className="generator-main-content">
+        <main
+          className={`generator-main-content transition-all duration-300 ml-0 mr-0${sidebarExpanded ? ' lg:ml-64' : ' lg:ml-20'} lg:mr-[320px] ${isOpen ? 'block lg:block hidden' : ''}`}
+        >
           <div className="generator-main">
             <Header
               title="AI Video Prompt Generator"
@@ -541,24 +553,17 @@ export default function AIVideoPromptGenerator() {
                     : 'You have reached your prompt generation limit.'}
               </div>
             )}
-            {!isSubscribed && genCount <= 0 ? (
-              <div className="subscribe-box">
-                <div className="subscribe-box-message">
-                  You have reached the free generation limit. Subscribe to
-                  unlock unlimited prompt generations.
-                </div>
-                <button onClick={handleSubscribe} className="subscribe-btn">
-                  <span className="subscribe-btn-emoji">🚀</span>
-                  Subscribe to Generate Prompt
-                </button>
-              </div>
-            ) : (
-              <GenerateButton
-                onClick={generatePrompt}
-                onReset={resetFormDataWithCount}
-                disabled={subscriptionStatus !== 'active' && genCount <= 0}
-              />
-            )}
+            <GenerateButton
+              onClick={generatePrompt}
+              onReset={resetFormDataWithCount}
+              disabled={subscriptionStatus !== 'active' && genCount <= 0}
+            />
+            <SubscribePrompt
+              user={user}
+              subscriptionStatus={subscriptionStatus}
+              genCount={genCount}
+              onSubscribe={() => user && handleSubscribePayment(user)}
+            />
             {showPrompt && (
               <div className="generator-prompt-section">
                 <PromptDisplay
@@ -575,7 +580,7 @@ export default function AIVideoPromptGenerator() {
           </div>
         </main>
         {/* Right vertical progress sidebar */}
-        <div className="generator-progress-sidebar">
+        <div className="generator-progress-sidebar hidden lg:block">
           <ProgressIndicator
             currentStep={currentStep}
             totalSteps={progressSteps.length}

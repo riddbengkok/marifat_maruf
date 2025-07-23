@@ -3,17 +3,20 @@
 import type { AudioFormData } from '@/components/PromptGenerator/AudioFormData';
 import AudioPromptGeneratorForm from '@/components/PromptGenerator/AudioPromptGeneratorForm';
 
+import { handleSubscribePayment } from '@/components/Auth/handleSubscribePayment';
 import GenerateButton from '@/components/PromptGenerator/GenerateButton';
 import Header from '@/components/PromptGenerator/Header';
 import Instructions from '@/components/PromptGenerator/Instructions';
 import LoadingSpinner from '@/components/PromptGenerator/LoadingSpinner';
 import ProgressIndicator from '@/components/PromptGenerator/ProgressIndicator';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
+import SubscribePrompt from '@/components/PromptGenerator/SubscribePrompt';
 import StructuredData from '@/components/SEO/StructuredData';
+import { SidebarContext } from '@/components/Sidebar';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormStorage } from '@/hooks/useFormStorage';
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import '../../components/PromptGenerator/PromptGenerator.css';
 
 // Dynamic import for Sidebar with SSR disabled
@@ -72,6 +75,7 @@ function isSectionComplete(
 }
 
 export default function AIAudioPromptGenerator() {
+  const { isOpen, sidebarExpanded } = useContext(SidebarContext);
   const [mounted, setMounted] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
@@ -568,6 +572,12 @@ export default function AIAudioPromptGenerator() {
     setShowPrompt(false);
   };
 
+  // --- Subscription Payment Logic (copied from Sidebar) ---
+  const subscribePrice =
+    typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE
+      ? parseInt(process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE, 10)
+      : 10000;
+
   if (!mounted) {
     return (
       <div
@@ -649,7 +659,9 @@ export default function AIAudioPromptGenerator() {
 
       <div className="generator-flex-layout">
         <Sidebar />
-        <main className="generator-main-content">
+        <main
+          className={`generator-main-content transition-all duration-300 ml-0 mr-0${sidebarExpanded ? ' lg:ml-64' : ' lg:ml-20'} lg:mr-[320px] ${isOpen ? 'block lg:block hidden' : ''}`}
+        >
           <Header
             title="AI Audio Prompt Generator"
             subtitle="Create professional audio prompts for AI generators"
@@ -696,6 +708,13 @@ export default function AIAudioPromptGenerator() {
             onClick={generatePrompt}
             onReset={resetFormDataWithCount}
             disabled={subscriptionStatus !== 'active' && genCount <= 0}
+          />
+
+          <SubscribePrompt
+            user={user}
+            subscriptionStatus={subscriptionStatus}
+            genCount={genCount}
+            onSubscribe={() => user && handleSubscribePayment(user)}
           />
 
           {showPrompt && (
@@ -958,7 +977,7 @@ export default function AIAudioPromptGenerator() {
           )}
         </main>
         {/* Right vertical progress sidebar */}
-        <div className="generator-progress-sidebar">
+        <div className="generator-progress-sidebar hidden lg:block">
           <ProgressIndicator
             currentStep={currentStep}
             totalSteps={progressSteps.length}

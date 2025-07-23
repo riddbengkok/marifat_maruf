@@ -1,5 +1,6 @@
 'use client';
 
+import { handleSubscribePayment } from '@/components/Auth/handleSubscribePayment';
 import GenerateButton from '@/components/PromptGenerator/GenerateButton';
 import Header from '@/components/PromptGenerator/Header';
 import Instructions from '@/components/PromptGenerator/Instructions';
@@ -7,9 +8,11 @@ import ProgressIndicator from '@/components/PromptGenerator/ProgressIndicator';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
 import { StoryFormData } from '@/components/PromptGenerator/StoryFormData';
 import StoryPromptGeneratorForm from '@/components/PromptGenerator/StoryPromptGeneratorForm';
+import SubscribePrompt from '@/components/PromptGenerator/SubscribePrompt';
+import { SidebarContext } from '@/components/Sidebar';
 import { useAuth } from '@/hooks/useAuth';
 import dynamic from 'next/dynamic';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import '../../components/PromptGenerator/PromptGenerator.css';
 
 // Dynamic import for Sidebar with SSR disabled
@@ -99,6 +102,7 @@ export default function AIStoryPromptGenerator() {
   const [subscriptionStatus, setSubscriptionStatus] = useState<
     'active' | 'inactive' | 'none' | null
   >(null);
+  const { isOpen, sidebarExpanded } = useContext(SidebarContext);
 
   useEffect(() => {
     setMounted(true);
@@ -150,15 +154,18 @@ export default function AIStoryPromptGenerator() {
   const generatePrompt = async () => {
     if (subscriptionStatus !== 'active' && genCount <= 0) return;
     // Check for required fields (genre, setting, mainCharacter or protagonistName)
-    if (!formData.genre.trim()) {
+    if (!(formData.genre ?? '').trim()) {
       setSubjectError('Please enter a genre for your story');
       return;
     }
-    if (!formData.setting.trim()) {
+    if (!(formData.setting ?? '').trim()) {
       setSubjectError('Please enter a setting for your story');
       return;
     }
-    if (!formData.mainCharacter.trim() && !formData.protagonistName.trim()) {
+    if (
+      !(formData.mainCharacter ?? '').trim() &&
+      !(formData.protagonistName ?? '').trim()
+    ) {
       setSubjectError(
         'Please enter a main character or protagonist name for your story'
       );
@@ -250,6 +257,12 @@ export default function AIStoryPromptGenerator() {
     }
   };
 
+  // --- Subscription Payment Logic (copied from Sidebar) ---
+  const subscribePrice =
+    typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE
+      ? parseInt(process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE, 10)
+      : 10000;
+
   if (!mounted) {
     return (
       <div
@@ -323,7 +336,9 @@ export default function AIStoryPromptGenerator() {
       )}
       <div className="generator-flex-layout">
         <Sidebar />
-        <main className="generator-main-content">
+        <main
+          className={`generator-main-content transition-all duration-300 ml-0 mr-0${sidebarExpanded ? ' lg:ml-64' : ' lg:ml-20'} lg:mr-[320px] ${isOpen ? 'block lg:block hidden' : ''}`}
+        >
           <div
             className="generator-main"
             style={{ maxWidth: '900px', margin: '0 auto' }}
@@ -361,6 +376,13 @@ export default function AIStoryPromptGenerator() {
               onReset={resetFormData}
               disabled={subscriptionStatus !== 'active' && genCount <= 0}
             />
+
+            <SubscribePrompt
+              user={user}
+              subscriptionStatus={subscriptionStatus}
+              genCount={genCount}
+              onSubscribe={() => user && handleSubscribePayment(user)}
+            />
             {showPrompt && (
               <div className="generator-prompt-section">
                 <PromptDisplay
@@ -390,7 +412,7 @@ export default function AIStoryPromptGenerator() {
           </div>
         </main>
         {/* Right vertical progress sidebar */}
-        <div className="generator-progress-sidebar">
+        <div className="generator-progress-sidebar hidden lg:block">
           <ProgressIndicator
             currentStep={currentStep}
             totalSteps={progressSteps.length}

@@ -1,5 +1,6 @@
 'use client';
 
+import { handleSubscribePayment } from '@/components/Auth/handleSubscribePayment';
 import { ImageFormData } from '@/components/PromptGenerator/FormData';
 import GenerateButton from '@/components/PromptGenerator/GenerateButton';
 import Header from '@/components/PromptGenerator/Header';
@@ -8,11 +9,13 @@ import Instructions from '@/components/PromptGenerator/Instructions';
 import LoadingSpinner from '@/components/PromptGenerator/LoadingSpinner';
 import ProgressIndicator from '@/components/PromptGenerator/ProgressIndicator';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
+import SubscribePrompt from '@/components/PromptGenerator/SubscribePrompt';
 import StructuredData from '@/components/SEO/StructuredData';
+import { SidebarContext } from '@/components/Sidebar';
 import { useAuth } from '@/hooks/useAuth';
 import { useFormStorage } from '@/hooks/useFormStorage';
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import '../../components/PromptGenerator/PromptGenerator.css';
 
 // Dynamically import Sidebar to prevent SSR issues
@@ -86,6 +89,7 @@ export default function PromptGenerator() {
   const [subscriptionStatus, setSubscriptionStatus] = useState<
     'active' | 'inactive' | 'none' | null
   >(null);
+  const { isOpen, sidebarExpanded } = useContext(SidebarContext);
 
   // Fetch prompt count from backend on login
   useEffect(() => {
@@ -346,6 +350,12 @@ export default function PromptGenerator() {
     setShowPrompt(false); // Ensure prompt is hidden after reset
   };
 
+  // --- Subscription Payment Logic (copied from Sidebar) ---
+  const subscribePrice =
+    typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE
+      ? parseInt(process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE, 10)
+      : 10000;
+
   if (!mounted) {
     return (
       <div
@@ -426,7 +436,9 @@ export default function PromptGenerator() {
 
       <div className="generator-flex-layout">
         <Sidebar />
-        <main className="generator-main-content">
+        <main
+          className={`generator-main-content transition-all duration-300 ml-0 mr-0${sidebarExpanded ? ' lg:ml-64' : ' lg:ml-20'} lg:mr-[320px] ${isOpen ? 'block lg:block hidden' : ''}`}
+        >
           <div
             className="generator-main"
             style={{ maxWidth: '1200px', margin: '0 auto' }}
@@ -484,6 +496,13 @@ export default function PromptGenerator() {
               onClick={generatePrompt}
               onReset={resetFormDataWithCount}
               disabled={subscriptionStatus !== 'active' && genCount <= 0}
+            />
+
+            <SubscribePrompt
+              user={user}
+              subscriptionStatus={subscriptionStatus}
+              genCount={genCount}
+              onSubscribe={() => user && handleSubscribePayment(user)}
             />
 
             {showPrompt && (
@@ -581,7 +600,7 @@ export default function PromptGenerator() {
           </div>
         </main>
         {/* Right vertical progress sidebar */}
-        <div className="generator-progress-sidebar">
+        <div className="generator-progress-sidebar hidden lg:block">
           <ProgressIndicator
             currentStep={currentStep}
             totalSteps={progressSteps.length}

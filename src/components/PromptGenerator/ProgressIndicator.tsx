@@ -16,7 +16,7 @@ export default function ProgressIndicator({
   const progress = (currentStep / totalSteps) * 100;
 
   return (
-    <div className="progress-indicator">
+    <div className="progress-indicator hidden lg:block">
       {/* Decorative top border */}
       <div className="progress-indicator__top-border" />
 

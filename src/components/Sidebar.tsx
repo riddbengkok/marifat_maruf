@@ -3,8 +3,22 @@
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
 import GoogleLoginButton from './Auth/GoogleLoginButton';
+import { handleSubscribePayment } from './Auth/handleSubscribePayment';
+
+// Sidebar context for open state
+export const SidebarContext = createContext<{
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  sidebarExpanded: boolean;
+  setSidebarExpanded: (expanded: boolean) => void;
+}>({
+  isOpen: false,
+  setIsOpen: () => {},
+  sidebarExpanded: true,
+  setSidebarExpanded: () => {},
+});
 
 declare global {
   interface Window {
@@ -35,6 +49,14 @@ function loadSnapJs(clientKey: string, isProduction: boolean) {
   }
 }
 
+// Define a User type for better type safety
+interface User {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+}
+
 const Sidebar = () => {
   // State
   const [isOpen, setIsOpen] = useState(false);
@@ -49,6 +71,7 @@ const Sidebar = () => {
   const [pendingOrderToken, setPendingOrderToken] = useState<string>('');
   const [pendingOrderId, setPendingOrderId] = useState<string>('');
   const snapShownRef = useRef(false);
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
 
   // Function to re-fetch subscription status
   const refetchSubscriptionStatus = async () => {
@@ -93,230 +116,62 @@ const Sidebar = () => {
       ? parseInt(process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE, 10)
       : 10000;
 
-  async function handleSubscribePayment(
-    user: { email?: string | null } | null
-  ) {
-    try {
-      const email = user?.email ?? undefined;
-      if (!email) {
-        alert('User email not found or not registered.');
-        return;
-      }
-      // Check for existing order_id in localStorage
-      let orderId: string = localStorage.getItem('snap_order_id') || '';
-      let snapToken: string = getStoredSnapToken() || '';
-      if (!orderId) {
-        // No order_id, create new Snap transaction
-        const res = await fetch('/api/subscription', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email,
-            customer_details: {
-              first_name: 'John',
-              last_name: 'Doe',
-              email: email,
-              phone: '08123456789',
-            },
-            item_details: [
-              {
-                id: 'sub001',
-                price: subscribePrice,
-                quantity: 1,
-                name: 'Subscription',
-              },
-            ],
-          }),
-        });
-        const data = await res.json();
-        if (data.token && data.order_id) {
-          snapToken = data.token;
-          orderId = data.order_id;
-          setStoredSnapToken(snapToken);
-          localStorage.setItem('snap_order_id', orderId);
-        } else {
-          alert(
-            'Failed to get payment token: ' + (data.error || 'Unknown error')
-          );
-          return;
-        }
-        // Show Snap
-        if (window.snap && window.snap.pay) {
-          window.snap.pay(snapToken, {
-            onSuccess: async function (result: unknown) {
-              setShowSuccessModal(true);
-              console.log('Success:', result);
-              try {
-                const orderId =
-                  typeof result === 'object' && result && 'order_id' in result
-                    ? (result as { order_id: string }).order_id
-                    : '';
-                if (orderId) {
-                  await fetch('/api/subscription', {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      order_id: orderId,
-                      transaction_status: 'paid',
-                      plan: 'pro',
-                    }),
-                  });
-                }
-              } catch (e) {
-                console.error(
-                  'Failed to update order/subscription after payment:',
-                  e
-                );
-              }
-              await refetchSubscriptionStatus();
-              setStoredSnapToken('');
-              localStorage.removeItem('snap_order_id');
-            },
-            onPending: function (result: unknown) {
-              alert('Payment Pending!');
-              console.log('Pending:', result);
-            },
-            onError: function (result: unknown) {
-              alert('Payment Error!');
-              console.log('Error:', result);
-            },
-            onClose: async function () {
-              alert('Payment popup closed without finishing the payment');
-              // Remove order if payment was canceled
-              if (orderId) {
-                const orderIdNum = orderId.replace('order-', '');
-                try {
-                  await fetch(`/api/subscription?id=${orderIdNum}`, {
-                    method: 'DELETE',
-                  });
-                } catch (e) {
-                  console.error('Failed to delete order after cancel:', e);
-                }
-                setStoredSnapToken('');
-                localStorage.removeItem('snap_order_id');
-              }
-            },
-          });
-        } else {
-          alert('Midtrans Snap.js is not loaded.');
-        }
-        return;
-      }
-      // If order_id exists, check its status
-      const orderIdNum = orderId.replace('order-', '');
-      const orderRes = await fetch(`/api/order-status?id=${orderIdNum}`);
-      const orderData = await orderRes.json();
-      if (orderData.status === 'pending') {
-        // Show Snap with stored token
-        if (!snapToken) {
-          alert('No Snap token available. Please try again.');
-          return;
-        }
-        if (window.snap && window.snap.pay) {
-          window.snap.pay(snapToken, {
-            onSuccess: async function (result: unknown) {
-              setShowSuccessModal(true);
-              console.log('Success:', result);
-              try {
-                const orderId =
-                  typeof result === 'object' && result && 'order_id' in result
-                    ? (result as { order_id: string }).order_id
-                    : '';
-                if (orderId) {
-                  await fetch('/api/subscription', {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      order_id: orderId,
-                      transaction_status: 'paid',
-                      plan: 'pro',
-                    }),
-                  });
-                }
-              } catch (e) {
-                console.error(
-                  'Failed to update order/subscription after payment:',
-                  e
-                );
-              }
-              await refetchSubscriptionStatus();
-              setStoredSnapToken('');
-              localStorage.removeItem('snap_order_id');
-            },
-            onPending: function (result: unknown) {
-              alert('Payment Pending!');
-              console.log('Pending:', result);
-            },
-            onError: function (result: unknown) {
-              alert('Payment Error!');
-              console.log('Error:', result);
-            },
-            onClose: function () {
-              alert('Payment popup closed without finishing the payment');
-            },
-          });
-        } else {
-          alert('Midtrans Snap.js is not loaded.');
-        }
-      } else {
-        // Not pending, clear and create new Snap transaction
-        setStoredSnapToken('');
-        localStorage.removeItem('snap_order_id');
-        await handleSubscribePayment(user); // Recursively call to create new transaction
-      }
-    } catch (err) {
-      let message = 'Unknown error';
-      if (err instanceof Error) message = err.message;
-      else if (typeof err === 'string') message = err;
-      alert('Error: ' + message);
-    }
-  }
-
   // Fetch latest pending order and token for the user
   const fetchPendingOrderToken = async () => {
-    if (user?.email) {
-      const res = await fetch('/api/subscription', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: user.email,
-          customer_details: {
-            first_name: 'John',
-            last_name: 'Doe',
-            email: user.email,
-            phone: '08123456789',
+    if (!user?.email) return;
+
+    // 1. Check for existing pending order by email
+    const orderStatusRes = await fetch(
+      `/api/order-status?email=${encodeURIComponent(user.email)}`
+    );
+    const orderStatusData = await orderStatusRes.json();
+
+    if (
+      orderStatusData.status === 'pending' &&
+      orderStatusData.token &&
+      orderStatusData.order_id
+    ) {
+      setPendingOrderToken(orderStatusData.token);
+      setPendingOrderId(orderStatusData.order_id);
+      return;
+    }
+
+    // 2. If no pending order, create a new one
+    const u = user as User;
+    const customerDetails = {
+      first_name: u.firstName || '',
+      last_name: u.lastName || '',
+      email: u.email || '',
+      phone: u.phone || '',
+    };
+    const res = await fetch('/api/subscription', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: u.email,
+        customer_details: customerDetails,
+        item_details: [
+          {
+            id: 'sub001',
+            price: subscribePrice,
+            quantity: 1,
+            name: 'Subscription',
           },
-          item_details: [
-            {
-              id: 'sub001',
-              price: subscribePrice,
-              quantity: 1,
-              name: 'Subscription',
-            },
-          ],
-        }),
-      });
-      const data = await res.json();
-      if (data.token && data.order_id) {
-        // Check order status
-        const orderIdNum = data.order_id.replace('order-', '');
-        const orderRes = await fetch(`/api/order-status?id=${orderIdNum}`);
-        const orderData = await orderRes.json();
-        if (orderData.status === 'pending') {
-          setPendingOrderToken(data.token);
-          setPendingOrderId(data.order_id);
-        } else {
-          setPendingOrderToken('');
-          setPendingOrderId('');
-        }
-      }
+        ],
+      }),
+    });
+    const data = await res.json();
+    if (data.token && data.order_id) {
+      setPendingOrderToken(data.token);
+      setPendingOrderId(data.order_id);
     }
   };
 
-  // On mount or user change, check for pending order
+  // On mount or user change, check for pending order and subscription status
   useEffect(() => {
     snapShownRef.current = false;
     fetchPendingOrderToken();
+    refetchSubscriptionStatus();
   }, [user]);
 
   // Remove the useEffect that triggers Snap automatically for pending orders
@@ -435,7 +290,9 @@ const Sidebar = () => {
 
   // Render
   return (
-    <>
+    <SidebarContext.Provider
+      value={{ isOpen, setIsOpen, sidebarExpanded, setSidebarExpanded }}
+    >
       {/* Success Modal */}
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
@@ -504,6 +361,7 @@ const Sidebar = () => {
       <button
         className="fixed top-4 right-4 z-50 lg:hidden p-2 rounded-md bg-black/20 backdrop-blur-sm border border-white/20"
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Open sidebar menu"
       >
         <svg
           className="w-6 h-6 text-white"
@@ -532,9 +390,12 @@ const Sidebar = () => {
       {/* Sidebar */}
       <section
         id="sidebar"
-        className={`fixed inset-y-0 left-0 z-40 w-64 sidebar-bg backdrop-blur-md border-r border-white/20 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0`}
+        className={`fixed inset-y-0 left-0 z-40 w-64 sidebar-bg backdrop-blur-md border-r border-white/20 transform transition-transform duration-300 ease-in-out
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          lg:translate-x-0 lg:block
+        `}
+        style={{ touchAction: isOpen ? 'none' : undefined }}
+        aria-hidden={!isOpen && window && window.innerWidth < 1024}
       >
         <div className="flex flex-col h-full p-6">
           {/* Logo/Brand */}
@@ -850,7 +711,9 @@ const Sidebar = () => {
             <button
               className="mt-4 px-4 py-2 text-sm font-semibold rounded-md shadow bg-gradient-to-r from-gray-900 to-gray-700 text-white hover:from-gray-800 hover:to-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-400 transition-all border border-cyan-500"
               style={{ letterSpacing: '0.04em' }}
-              onClick={() => handleSubscribePayment(user)}
+              onClick={() =>
+                user && handleSubscribePayment({ email: user.email })
+              }
             >
               Subscribe
             </button>
@@ -861,11 +724,12 @@ const Sidebar = () => {
       {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden transition-opacity duration-300"
           onClick={() => setIsOpen(false)}
+          aria-label="Close sidebar overlay"
         />
       )}
-    </>
+    </SidebarContext.Provider>
   );
 };
 

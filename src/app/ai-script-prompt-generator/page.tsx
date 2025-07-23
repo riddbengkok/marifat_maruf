@@ -1,5 +1,6 @@
 'use client';
 
+import { handleSubscribePayment } from '@/components/Auth/handleSubscribePayment';
 import GenerateButton from '@/components/PromptGenerator/GenerateButton';
 import Header from '@/components/PromptGenerator/Header';
 import Instructions from '@/components/PromptGenerator/Instructions';
@@ -7,9 +8,11 @@ import ProgressIndicator from '@/components/PromptGenerator/ProgressIndicator';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
 import { StoryFormData } from '@/components/PromptGenerator/StoryFormData';
 import StoryPromptGeneratorForm from '@/components/PromptGenerator/StoryPromptGeneratorForm';
+import SubscribePrompt from '@/components/PromptGenerator/SubscribePrompt';
+import { SidebarContext } from '@/components/Sidebar';
 import { useAuth } from '@/hooks/useAuth';
 import dynamic from 'next/dynamic';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import '../../components/PromptGenerator/PromptGenerator.css';
 
 const Sidebar = dynamic(() => import('@/components/Sidebar'), { ssr: false });
@@ -36,6 +39,7 @@ function isSectionComplete(
 }
 
 export default function AIScriptPromptGenerator() {
+  const { isOpen, sidebarExpanded } = useContext(SidebarContext);
   const [mounted, setMounted] = useState(false);
   const initialFormData: StoryFormData = {
     title: '',
@@ -313,7 +317,9 @@ export default function AIScriptPromptGenerator() {
       )}
       <div className="generator-flex-layout">
         <Sidebar />
-        <main className="generator-main-content">
+        <main
+          className={`generator-main-content transition-all duration-300 ml-0 mr-0${sidebarExpanded ? ' lg:ml-64' : ' lg:ml-20'} lg:mr-[320px] ${isOpen ? 'block lg:block hidden' : ''}`}
+        >
           <div
             className="generator-main"
             style={{ maxWidth: '900px', margin: '0 auto' }}
@@ -351,6 +357,13 @@ export default function AIScriptPromptGenerator() {
               onReset={resetFormData}
               disabled={subscriptionStatus !== 'active' && genCount <= 0}
             />
+
+            <SubscribePrompt
+              user={user}
+              subscriptionStatus={subscriptionStatus}
+              genCount={genCount}
+              onSubscribe={() => user && handleSubscribePayment(user)}
+            />
             {showPrompt && (
               <div className="generator-prompt-section">
                 <PromptDisplay
@@ -380,7 +393,7 @@ export default function AIScriptPromptGenerator() {
           </div>
         </main>
         {/* Right vertical progress sidebar */}
-        <div className="generator-progress-sidebar">
+        <div className="generator-progress-sidebar hidden lg:block">
           <ProgressIndicator
             currentStep={currentStep}
             totalSteps={progressSteps.length}
