@@ -395,7 +395,9 @@ const Sidebar = () => {
           lg:translate-x-0 lg:block
         `}
         style={{ touchAction: isOpen ? 'none' : undefined }}
-        aria-hidden={!isOpen && window && window.innerWidth < 1024}
+        aria-hidden={
+          !isOpen && typeof window !== 'undefined' && window.innerWidth < 1024
+        }
       >
         <div className="flex flex-col h-full p-6">
           {/* Logo/Brand */}

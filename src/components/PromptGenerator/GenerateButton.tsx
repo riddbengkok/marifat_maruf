@@ -38,18 +38,27 @@ export default function GenerateButton({
     <div className="button-container">
       <div className="button-container-spacer"></div>
 
-      <button
-        onClick={handleClick}
-        disabled={isLoading || disabled}
-        className="btn-primary"
-      >
-        {isLoading && <div className="loading-spinner"></div>}
-        {user
-          ? disabled
+      {user ? (
+        <button
+          onClick={handleClick}
+          disabled={isLoading || disabled}
+          className="btn-primary"
+        >
+          {isLoading && <div className="loading-spinner"></div>}
+          {disabled
             ? '🚀 Subscribe to get unlimited access only IDR 6k'
-            : '🚀 Generate Prompt'
-          : '🔐 Sign in Google to Generate Prompt'}
-      </button>
+            : '🚀 Generate Prompt'}
+        </button>
+      ) : (
+        <button
+          onClick={handleClick}
+          disabled={isLoading}
+          className="btn-primary"
+        >
+          {isLoading && <div className="loading-spinner"></div>}
+          {'🔐 Sign in Google to Generate Prompt'}
+        </button>
+      )}
 
       <div className="button-container-right">
         {onReset && <ResetButton onReset={onReset} />}
