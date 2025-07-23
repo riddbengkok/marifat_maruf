@@ -185,20 +185,22 @@ const Portfolio = () => {
       duration: 'May 2019 - May 2025 · 6 yrs 1 mo',
       location: 'Yogyakarta, Indonesia',
       description:
-        'Started as a fullstack developer working with Laravel and Ruby on Rails. Transitioned to focus on frontend development, becoming an expert in HTML, CSS, React.js, and Vue.js. Enjoyed the specialization and continued to develop skills in frontend technologies.',
+        'Started as a fullstack developer working with Laravel and Ruby on Rails. Transitioned to focus on frontend development, becoming an expert in Frontend technologies like HTML, CSS, React.js,Next.js, Vue.js and Nuxt.js. Enjoyed the specialization and continued to develop skills in frontend technologies.',
       technologies: [
         'HTML',
         'CSS',
         'React.js',
+        'Next.js',
         'Vue.js',
+        'Nuxt.js',
         'Laravel',
         'Ruby on Rails',
       ],
       achievements: [
-        'Transitioned from fullstack to specialized frontend development',
-        'Developed expertise in React.js and Vue.js frameworks',
-        'Worked with Laravel for backend integration',
-        'Gained 6+ years of experience in web development',
+        'Gained 6+ years of experience in web development specializing in frontend development',
+        'very familiar working together in a team',
+        'Developed expertise in React.js, Next.js, Vue.js, Nuxt.js frameworks and other frontend technologies ,with tools like Git, Cursor, Docker, Vercel, Confluence, Jira, and other tools',
+        'familiar with Laravel,prisma,Next.js for backend integration',
       ],
     },
     {

@@ -429,11 +429,6 @@ export default function Home() {
                     giving me a holistic understanding of web application
                     architecture.
                   </p>
-                  <p className="text-xl text-gray-300 leading-relaxed">
-                    When I&apos;m not coding, you can find me exploring new
-                    technologies, contributing to open-source projects, or
-                    sharing knowledge with the developer community.
-                  </p>
                 </div>
                 <div className="space-y-6">
                   <div className="glass-effect rounded-xl p-6">
@@ -444,25 +439,26 @@ export default function Home() {
                       <li className="flex items-start">
                         <span className="text-cyan-400 mr-3 mt-1">•</span>
                         <span className="text-gray-300">
-                          Frontend Development with React.js & Vue.js
+                          Frontend Development with React.js & Vue.js and other
+                          frontend frameworks
                         </span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-cyan-400 mr-3 mt-1">•</span>
                         <span className="text-gray-300">
-                          UI/UX Design & Prototyping
+                          Implement UI/UX into real project
                         </span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-cyan-400 mr-3 mt-1">•</span>
                         <span className="text-gray-300">
-                          Full Stack Development
+                          Sometimes i can be a Full Stack Development
                         </span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-cyan-400 mr-3 mt-1">•</span>
                         <span className="text-gray-300">
-                          Performance Optimization
+                          Performance Optimization and SEO Optimization
                         </span>
                       </li>
                     </ul>
@@ -483,8 +479,9 @@ export default function Home() {
               </h2>
               <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
                 My technical skills span across frontend and backend
-                technologies, with a focus on modern web development frameworks
-                and tools.
+                technologies, with a focus on modern Frontend web development
+                frameworks. I have a strong understanding of the entire Frontend
+                web development process.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
