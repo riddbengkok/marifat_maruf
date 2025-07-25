@@ -13,6 +13,8 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 interface Project {
   id: number;
@@ -29,6 +31,7 @@ export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t } = useLanguage();
 
   const openModal = (project: Project) => {
     setSelectedProject(project);
@@ -92,9 +95,14 @@ export default function Home() {
             className="wrapper style1 fade-up py-20 bg-gradient-to-br from-black to-gray-900"
           >
             <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
+              {/* Language Switcher - Top Right */}
+              <div className="flex justify-end mb-8">
+                <LanguageSwitcher />
+              </div>
+
               <div className="text-center">
                 <h1 className="text-hyperspace-h1 font-bold mb-6 text-gradient">
-                  Marifat Maruf
+                  {t('hero.name')}
                 </h1>
 
                 {/* Profile Picture */}
@@ -112,14 +120,10 @@ export default function Home() {
                 </div>
 
                 <p className="text-hyperspace-h2 text-gray-300 mb-8 leading-relaxed">
-                  Frontend Web Developer
+                  {t('hero.title')}
                 </p>
                 <p className="text-hyperspace-intro text-gray-400 mb-12 max-w-4xl mx-auto leading-relaxed">
-                  Obsessed with finding the sweet spot between beauty,
-                  performance, and efficiency. I design solutions that are
-                  powerful without wasting unnecessary energy. Focused on web
-                  application development, I specialize in React.js, Vue.js, and
-                  modern frontend technologies with 6+ years of experience.
+                  {t('hero.description')}
                 </p>
 
                 {/* Navigation Buttons */}
@@ -128,25 +132,25 @@ export default function Home() {
                     onClick={() => scrollToSection('about')}
                     className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
-                    About Me
+                    {t('btn.about')}
                   </button>
                   <button
                     onClick={() => scrollToSection('skills')}
                     className="bg-gradient-to-r from-purple-400 to-pink-500 hover:from-purple-500 hover:to-pink-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
-                    Skills
+                    {t('ui.skills')}
                   </button>
                   <button
                     onClick={() => scrollToSection('experience')}
                     className="bg-gradient-to-r from-green-400 to-teal-500 hover:from-green-500 hover:to-teal-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
-                    Experience
+                    {t('btn.experience')}
                   </button>
                   <button
                     onClick={() => scrollToSection('projects')}
                     className="bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
-                    Projects
+                    {t('btn.projects')}
                   </button>
                 </div>
 
@@ -169,7 +173,7 @@ export default function Home() {
                         d="M13 10V3L4 14h7v7l9-11h-7z"
                       />
                     </svg>
-                    View Features
+                    {t('ui.viewFeatures')}
                   </Link>
                   <a
                     href="/public/marifat_maruf_resume.pdf"
@@ -190,7 +194,7 @@ export default function Home() {
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                       />
                     </svg>
-                    Download Resume
+                    {t('ui.downloadResume')}
                   </a>
                 </div>
               </div>
@@ -201,55 +205,45 @@ export default function Home() {
           <section id="about" className="wrapper style2 fade-up py-20">
             <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
               <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
-                About Me
+                {t('about.title')}
               </h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
                   <p className="text-xl text-gray-300 mb-6 leading-relaxed">
-                    I&apos;m a passionate Frontend Web Developer with over 6
-                    years of experience creating beautiful and functional web
-                    applications. My journey in web development started with PHP
-                    and has evolved to include modern frameworks like React.js,
-                    Vue.js, and Next.js.
+                    {t('about.intro1')}
                   </p>
                   <p className="text-xl text-gray-300 mb-6 leading-relaxed">
-                    I specialize in building responsive, user-friendly
-                    interfaces and have worked on projects ranging from small
-                    business websites to complex financial applications. My
-                    expertise includes both frontend and backend development,
-                    giving me a holistic understanding of web application
-                    architecture.
+                    {t('about.intro2')}
                   </p>
                 </div>
                 <div className="space-y-6">
                   <div className="glass-effect rounded-xl p-6">
                     <h3 className="text-2xl font-bold text-white mb-4">
-                      What I Do
+                      {t('about.whatIDo')}
                     </h3>
                     <ul className="space-y-3">
                       <li className="flex items-start">
                         <span className="text-cyan-400 mr-3 mt-1">•</span>
                         <span className="text-gray-300">
-                          Frontend Development with React.js & Vue.js and other
-                          frontend frameworks
+                          {t('about.frontendDev')}
                         </span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-cyan-400 mr-3 mt-1">•</span>
                         <span className="text-gray-300">
-                          Implement UI/UX into real project
+                          {t('about.uiux')}
                         </span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-cyan-400 mr-3 mt-1">•</span>
                         <span className="text-gray-300">
-                          Sometimes i can be a Full Stack Development
+                          {t('about.fullstack')}
                         </span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-cyan-400 mr-3 mt-1">•</span>
                         <span className="text-gray-300">
-                          Performance Optimization and SEO Optimization
+                          {t('about.optimization')}
                         </span>
                       </li>
                     </ul>
@@ -266,13 +260,10 @@ export default function Home() {
           >
             <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
               <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
-                Skills & Expertise
+                {t('skills.title')}
               </h2>
               <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
-                My technical skills span across frontend and backend
-                technologies, with a focus on modern Frontend web development
-                frameworks. I have a strong understanding of the entire Frontend
-                web development process, debuging and optimizing the code.
+                {t('skills.description')}
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -305,11 +296,10 @@ export default function Home() {
           >
             <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
               <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
-                Professional Experience
+                {t('experience.title')}
               </h2>
               <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
-                My journey in software development, from freelance work to
-                leading teams at fintech companies.
+                {t('experience.subtitle')}
               </p>
 
               <div className="space-y-12">
@@ -378,7 +368,7 @@ export default function Home() {
                         {/* Achievements */}
                         <div className="space-y-2">
                           <h4 className="text-white font-semibold">
-                            Key Achievements:
+                            {t('experience.keyAchievements')}:
                           </h4>
                           <ul className="space-y-1">
                             {job.achievements.map((achievement, idx) => (
@@ -404,11 +394,10 @@ export default function Home() {
           <section id="projects" className="wrapper style3 fade-up py-20">
             <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
               <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
-                Featured Projects
+                {t('portfolio.title')}
               </h2>
               <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
-                A collection of my best work showcasing creativity, technical
-                skills, and problem-solving abilities.
+                {t('portfolio.description')}
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -463,7 +452,7 @@ export default function Home() {
                               d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                             />
                           </svg>
-                          <span>Preview Design</span>
+                          <span>{t('portfolio.previewDesign')}</span>
                         </button>
                       </div>
                     </div>
@@ -476,22 +465,25 @@ export default function Home() {
                         </span>
                       </div>
                       <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors duration-200">
-                        {project.title}
+                        {t(`projects.${project.id}.title`, project.title)}
                       </h3>
                       <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                        {project.description}
+                        {t(`projects.${project.id}.description`, project.description)}
                       </p>
 
                       {/* Technologies */}
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.technologies.map(tech => (
-                          <span
-                            key={tech}
-                            className="px-2 py-1 text-xs bg-gray-800/50 text-gray-300 rounded-md"
-                          >
-                            {tech}
-                          </span>
-                        ))}
+                      <div className="mb-2">
+                        <p className="text-xs text-cyan-400 mb-2">{t('portfolio.technologies')}</p>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {project.technologies.map(tech => (
+                            <span
+                              key={tech}
+                              className="px-2 py-1 text-xs bg-gray-800/50 text-gray-300 rounded-md"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
                       </div>
 
                       {/* Action Buttons */}
@@ -519,7 +511,7 @@ export default function Home() {
                               d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                             />
                           </svg>
-                          Preview
+                          <span>{t('portfolio.previewDesign')}</span>
                         </button>
                         <a
                           href={project.link}
@@ -540,7 +532,7 @@ export default function Home() {
                               d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                             />
                           </svg>
-                          Open in Figma →
+                          <span>{t('portfolio.openInFigma')}</span>
                         </a>
                       </div>
                     </div>
@@ -557,7 +549,7 @@ export default function Home() {
           >
             <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
               <h2 className="text-hyperspace-h1 font-bold mb-6 text-center text-gradient">
-                Education & Certifications
+                Education
               </h2>
               <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
                 My educational background and professional certifications that

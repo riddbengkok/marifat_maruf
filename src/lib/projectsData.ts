@@ -239,31 +239,20 @@ export const experience = [
 // Shared education data (superset)
 export const education = [
   {
-    institution: 'Universitas Gadjah Mada',
-    degree: 'Bachelor of Computer Science',
-    duration: '2011 - 2015',
+    institution: 'Qodr Academy',
+    degree: 'Fullstack Developer',
+    duration: '2013 - 2016',
     location: 'Yogyakarta, Indonesia',
-    description:
-      'Studied Computer Science with focus on software development and programming fundamentals.',
+    description: 'Studied software development and programming fundamentals.',
     relevantCourses: [
-      'Web Development',
+      'Frontend Development',
+      'HTML&CSS',
+      'Backend Development',
       'Database Systems',
       'Software Engineering',
-      'Data Structures',
-    ],
-  },
-  {
-    institution: 'Universitas Bina Bangsa',
-    degree: 'Bachelor of Computer Science',
-    duration: '2018 - 2022',
-    location: 'Serang, Indonesia',
-    description:
-      'Focused on software engineering, web development, and database management systems.',
-    relevantCourses: [
-      'Web Development',
-      'Database Systems',
-      'Software Engineering',
-      'Data Structures',
+      'Git',
+      'PHP',
+      'Laravel',
     ],
   },
 ];
@@ -271,34 +260,11 @@ export const education = [
 // Shared certifications data (superset)
 export const certifications = [
   {
-    name: 'Vue.js Certification',
-    issuer: 'Vue.js Official',
-    date: '2023',
+    name: 'Qodr',
+    issuer: 'Educational graduation Fullstack Developer certificate ',
+    date: '2018',
     year: '2023',
-    description:
-      'Certified Vue.js developer with expertise in Vue 3 and Composition API.',
-  },
-  {
-    name: 'React.js Certification',
-    issuer: 'Meta',
-    date: '2023',
-    year: '2023',
-    description:
-      'Certified React.js developer with experience in modern React patterns and hooks.',
-  },
-  {
-    name: 'Laravel Framework Certification',
-    issuer: 'Laravel Official',
-    date: '2022',
-    year: '2022',
-    description: 'Laravel framework mastery and advanced features',
-  },
-  {
-    name: 'AWS Certified Developer',
-    issuer: 'Amazon Web Services',
-    date: '2022',
-    year: '2022',
-    description: 'Cloud development and deployment on AWS platform',
+    description: 'Certified educational graduation certificate',
   },
 ];
 

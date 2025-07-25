@@ -82,6 +82,8 @@ export default function AIAudioPromptGenerator() {
   const [copied, setCopied] = useState(false);
   const [genCount, setGenCount] = useState<number>(0);
   const [subjectError, setSubjectError] = useState<string | null>(null);
+  const [generatedStory, setGeneratedStory] = useState('');
+  const [isGeneratingStory, setIsGeneratingStory] = useState(false);
   const { user } = useAuth();
   const [subscriptionStatus, setSubscriptionStatus] = useState<
     'active' | 'inactive' | 'none' | null
@@ -531,6 +533,35 @@ export default function AIAudioPromptGenerator() {
     setGeneratedPrompt(finalPrompt);
     setShowPrompt(true);
     setCopied(false);
+
+    // Call ChatGPT API to generate story
+    try {
+      setIsGeneratingStory(true);
+      const response = await fetch('/api/generate-story', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: `Create a detailed audio description based on this prompt: ${finalPrompt}. The description should capture the mood, atmosphere, and key audio elements in a vivid and engaging way.`,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate audio description');
+      }
+
+      const data = await response.json();
+      setGeneratedStory(data.story);
+    } catch (error) {
+      console.error('Error generating audio description:', error);
+      setGeneratedStory(
+        'Failed to generate audio description. Please try again.'
+      );
+    } finally {
+      setIsGeneratingStory(false);
+    }
+
     // Decrement count in backend
     if (user?.email && subscriptionStatus !== 'active') {
       try {
@@ -724,6 +755,40 @@ export default function AIAudioPromptGenerator() {
                 onCopy={copyToClipboard}
                 copied={copied}
               />
+
+              <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                <h3 className="text-xl font-bold text-white mb-4">
+                  🤖 Enhance with ChatGPT :
+                </h3>
+                {isGeneratingStory ? (
+                  <div className="flex justify-center my-8">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+                    <span className="ml-4 text-cyan-400 text-lg">
+                      Generating your audio description...
+                    </span>
+                  </div>
+                ) : (
+                  <>
+                    <div className="prose prose-invert max-w-none">
+                      {generatedStory.split('\n').map((paragraph, i) => (
+                        <p key={i} className="mb-4">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(generatedStory);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      }}
+                      className="mt-4 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md transition-colors"
+                    >
+                      {copied ? 'Copied!' : 'Copy Description'}
+                    </button>
+                  </>
+                )}
+              </div>
 
               {/* Tips Section */}
               <div className="audio-tips-section">

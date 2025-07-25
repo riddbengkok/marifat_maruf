@@ -93,7 +93,10 @@ export default function AIStoryPromptGenerator() {
     return initialFormData;
   });
   const [generatedPrompt, setGeneratedPrompt] = useState('');
+  const [generatedStory, setGeneratedStory] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
+  const [showStory, setShowStory] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const promptRef = useRef<HTMLDivElement>(null);
   const [genCount, setGenCount] = useState<number>(0);
@@ -171,62 +174,102 @@ export default function AIStoryPromptGenerator() {
       );
       return;
     }
+
     setSubjectError(null);
-    const parts: string[] = [];
-    if (formData.title) parts.push(`Title: ${formData.title}`);
-    if (formData.mainIdea) parts.push(`Main Idea: ${formData.mainIdea}`);
-    if (formData.genre) parts.push(`Genre: ${formData.genre}`);
-    if (formData.setting) parts.push(`Setting: ${formData.setting}`);
-    if (formData.desiredLength)
-      parts.push(`Desired Length: ${formData.desiredLength}`);
-    if (
-      formData.protagonistName ||
-      formData.protagonistRole ||
-      formData.protagonistPersonality ||
-      formData.protagonistGoal
-    ) {
-      parts.push(
-        `Protagonist: ${formData.protagonistName ? formData.protagonistName : ''}${formData.protagonistRole ? ', ' + formData.protagonistRole : ''}${formData.protagonistPersonality ? ', ' + formData.protagonistPersonality : ''}${formData.protagonistGoal ? ', Goal: ' + formData.protagonistGoal : ''}`.trim()
-      );
-    }
-    if (formData.supportingCharacters)
-      parts.push(`Supporting Characters: ${formData.supportingCharacters}`);
-    if (formData.pov) parts.push(`Point of View: ${formData.pov}`);
-    if (formData.tone) parts.push(`Tone: ${formData.tone}`);
-    if (formData.style) parts.push(`Style: ${formData.style}`);
-    if (formData.theme) parts.push(`Theme: ${formData.theme}`);
-    if (formData.moral) parts.push(`Moral: ${formData.moral}`);
-    if (formData.incitingIncident)
-      parts.push(`Inciting Incident: ${formData.incitingIncident}`);
-    if (formData.conflict) parts.push(`Conflict: ${formData.conflict}`);
-    if (formData.plotPoints)
-      parts.push(`Key Plot Points: ${formData.plotPoints}`);
-    if (formData.climax) parts.push(`Climax: ${formData.climax}`);
-    if (formData.resolution) parts.push(`Resolution: ${formData.resolution}`);
-    if (formData.twist) parts.push(`Twist: ${formData.twist}`);
-    if (formData.worldRules) parts.push(`World Rules: ${formData.worldRules}`);
-    if (formData.magicSystem)
-      parts.push(`Magic System: ${formData.magicSystem}`);
-    if (formData.technology) parts.push(`Technology: ${formData.technology}`);
-    if (formData.specialElements)
-      parts.push(`Special Elements: ${formData.specialElements}`);
-    if (formData.additionalNotes)
-      parts.push(`Additional Notes: ${formData.additionalNotes}`);
-    const prompt = `create an interesting full story based on the specifications below:\n\n${parts.join('\n')}`;
-    setGeneratedPrompt(prompt);
-    setShowPrompt(true);
-    setCopied(false);
-    // Decrement count in backend
-    if (user?.email && subscriptionStatus !== 'active') {
-      try {
-        const res = await fetch('/api/prompt-usage', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: user.email }),
-        });
-        const data = await res.json();
-        if (typeof data.count === 'number') setGenCount(data.count);
-      } catch {}
+    setIsGenerating(true);
+    setShowStory(false);
+    setGeneratedStory('');
+
+    try {
+      // Build the prompt
+      const parts: string[] = [];
+      if (formData.title) parts.push(`Title: ${formData.title}`);
+      if (formData.mainIdea) parts.push(`Main Idea: ${formData.mainIdea}`);
+      if (formData.genre) parts.push(`Genre: ${formData.genre}`);
+      if (formData.setting) parts.push(`Setting: ${formData.setting}`);
+      if (formData.desiredLength)
+        parts.push(`Desired Length: ${formData.desiredLength}`);
+
+      if (
+        formData.protagonistName ||
+        formData.protagonistRole ||
+        formData.protagonistPersonality ||
+        formData.protagonistGoal
+      ) {
+        parts.push(
+          `Protagonist: ${formData.protagonistName ? formData.protagonistName : ''}${formData.protagonistRole ? ', ' + formData.protagonistRole : ''}${formData.protagonistPersonality ? ', ' + formData.protagonistPersonality : ''}${formData.protagonistGoal ? ', Goal: ' + formData.protagonistGoal : ''}`.trim()
+        );
+      }
+
+      if (formData.supportingCharacters)
+        parts.push(`Supporting Characters: ${formData.supportingCharacters}`);
+      if (formData.pov) parts.push(`Point of View: ${formData.pov}`);
+      if (formData.tone) parts.push(`Tone: ${formData.tone}`);
+      if (formData.style) parts.push(`Style: ${formData.style}`);
+      if (formData.theme) parts.push(`Theme: ${formData.theme}`);
+      if (formData.moral) parts.push(`Moral: ${formData.moral}`);
+      if (formData.incitingIncident)
+        parts.push(`Inciting Incident: ${formData.incitingIncident}`);
+      if (formData.conflict) parts.push(`Conflict: ${formData.conflict}`);
+      if (formData.plotPoints)
+        parts.push(`Key Plot Points: ${formData.plotPoints}`);
+      if (formData.climax) parts.push(`Climax: ${formData.climax}`);
+      if (formData.resolution) parts.push(`Resolution: ${formData.resolution}`);
+      if (formData.twist) parts.push(`Twist: ${formData.twist}`);
+      if (formData.worldRules)
+        parts.push(`World Rules: ${formData.worldRules}`);
+      if (formData.magicSystem)
+        parts.push(`Magic System: ${formData.magicSystem}`);
+      if (formData.technology) parts.push(`Technology: ${formData.technology}`);
+      if (formData.specialElements)
+        parts.push(`Special Elements: ${formData.specialElements}`);
+      if (formData.additionalNotes)
+        parts.push(`Additional Notes: ${formData.additionalNotes}`);
+
+      const prompt = `Develop ideas from this prompt then Generate detailed Prompt: \n\n${parts.join('\n')}`;
+
+      // Save the prompt to display
+      setGeneratedPrompt(prompt);
+      setShowPrompt(true);
+      setCopied(false);
+
+      // Call the API to generate the story
+      const response = await fetch('/api/generate-story', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate story');
+      }
+
+      const data = await response.json();
+      setGeneratedStory(data.story);
+      setShowStory(true); // Make sure to show the story section
+      setShowStory(true);
+
+      // Decrement count in backend
+      if (user?.email && subscriptionStatus !== 'active') {
+        try {
+          const res = await fetch('/api/prompt-usage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: user.email }),
+          });
+          const countData = await res.json();
+          if (typeof countData.count === 'number') setGenCount(countData.count);
+        } catch (error) {
+          console.error('Error updating prompt count:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Error generating story:', error);
+      setSubjectError('Failed to generate story. Please try again.');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -374,7 +417,10 @@ export default function AIStoryPromptGenerator() {
             <GenerateButton
               onClick={generatePrompt}
               onReset={resetFormData}
-              disabled={subscriptionStatus !== 'active' && genCount <= 0}
+              disabled={
+                (subscriptionStatus !== 'active' && genCount <= 0) ||
+                isGenerating
+              }
             />
 
             <SubscribePrompt
@@ -383,6 +429,15 @@ export default function AIStoryPromptGenerator() {
               genCount={genCount}
               onSubscribe={() => user && handleSubscribePayment(user)}
             />
+            {isGenerating && (
+              <div className="flex justify-center my-8">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+                <span className="ml-4 text-cyan-400 text-lg">
+                  Generating your story...
+                </span>
+              </div>
+            )}
+
             {showPrompt && (
               <div className="generator-prompt-section">
                 <PromptDisplay
@@ -390,21 +445,35 @@ export default function AIStoryPromptGenerator() {
                   onCopy={copyToClipboard}
                   copied={copied}
                 />
-                {/* Suggestion for ChatGPT/Gemini */}
-                <div className="story-suggestion-box">
-                  <div className="story-suggestion-box-desc">
-                    Paste this prompt into <b>ChatGPT</b> or <b>Gemini</b> and
-                    ask:
-                    <br />
-                    <span className="story-suggestion-box-italic">
-                      Write a story based on this prompt.
-                    </span>
+
+                <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    Story By Chatgpt Result :
+                  </h3>
+                  <div className="prose prose-invert max-w-none">
+                    {isGenerating && (
+                      <div className="flex justify-center my-8">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+                        <span className="ml-4 text-cyan-400 text-lg">
+                          Generating your story...
+                        </span>
+                      </div>
+                    )}
+                    {generatedStory.split('\n').map((paragraph, i) => (
+                      <p key={i} className="mb-4">
+                        {paragraph}
+                      </p>
+                    ))}
                   </div>
                   <button
-                    onClick={copyAndOpenChatGPT}
-                    className="story-suggestion-btn"
+                    onClick={() => {
+                      navigator.clipboard.writeText(generatedStory);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                    className="mt-4 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md transition-colors"
                   >
-                    Copy &amp; Open ChatGPT
+                    {copied ? 'Copied!' : 'Copy Story'}
                   </button>
                 </div>
               </div>

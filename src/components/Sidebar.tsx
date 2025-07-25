@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { createContext, useEffect, useRef, useState } from 'react';
 import GoogleLoginButton from './Auth/GoogleLoginButton';
 import { handleSubscribePayment } from './Auth/handleSubscribePayment';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Sidebar context for open state
 export const SidebarContext = createContext<{
@@ -62,6 +63,7 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [subscriptionStatus, setSubscriptionStatus] = useState<
     'active' | 'inactive' | 'none' | null
   >(null);
@@ -205,7 +207,7 @@ const Sidebar = () => {
   const GENERATOR_LINKS = [
     {
       href: '/ai-image-prompt-generator',
-      label: 'AI Image Prompt Generator',
+      label: t('ai.imageGenerator'),
       icon: (
         <svg
           width="20"
@@ -223,7 +225,7 @@ const Sidebar = () => {
     },
     {
       href: '/ai-video-prompt-generator',
-      label: 'AI Video Prompt Generator',
+      label: t('ai.videoGenerator'),
       icon: (
         <svg
           width="20"
@@ -240,7 +242,7 @@ const Sidebar = () => {
     },
     {
       href: '/ai-audio-prompt-generator',
-      label: 'AI Audio Prompt Generator',
+      label: t('ai.audioGenerator'),
       icon: (
         <svg
           width="20"
@@ -258,7 +260,7 @@ const Sidebar = () => {
     },
     {
       href: '/ai-story-prompt-generator',
-      label: 'AI Story Prompt Generator',
+      label: t('ai.storyGenerator'),
       icon: (
         <svg
           width="20"
@@ -680,22 +682,22 @@ const Sidebar = () => {
                   {subLoading ? (
                     <span className="inline-flex items-center gap-2 text-xs font-semibold text-gray-400">
                       <span className="w-2.5 h-2.5 rounded-full bg-gray-300 animate-pulse"></span>
-                      Checking subscription...
+                      {t('subscription.checking')}
                     </span>
                   ) : subscriptionStatus === 'active' ? (
                     <span className="inline-flex items-center gap-2 text-xs font-semibold text-gray-700">
                       <span className="w-2.5 h-2.5 rounded-full bg-green-400"></span>
-                      Active Subscription
+                      {t('subscription.active')}
                     </span>
                   ) : subscriptionStatus === 'inactive' ? (
                     <span className="inline-flex items-center gap-2 text-xs font-semibold text-gray-500">
                       <span className="w-2.5 h-2.5 rounded-full bg-gray-400"></span>
-                      Inactive Subscription
+                      {t('subscription.inactive')}
                     </span>
                   ) : subscriptionStatus === 'none' ? (
                     <span className="inline-flex items-center gap-2 text-xs font-semibold text-gray-400">
                       <span className="w-2.5 h-2.5 rounded-full bg-orange-400"></span>
-                      No Subscription
+                      {t('subscription.none')}
                     </span>
                   ) : null}
                 </div>
@@ -705,7 +707,7 @@ const Sidebar = () => {
 
           {/* Footer */}
           <div className="pt-4 border-t border-white/20">
-            <p className="text-sm text-gray-400">© 2025 Marifat Maruf</p>
+            <p className="text-sm text-gray-400">{t('footer.copyright')}</p>
           </div>
 
           {/* Subscribe Button */}
@@ -717,7 +719,7 @@ const Sidebar = () => {
                 user && handleSubscribePayment({ email: user.email })
               }
             >
-              Subscribe
+              {t('btn.subscribe')}
             </button>
           </li>
         </div>
