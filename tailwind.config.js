@@ -9,30 +9,43 @@ module.exports = {
     // Gradient directions
     'bg-gradient-to-br',
     'bg-gradient-to-r',
-    // Purple variants
-    'from-purple-500', 'to-purple-500',
-    'hover:from-purple-600', 'hover:to-purple-600',
-    // Pink variants
-    'from-pink-500', 'to-pink-500',
-    'hover:from-pink-600', 'hover:to-pink-600',
-    // Green variants
-    'from-green-500', 'to-green-500',
-    'hover:from-green-600', 'hover:to-green-600',
-    // Teal variants
-    'from-teal-500', 'to-teal-500',
-    'hover:from-teal-600', 'hover:to-teal-600',
-    // Orange variants
-    'from-orange-500', 'to-orange-500',
-    'hover:from-orange-600', 'hover:to-orange-600',
-    // Red variants
-    'from-red-500', 'to-red-500',
-    'hover:from-red-600', 'hover:to-red-600',
-    // Indigo variants
-    'from-indigo-500', 'to-indigo-500',
-    'hover:from-indigo-600', 'hover:to-indigo-600',
-    // Yellow variants
-    'from-yellow-500', 'to-yellow-500',
-    'hover:from-yellow-600', 'hover:to-yellow-600',
+    
+    // Project gradient colors (500 variants)
+    'from-blue-500', 'to-cyan-500',
+    'from-purple-500', 'to-pink-500',
+    'from-green-500', 'to-teal-500',
+    'from-orange-500', 'to-red-500',
+    'from-indigo-500', 'to-purple-500',
+    'from-yellow-500', 'to-orange-500',
+    
+    // Skills gradient colors (400-500 variants)
+    'from-blue-400', 'to-emerald-500',
+    'from-orange-400', 'to-blue-500',
+    'from-green-400', 'to-emerald-500',
+    'from-yellow-400', 'to-orange-500',
+    'from-red-400', 'to-pink-500',
+    'from-indigo-400', 'to-purple-500',
+    'from-cyan-400', 'to-cyan-500',
+    'from-pink-400', 'to-rose-500',
+    'from-violet-400', 'to-purple-500',
+    'from-teal-400', 'to-emerald-500',
+    'from-amber-400', 'to-orange-500',
+    'from-lime-400', 'to-green-500',
+    'from-emerald-400', 'to-teal-500',
+    'from-sky-400', 'to-blue-500',
+    'from-fuchsia-400', 'to-pink-500',
+    'from-rose-400', 'to-red-500',
+    
+    // Hover variants for gradients
+    'hover:from-blue-500', 'hover:to-cyan-500',
+    'hover:from-purple-500', 'hover:to-pink-500',
+    'hover:from-green-500', 'hover:to-teal-500',
+    'hover:from-orange-500', 'hover:to-red-500',
+    'hover:from-indigo-500', 'hover:to-purple-500',
+    'hover:from-yellow-500', 'hover:to-orange-500',
+    
+    // Other utility classes that might be used with gradients
+    'opacity-80', 'hover:opacity-90',
   ],
   theme: {
     extend: {
