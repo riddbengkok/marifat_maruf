@@ -1,7 +1,9 @@
 'use client';
 
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ProjectModal from '@/components/ProjectModal';
 import Sidebar from '@/components/Sidebar';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   achievements,
   certifications,
@@ -13,8 +15,6 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 interface Project {
   id: number;
@@ -230,9 +230,7 @@ export default function Home() {
                       </li>
                       <li className="flex items-start">
                         <span className="text-cyan-400 mr-3 mt-1">•</span>
-                        <span className="text-gray-300">
-                          {t('about.uiux')}
-                        </span>
+                        <span className="text-gray-300">{t('about.uiux')}</span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-cyan-400 mr-3 mt-1">•</span>
@@ -468,12 +466,17 @@ export default function Home() {
                         {t(`projects.${project.id}.title`, project.title)}
                       </h3>
                       <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                        {t(`projects.${project.id}.description`, project.description)}
+                        {t(
+                          `projects.${project.id}.description`,
+                          project.description
+                        )}
                       </p>
 
                       {/* Technologies */}
                       <div className="mb-2">
-                        <p className="text-xs text-cyan-400 mb-2">{t('portfolio.technologies')}</p>
+                        <p className="text-xs text-cyan-400 mb-2">
+                          {t('portfolio.technologies')}
+                        </p>
                         <div className="flex flex-wrap gap-2 mb-4">
                           {project.technologies.map(tech => (
                             <span

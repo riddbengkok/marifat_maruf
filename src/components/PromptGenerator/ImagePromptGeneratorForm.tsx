@@ -71,7 +71,7 @@ export default function ImagePromptGeneratorForm({
             type="text"
             value={formData.subject}
             onChange={value => handleInputChange('subject', value)}
-            placeholder="e.g., a majestic dragon, cyberpunk city, portrait of a warrior"
+            placeholder="e.g., A serene alpine lake at sunrise, with mist hovering over the water and towering snow‑capped peaks in the background."
             required
           />
 

@@ -1,8 +1,8 @@
+import { LanguageProvider } from '@/contexts/LanguageContext';
 import type { Metadata } from 'next';
 import { Source_Code_Pro, Source_Sans_3 } from 'next/font/google';
 import './globals.css';
 import { homeMetadata } from './metadata';
-import { LanguageProvider } from '@/contexts/LanguageContext';
 
 const sourceSans = Source_Sans_3({
   subsets: ['latin'],
@@ -36,9 +36,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${sourceSans.variable} ${sourceCode.variable}`}>
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

@@ -321,7 +321,7 @@ export default function PromptGenerator() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt: `Create a detailed description of this image prompt: ${finalPrompt}. The description should be vivid and suitable for the described visual style.`,
+          prompt: `Improve this prompt to make it more sensible and meet the rules of photography or design theory : ${finalPrompt}.`,
         }),
       });
 
