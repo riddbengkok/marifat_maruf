@@ -118,6 +118,7 @@ export default function AIVideoPromptGenerator() {
   const [genCount, setGenCount] = useState<number>(0);
   const [generatedStory, setGeneratedStory] = useState('');
   const [isGeneratingStory, setIsGeneratingStory] = useState(false);
+  const [hasEnhancedWithAI, setHasEnhancedWithAI] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const { user } = useAuth();
   const [subjectError, setSubjectError] = useState<string | null>(null);
@@ -270,8 +271,7 @@ export default function AIVideoPromptGenerator() {
   });
 
   // --- Handlers ---
-  const generatePrompt = async () => {
-    if (subscriptionStatus !== 'active' && genCount <= 0) return;
+  const generatePrompt = () => {
     if (!formData.subject.trim()) {
       setSubjectError('Please enter a subject for your video');
       return;
@@ -384,17 +384,28 @@ export default function AIVideoPromptGenerator() {
     setGeneratedPrompt(finalPrompt);
     setShowPrompt(true);
     setCopied(false);
+    setGeneratedStory('');
+    setHasEnhancedWithAI(false);
+  };
+
+  const enhanceWithAI = async () => {
+    if (subscriptionStatus !== 'active' && genCount <= 0) return;
+    if (!generatedPrompt) {
+      alert('Please generate a prompt first before enhancing with AI');
+      return;
+    }
 
     // Call ChatGPT API to generate story
     try {
       setIsGeneratingStory(true);
+      setHasEnhancedWithAI(true);
       const response = await fetch('/api/generate-story', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt: `Create a short story based on this video prompt: ${finalPrompt}. The story should be engaging and suitable for the described visual style.`,
+          prompt: `Create a short story based on this video prompt: ${generatedPrompt}. The story should be engaging and suitable for the described visual style.`,
         }),
       });
 
@@ -583,10 +594,19 @@ export default function AIVideoPromptGenerator() {
               </div>
             )}
             <GenerateButton
-              onClick={generatePrompt}
+              onGenerate={generatePrompt}
+              onEnhance={enhanceWithAI}
               onReset={resetFormDataWithCount}
               disabled={subscriptionStatus !== 'active' && genCount <= 0}
+              hasGeneratedPrompt={!!generatedPrompt}
             />
+
+            {showPrompt && !hasEnhancedWithAI && (
+              <div className="mt-4 text-center text-gray-400 text-sm">
+                💡 Click &ldquo;🤖 Enhance with AI&rdquo; to get a creative
+                story based on your prompt
+              </div>
+            )}
             <SubscribePrompt
               user={user}
               subscriptionStatus={subscriptionStatus}
@@ -605,39 +625,41 @@ export default function AIVideoPromptGenerator() {
                   copied={copied}
                 />
 
-                <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                  <h3 className="text-xl font-bold text-white mb-4">
-                    🤖 Enhance with ChatGPT
-                  </h3>
-                  {isGeneratingStory ? (
-                    <div className="flex justify-center my-8">
-                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
-                      <span className="ml-4 text-cyan-400 text-lg">
-                        Generating your story...
-                      </span>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="prose prose-invert max-w-none">
-                        {generatedStory.split('\n').map((paragraph, i) => (
-                          <p key={i} className="mb-4">
-                            {paragraph}
-                          </p>
-                        ))}
+                {hasEnhancedWithAI && (
+                  <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                    <h3 className="text-xl font-bold text-white mb-4">
+                      🤖 Enhanced with ChatGPT
+                    </h3>
+                    {isGeneratingStory ? (
+                      <div className="flex justify-center my-8">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+                        <span className="ml-4 text-cyan-400 text-lg">
+                          Generating your story...
+                        </span>
                       </div>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(generatedStory);
-                          setCopied(true);
-                          setTimeout(() => setCopied(false), 2000);
-                        }}
-                        className="mt-4 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md transition-colors"
-                      >
-                        {copied ? 'Copied!' : 'Copy Story'}
-                      </button>
-                    </>
-                  )}
-                </div>
+                    ) : (
+                      <>
+                        <div className="prose prose-invert max-w-none">
+                          {generatedStory.split('\n').map((paragraph, i) => (
+                            <p key={i} className="mb-4">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(generatedStory);
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                          }}
+                          className="mt-4 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md transition-colors"
+                        >
+                          {copied ? 'Copied!' : 'Copy Story'}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>

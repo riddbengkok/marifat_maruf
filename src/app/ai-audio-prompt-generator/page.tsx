@@ -736,7 +736,7 @@ export default function AIAudioPromptGenerator() {
             </div>
           )}
           <GenerateButton
-            onClick={generatePrompt}
+            onGenerate={generatePrompt}
             onReset={resetFormDataWithCount}
             disabled={subscriptionStatus !== 'active' && genCount <= 0}
           />

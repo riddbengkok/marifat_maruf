@@ -79,7 +79,7 @@ export default function PromptGeneratorForm({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gridTemplateColumns: '1fr',
             gap: '24px',
             marginBottom: '8px',
           }}
@@ -87,13 +87,23 @@ export default function PromptGeneratorForm({
           <FormField
             label="Subject"
             icon="🎯"
-            type="text"
+            type="textarea"
             value={formData.subject}
             onChange={value => handleInputChange('subject', value)}
-            placeholder="e.g., a majestic dragon, cyberpunk city, portrait of a warrior"
+            placeholder="e.g., sealed IKEA box trembles, opens, and flat pack furniture assembles rapidly into a serene, styled room highlighted by a yellow IKEA throw on the bed"
             required
+            rows={4}
           />
+        </div>
 
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '24px',
+            marginBottom: '8px',
+          }}
+        >
           <FormField
             label="Style"
             icon="🎨"

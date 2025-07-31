@@ -522,7 +522,7 @@ export default function PromptGenerator() {
               </>
             )}
             <GenerateButton
-              onClick={generatePrompt}
+              onGenerate={generatePrompt}
               onReset={resetFormDataWithCount}
               disabled={subscriptionStatus !== 'active' && genCount <= 0}
             />

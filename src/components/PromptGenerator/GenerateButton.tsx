@@ -6,20 +6,24 @@ import './PromptGenerator.css';
 import ResetButton from './ResetButton';
 
 interface GenerateButtonProps {
-  onClick: () => void;
+  onGenerate: () => void;
+  onEnhance?: () => void;
   onReset?: () => void;
   disabled?: boolean;
+  hasGeneratedPrompt?: boolean;
 }
 
 export default function GenerateButton({
-  onClick,
+  onGenerate,
+  onEnhance,
   onReset,
   disabled = false,
+  hasGeneratedPrompt = false,
 }: GenerateButtonProps) {
   const { user, signInWithGoogle } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClick = async () => {
+  const handleGenerateClick = async () => {
     if (!user) {
       try {
         setIsLoading(true);
@@ -30,7 +34,22 @@ export default function GenerateButton({
         setIsLoading(false);
       }
     } else {
-      onClick();
+      onGenerate();
+    }
+  };
+
+  const handleEnhanceClick = async () => {
+    if (!user) {
+      try {
+        setIsLoading(true);
+        await signInWithGoogle();
+      } catch (error) {
+        console.error('Error signing in with Google:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      onEnhance?.();
     }
   };
 
@@ -39,19 +58,43 @@ export default function GenerateButton({
       <div className="button-container-spacer"></div>
 
       {user ? (
-        <button
-          onClick={handleClick}
-          disabled={isLoading || disabled}
-          className="btn-primary"
-        >
-          {isLoading && <div className="loading-spinner"></div>}
-          {disabled
-            ? '🚀 Subscribe to get unlimited access only IDR 6k'
-            : '🚀 Generate Prompt'}
-        </button>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <button
+            onClick={handleGenerateClick}
+            disabled={isLoading || disabled}
+            className="btn-primary"
+          >
+            {isLoading && <div className="loading-spinner"></div>}
+            {disabled
+              ? '🚀 Subscribe to get unlimited access only IDR 6k'
+              : '🚀 Generate Prompt'}
+          </button>
+
+          {hasGeneratedPrompt && onEnhance && (
+            <button
+              onClick={handleEnhanceClick}
+              disabled={isLoading || disabled}
+              className="btn-secondary"
+              style={{
+                background: 'linear-gradient(135deg, #7dd8e0, #6b9ac4)',
+                color: '#000',
+                border: 'none',
+                padding: '16px 24px',
+                fontSize: '16px',
+                fontWeight: '600',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 20px rgba(125, 216, 224, 0.3)',
+              }}
+            >
+              🤖 Enhance with AI
+            </button>
+          )}
+        </div>
       ) : (
         <button
-          onClick={handleClick}
+          onClick={handleGenerateClick}
           disabled={isLoading}
           className="btn-primary"
         >

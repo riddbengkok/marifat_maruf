@@ -415,7 +415,7 @@ export default function AIStoryPromptGenerator() {
               </div>
             )}
             <GenerateButton
-              onClick={generatePrompt}
+              onGenerate={generatePrompt}
               onReset={resetFormData}
               disabled={
                 (subscriptionStatus !== 'active' && genCount <= 0) ||

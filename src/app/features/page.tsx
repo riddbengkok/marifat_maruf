@@ -119,8 +119,9 @@ export default function FeaturesPage() {
                 Get in Touch
               </h2>
               <p className="text-xl text-gray-300 mb-16 text-center max-w-4xl mx-auto leading-relaxed">
-                I'm always interested in new opportunities and exciting
-                projects. Let's discuss how we can bring your ideas to life.
+                I&apos;m always interested in new opportunities and exciting
+                projects. Let&apos;s discuss how we can bring your ideas to
+                life.
               </p>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -128,12 +129,12 @@ export default function FeaturesPage() {
                 <div className="space-y-8">
                   <div>
                     <h3 className="text-hyperspace-h2 font-bold text-white mb-6">
-                      Let's Connect
+                      Let&apos;s Connect
                     </h3>
                     <p className="text-gray-300 mb-8 leading-relaxed">
                       Whether you have a project in mind, want to discuss
                       collaboration opportunities, or just want to say hello,
-                      I'd love to hear from you.
+                      I&apos;d love to hear from you.
                     </p>
 
                     <div className="space-y-6">
