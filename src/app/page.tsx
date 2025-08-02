@@ -92,22 +92,24 @@ export default function Home() {
           {/* Hero Section */}
           <section
             id="hero"
-            className="wrapper style1 fade-up py-20 bg-gradient-to-br from-black to-gray-900"
+            className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden"
           >
-            <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
+            {/* Animated background elements */}
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+              <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+            </div>
+
+            <div className="relative z-10 max-w-6xl w-full mx-auto px-4 lg:px-8 py-20">
               {/* Language Switcher - Top Right */}
-              <div className="flex justify-end mb-8">
+              <div className="absolute top-6 right-6 z-20">
                 <LanguageSwitcher />
               </div>
 
               <div className="text-center">
-                <h1 className="text-hyperspace-h1 font-bold mb-6 text-gradient">
-                  {t('hero.name')}
-                </h1>
-
-                {/* Profile Picture */}
-                <div className="flex justify-center mb-6">
-                  <div className="relative w-32 h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden border-4 border-cyan-400/30 shadow-2xl hover:border-cyan-400 transition-all duration-300 transform hover:scale-105">
+                {/* Profile Picture with Floating Animation */}
+                <div className="flex justify-center mb-8">
+                  <div className="relative w-40 h-40 lg:w-48 lg:h-48 rounded-full overflow-hidden border-4 border-cyan-400/50 shadow-2xl hover:border-cyan-400 transition-all duration-500 transform hover:scale-105 animate-float">
                     <Image
                       src="/images/rifat.jpg"
                       alt="Marifat Maruf"
@@ -119,39 +121,109 @@ export default function Home() {
                   </div>
                 </div>
 
-                <p className="text-hyperspace-h2 text-gray-300 mb-8 leading-relaxed">
-                  {t('hero.title')}
-                </p>
-                <p className="text-hyperspace-intro text-gray-400 mb-12 max-w-4xl mx-auto leading-relaxed">
+                {/* Headline */}
+                <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500">
+                  {t('hero.name')}
+                </h1>
+                
+                <div className="relative inline-block mb-8">
+                  <p className="text-xl md:text-2xl font-medium text-cyan-300 inline-block relative">
+                    {t('hero.title')}
+                    <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-transparent" />
+                  </p>
+                </div>
+
+                <p className="text-lg text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed px-4">
                   {t('hero.description')}
                 </p>
 
                 {/* Navigation Buttons */}
-                <div className="flex flex-wrap justify-center gap-4 mb-12">
+                <div className="flex flex-wrap justify-center gap-4 mb-8">
                   <button
                     onClick={() => scrollToSection('about')}
-                    className="bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="relative group bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/30 overflow-hidden"
                   >
-                    {t('btn.about')}
+                    <span className="relative z-10">{t('btn.about')}</span>
+                    <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                   </button>
                   <button
                     onClick={() => scrollToSection('skills')}
-                    className="bg-gradient-to-r from-purple-400 to-pink-500 hover:from-purple-500 hover:to-pink-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="relative group bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/30 overflow-hidden"
                   >
-                    {t('ui.skills')}
+                    <span className="relative z-10">{t('ui.skills')}</span>
+                    <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                   </button>
                   <button
                     onClick={() => scrollToSection('experience')}
-                    className="bg-gradient-to-r from-green-400 to-teal-500 hover:from-green-500 hover:to-teal-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="relative group bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-teal-500/30 overflow-hidden"
                   >
-                    {t('btn.experience')}
+                    <span className="relative z-10">{t('btn.experience')}</span>
+                    <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                   </button>
-                  <button
-                    onClick={() => scrollToSection('projects')}
-                    className="bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                </div>
+
+                {/* Secondary Action Buttons */}
+                <div className="flex flex-wrap justify-center gap-6 mb-12">
+                  <Link
+                    href="#contact"
+                    className="group relative px-6 py-3 font-medium text-gray-300 hover:text-white transition-colors duration-300"
                   >
-                    {t('btn.projects')}
-                  </button>
+                    <span className="relative z-10 flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-2 text-cyan-400 group-hover:animate-bounce"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      {t('ui.contactMe')}
+                    </span>
+                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cyan-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                  </Link>
+                </div>
+
+                {/* Social Links */}
+                <div className="flex justify-center space-x-6 mt-12">
+                  {[
+                    {
+                      name: 'GitHub',
+                      href: 'https://github.com/yourusername',
+                      icon: 'github',
+                    },
+                    {
+                      name: 'LinkedIn',
+                      href: 'https://linkedin.com/in/yourprofile',
+                      icon: 'linkedin',
+                    },
+                    {
+                      name: 'Twitter',
+                      href: 'https://twitter.com/yourhandle',
+                      icon: 'twitter',
+                    },
+                    {
+                      name: 'Dribbble',
+                      href: 'https://dribbble.com/yourprofile',
+                      icon: 'dribbble',
+                    },
+                  ].map(item => (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-cyan-400 transition-colors duration-300"
+                      aria-label={item.name}
+                    >
+                      <span className="sr-only">{item.name}</span>
+                      <i className={`fab fa-${item.icon} text-2xl`}></i>
+                    </a>
+                  ))}
                 </div>
 
                 {/* Quick Links */}

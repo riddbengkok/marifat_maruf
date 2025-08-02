@@ -90,15 +90,15 @@ const translations: Record<Language, Record<string, string>> = {
     'portfolio.category.uiux': 'UI/UX Design',
 
     // Projects
-    'projects.1.title': 'AI-Powered Prompt Generator',
+    'projects.1.title': 'User Transfer Report',
     'projects.1.description':
-      'A web application that generates creative writing prompts using AI. Built with Next.js and OpenAI API.',
-    'projects.2.title': 'E-commerce Platform',
+      'A web dashboard to show data user transfer report',
+    'projects.2.title': 'Component edit feature',
     'projects.2.description':
-      'A full-featured e-commerce platform with product catalog, cart, and checkout functionality.',
-    'projects.3.title': 'Portfolio Website',
+      'Dashboard for setting component that show in mobile application',
+    'projects.3.title': 'Product management for apps',
     'projects.3.description':
-      'A modern, responsive portfolio website built with Next.js and Tailwind CSS.',
+      'Dashboard product management create edit delete for apps',
 
     // Hero Section
     'hero.name': 'Marifat Maruf',
