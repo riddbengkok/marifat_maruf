@@ -125,7 +125,7 @@ export default function Home() {
                 <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500">
                   {t('hero.name')}
                 </h1>
-                
+
                 <div className="relative inline-block mb-8">
                   <p className="text-xl md:text-2xl font-medium text-cyan-300 inline-block relative">
                     {t('hero.title')}
