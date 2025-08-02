@@ -1,12 +1,12 @@
 'use client';
 
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createContext, useEffect, useRef, useState } from 'react';
 import GoogleLoginButton from './Auth/GoogleLoginButton';
 import { handleSubscribePayment } from './Auth/handleSubscribePayment';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 // Sidebar context for open state
 export const SidebarContext = createContext<{
@@ -557,35 +557,6 @@ const Sidebar = () => {
                       Education
                     </button>
                   </li>
-                  <li>
-                    <Link
-                      href="/teleprompter"
-                      className={`flex items-center gap-2 px-3 py-2 rounded border transition-colors text-base ${
-                        pathname === '/teleprompter'
-                          ? 'border-cyan-400 bg-cyan-900/10 text-cyan-200 font-semibold'
-                          : 'border-transparent text-gray-300 hover:border-cyan-700 hover:bg-cyan-900/10 hover:text-cyan-100'
-                      }`}
-                      onClick={() => setIsOpen(false)}
-                      aria-current={pathname === '/teleprompter' ? 'page' : undefined}
-                    >
-                      <svg
-                        width="20"
-                        height="20"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.7"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <rect x="3" y="7" width="18" height="10" rx="2" />
-                        <rect x="6" y="10" width="12" height="4" rx="1" />
-                        <path d="M9 16v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-2" />
-                      </svg>
-                      <span className="leading-tight text-sm text-left">
-                        Teleprompter
-                      </span>
-                    </Link>
-                  </li>
                   <li className="pt-4 border-t border-white/20">
                     <Link
                       href="/features"
@@ -664,6 +635,25 @@ const Sidebar = () => {
                         >
                           <rect x="4" y="4" width="16" height="16" rx="2" />
                           <path d="M8 8h8M8 12h8M8 16h4" />
+                        </svg>
+                      ),
+                    },
+                    {
+                      href: '/teleprompter',
+                      label: 'Teleprompter',
+                      icon: (
+                        <svg
+                          width="20"
+                          height="20"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.7"
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                        >
+                          <rect x="3" y="7" width="18" height="10" rx="2" />
+                          <rect x="6" y="10" width="12" height="4" rx="1" />
+                          <path d="M9 16v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-2" />
                         </svg>
                       ),
                     },
