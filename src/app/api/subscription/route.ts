@@ -1,7 +1,7 @@
 // Add this at the top for TypeScript module declaration
-import { NextRequest } from 'next/server';
-// @ts-expect-error: No types available for 'midtrans-client', safe to ignore for JS import
 import {
+  CustomerDetails,
+  ItemDetail,
   MidtransWebhookRequest,
   PaymentRequest,
   PaymentResponse,
@@ -17,6 +17,7 @@ import {
 } from '@/lib/api-utils';
 import { prisma } from '@/lib/prisma';
 import midtransClient from 'midtrans-client';
+import { NextRequest } from 'next/server';
 
 // Function to generate Midtrans Snap token for an order
 async function generateMidtransToken({
@@ -25,15 +26,14 @@ async function generateMidtransToken({
   item_details,
 }: {
   order_id: string;
-  customer_details: any;
-  item_details: any[];
+  customer_details: CustomerDetails;
+  item_details: ItemDetail[];
 }) {
   const isProduction = process.env.MIDTRANS_IS_PRODUCTION === 'true';
-  const snap = new midtransClient.Snap({
-    isProduction,
-    serverKey: process.env.SERVER_KEY_MIDTRANS,
-    clientKey: process.env.NEXT_PUBLIC_CLIENT_KEY_MIDTRANS,
-  });
+  const serverKey = process.env.SERVER_KEY_MIDTRANS;
+  const clientKey = process.env.NEXT_PUBLIC_CLIENT_KEY_MIDTRANS;
+  if (!serverKey || !clientKey) throw new Error('Midtrans keys missing');
+  const snap = new midtransClient.Snap({ isProduction, serverKey, clientKey });
 
   // Explicitly set the Snap API base URL for prod/staging
   snap.apiConfig.apiBaseUrl = isProduction
@@ -63,8 +63,17 @@ export async function POST(req: NextRequest) {
   try {
     const body: PaymentRequest = await req.json();
 
-    // If this is a Midtrans notification (webhook), reject here (handled in notify route)
-    if (body.order_id && (body as any).transaction_status) {
+    // If this is a Midtrans notification (webhook), reject here
+    const isWebhook = (b: unknown): b is MidtransWebhookRequest =>
+      typeof b === 'object' &&
+      b !== null &&
+      'order_id' in b &&
+      'transaction_status' in b &&
+      'signature_key' in b &&
+      'status_code' in b &&
+      'gross_amount' in b;
+
+    if (isWebhook(body)) {
       return createErrorResponse('Webhook not allowed here', 405);
     }
 

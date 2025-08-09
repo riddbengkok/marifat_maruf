@@ -18,9 +18,20 @@ export async function analyzeImageVision(
   imageBuffer: Buffer
 ): Promise<VisionImageAnalysis> {
   try {
-    const client = new ImageAnnotatorClient({
-      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-    });
+    const client = new ImageAnnotatorClient(
+      process.env.GOOGLE_APPLICATION_CREDENTIALS
+        ? { keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS }
+        : {
+            credentials: {
+              client_email: process.env.GOOGLE_CLIENT_EMAIL,
+              private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(
+                /\\n/g,
+                '\n'
+              ),
+            },
+            projectId: process.env.GOOGLE_PROJECT_ID,
+          }
+    );
 
     const request = {
       image: {

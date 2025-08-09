@@ -94,9 +94,13 @@ export async function POST(req: NextRequest) {
     try {
       if (method === 'vision') {
         // Check if Google Vision API is configured
-        if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+        const hasKeyFile = !!process.env.GOOGLE_APPLICATION_CREDENTIALS;
+        const hasKeyPair =
+          !!process.env.GOOGLE_CLIENT_EMAIL && !!process.env.GOOGLE_PRIVATE_KEY;
+
+        if (!hasKeyFile && !hasKeyPair) {
           return createErrorResponse(
-            'Google Vision API not configured. Please use local analysis or configure Google Vision API.',
+            'Google Vision API not configured. Provide GOOGLE_APPLICATION_CREDENTIALS or GOOGLE_CLIENT_EMAIL + GOOGLE_PRIVATE_KEY.',
             400
           );
         }

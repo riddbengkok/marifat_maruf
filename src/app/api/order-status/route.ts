@@ -38,12 +38,12 @@ export async function GET(req: NextRequest) {
       const response: OrderStatusResponse = {
         status: order.status,
         id: order.id,
-        statusPayment: order.statusPayment,
-        price: order.price,
+        statusPayment: order.statusPayment ?? undefined,
+        price: order.price ?? undefined,
         published: order.published,
         createdAt: order.createdAt.toISOString(),
         updatedAt: order.updatedAt.toISOString(),
-        userId: order.userId,
+        userId: order.userId ?? undefined,
       };
       return createSuccessResponse(response);
     } else {

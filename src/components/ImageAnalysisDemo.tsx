@@ -1,7 +1,23 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
+import type {
+  FaceAnnotation,
+  ImagePropertiesAnnotation,
+  LabelAnnotation,
+  SafeSearchAnnotation,
+  TextAnnotation,
+} from '@/lib/api-types';
 import React, { useEffect, useState } from 'react';
+
+// Human-readable labels for SafeSearch keys
+const SAFE_SEARCH_LABELS: Record<string, string> = {
+  adult: 'Adult Content',
+  violence: 'Violence',
+  racy: 'Racy Content',
+  medical: 'Medical Content',
+  spoof: 'Spoof (Fake/Manipulated)',
+};
 
 interface AnalysisResult {
   isGood: boolean;
@@ -260,376 +276,524 @@ export const ImageAnalysisDemo: React.FC = () => {
 
       {result && (
         <div className="mt-8 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 p-8">
-          <h2 className="text-2xl font-semibold text-white mb-6">
-            Analysis Results
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-lg font-medium text-white mb-4">Summary</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                  <span className="text-gray-300">Stock Photo Quality:</span>
-                  <span
-                    className={`font-semibold px-3 py-1 rounded-full text-sm ${
-                      result.isGood
-                        ? 'bg-green-500/20 text-green-400'
-                        : 'bg-red-500/20 text-red-400'
-                    }`}
-                  >
-                    {result.isGood
-                      ? 'Acceptable for Stock'
-                      : 'Needs Improvement'}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                  <span className="text-gray-300">Professional Score:</span>
-                  <span className="font-semibold text-white">
-                    {result.score}/100
-                  </span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                  <span className="text-gray-300">Analysis Method:</span>
-                  <span className="font-semibold text-cyan-400 capitalize">
-                    {result.method}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-white mb-4 mt-4">
-                  Reasons
-                </h3>
-                <ul className="space-y-2">
-                  {result.reasons.map((reason, index) => (
-                    <li
-                      key={index}
-                      className="text-sm text-gray-300 flex items-start p-2 bg-gray-700/30 rounded-lg"
-                    >
-                      <span className="text-cyan-400 mr-2">•</span>
-                      {reason}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-medium text-white mb-4">
-                Stock Photo Assessment
-              </h3>
-              <div className="space-y-4">
-                {result.method === 'local' && result.analysis.metrics && (
-                  <>
-                    {/* Stock Photo Quality Assessment */}
-                    <div className="p-4 bg-gray-700/30 rounded-lg border-l-4 border-cyan-500">
-                      <h4 className="text-cyan-400 font-semibold mb-2">
-                        Stock Photo Standards
-                      </h4>
-                      <div className="space-y-2 text-sm text-gray-300">
-                        {result.score >= 80 && (
-                          <div className="flex items-center">
-                            <span className="text-green-400 mr-2">✓</span>
-                            <span>
-                              Excellent quality - Ready for premium stock sites
-                            </span>
-                          </div>
-                        )}
-                        {result.score >= 70 && result.score < 80 && (
-                          <div className="flex items-center">
-                            <span className="text-yellow-400 mr-2">⚠</span>
-                            <span>
-                              Good quality - Acceptable for standard stock sites
-                            </span>
-                          </div>
-                        )}
-                        {result.score >= 60 && result.score < 70 && (
-                          <div className="flex items-center">
-                            <span className="text-orange-400 mr-2">⚠</span>
-                            <span>
-                              Acceptable quality - May need minor improvements
-                            </span>
-                          </div>
-                        )}
-                        {result.score < 60 && (
-                          <div className="flex items-center">
-                            <span className="text-red-400 mr-2">✗</span>
-                            <span>
-                              Below stock standards - Significant improvements
-                              needed
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Basic Quality Assessment */}
-
-                        <div className="mt-3 bg-gray-800/50 rounded text-xs text-gray-400">
-                          <span className="text-yellow-400 mr-2">ⓘ</span>
-                          <strong>Stock Requirements:</strong> Sharpness ≥50,
-                          Color Balance ≥60, Brightness 30-80, Contrast ≥20
-                        </div>
-
-                        {/* Composition Assessment */}
-                        {result.analysis.metrics.composition && (
-                          <div className=" bg-gray-800/50 rounded text-xs text-gray-400">
-                            <span className="text-yellow-400 mr-2">ⓘ</span>
-                            <strong>Stock Standards:</strong> Overall ≥60, Rule
-                            of Thirds ≥50, Golden Ratio ≥40, Symmetry ≥30
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Stock Photo Recommendations */}
-                    <div className="p-4 bg-gray-700/30 rounded-lg border-l-4 border-green-500">
-                      <h4 className="text-green-400 font-semibold mb-2">
-                        Stock Photo Recommendations
-                      </h4>
-                      <div className="space-y-2 text-sm text-gray-300">
-                        {result.score >= 80 && (
-                          <>
-                            <div className="flex items-start">
-                              <span className="text-green-400 mr-2 mt-1">
-                                ✓
-                              </span>
-                              <span>
-                                Premium stock sites: Shutterstock, iStock, Adobe
-                                Stock
-                              </span>
-                            </div>
-                            <div className="flex items-start">
-                              <span className="text-green-400 mr-2 mt-1">
-                                ✓
-                              </span>
-                              <span>High commercial value potential</span>
-                            </div>
-                          </>
-                        )}
-                        {result.score >= 70 && result.score < 80 && (
-                          <>
-                            <div className="flex items-start">
-                              <span className="text-yellow-400 mr-2 mt-1">
-                                ⚠
-                              </span>
-                              <span>
-                                Standard stock sites: Shutterstock, Dreamstime
-                              </span>
-                            </div>
-                            <div className="flex items-start">
-                              <span className="text-yellow-400 mr-2 mt-1">
-                                ⚠
-                              </span>
-                              <span>
-                                Consider minor adjustments for better acceptance
-                              </span>
-                            </div>
-                          </>
-                        )}
-                        {result.score >= 60 && result.score < 70 && (
-                          <>
-                            <div className="flex items-start">
-                              <span className="text-orange-400 mr-2 mt-1">
-                                ⚠
-                              </span>
-                              <span>Microstock sites: Pixabay, Unsplash</span>
-                            </div>
-                            <div className="flex items-start">
-                              <span className="text-orange-400 mr-2 mt-1">
-                                ⚠
-                              </span>
-                              <span>
-                                Improve quality before submitting to premium
-                                sites
-                              </span>
-                            </div>
-                          </>
-                        )}
-                        {result.score < 60 && (
-                          <>
-                            <div className="flex items-start">
-                              <span className="text-red-400 mr-2 mt-1">✗</span>
-                              <span>
-                                Not suitable for commercial stock sites
-                              </span>
-                            </div>
-                            <div className="flex items-start">
-                              <span className="text-red-400 mr-2 mt-1">✗</span>
-                              <span>
-                                Significant improvements needed for stock
-                                acceptance
-                              </span>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-            {/* <div></div> */}
-          </div>
-
-          {result.method === 'local' && result.analysis.metrics && (
-            <div className="mt-8">
-              <h3 className="text-xl font-semibold text-white mb-6">
-                Detailed Metrics
-              </h3>
-
-              {/* Basic Metrics */}
-              <div className="mb-8">
-                <h4 className="text-lg font-medium text-gray-200 mb-4">
-                  Basic Quality
-                </h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {Object.entries(result.analysis.metrics).map(
-                    ([key, value]) => {
-                      if (key === 'composition') return null; // Skip composition, handled separately
-                      const label = key.replace(/([A-Z])/g, ' $1').trim();
-                      const numeric =
-                        typeof value === 'number' ? value : Number(value);
-                      const formatted = Number.isFinite(numeric)
-                        ? Math.round(numeric * 10) / 10
-                        : 0;
-                      return (
-                        <div
-                          key={key}
-                          className="rounded-lg border border-gray-600 bg-gray-700/50 p-4 shadow-sm flex flex-col items-center justify-center hover:border-cyan-500/50 transition-all duration-300"
-                        >
-                          <div className="text-xs uppercase tracking-wide text-gray-400 mb-2 text-center truncate w-full">
-                            {label}
-                          </div>
-                          <div className="text-3xl font-extrabold text-cyan-400 leading-none">
-                            {formatted}
-                          </div>
-                          <div className="mt-2 text-[11px] leading-snug text-gray-400 text-center">
-                            {getMetricExplanation(key, numeric)}
-                          </div>
-                        </div>
-                      );
-                    }
-                  )}
-                </div>
-              </div>
-
-              {/* Composition Metrics */}
-              {result.analysis.metrics.composition && (
+          {/* Only show these for local analysis */}
+          {result.method === 'local' && (
+            <>
+              <h2 className="text-2xl font-semibold text-white mb-6">
+                Analysis Results
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <h4 className="text-lg font-medium text-gray-200 mb-4">
-                    Composition Analysis
-                  </h4>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {(
-                      [
-                        [
-                          'Overall',
-                          result.analysis.metrics.composition.overall,
-                          'text-purple-400',
-                          'overall',
-                        ],
-                        [
-                          'Rule of Thirds',
-                          result.analysis.metrics.composition.ruleOfThirds,
-                          'text-green-400',
-                          'thirds',
-                        ],
-                        [
-                          'Golden Ratio',
-                          result.analysis.metrics.composition.goldenRatio,
-                          'text-yellow-400',
-                          'golden',
-                        ],
-                        [
-                          'Symmetry',
-                          result.analysis.metrics.composition.symmetry,
-                          'text-indigo-400',
-                          'symmetry',
-                        ],
-                        [
-                          'Leading Lines',
-                          result.analysis.metrics.composition.leadingLines,
-                          'text-orange-400',
-                          'lines',
-                        ],
-                        [
-                          'Horizon',
-                          result.analysis.metrics.composition.horizonPlacement,
-                          'text-red-400',
-                          'horizon',
-                        ],
-                      ] as Array<
-                        [
-                          string,
-                          number,
-                          string,
-                          (
-                            | 'overall'
-                            | 'thirds'
-                            | 'golden'
-                            | 'symmetry'
-                            | 'lines'
-                            | 'horizon'
-                          ),
-                        ]
+                  <h3 className="text-lg font-medium text-white mb-4">
+                    Summary
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                      <span className="text-gray-300">
+                        Stock Photo Quality:
+                      </span>
+                      <span
+                        className={`font-semibold px-3 py-1 rounded-full text-sm ${
+                          result.isGood
+                            ? 'bg-green-500/20 text-green-400'
+                            : 'bg-red-500/20 text-red-400'
+                        }`}
                       >
-                    ).map(([title, value, color, illo], idx) => (
-                      <div
-                        key={idx}
-                        className="rounded-lg border border-gray-600 bg-gray-700/50 p-4 shadow-sm flex flex-col items-center justify-center hover:border-purple-500/50 transition-all duration-300"
-                      >
-                        <div className="text-xs uppercase tracking-wide text-gray-400 mb-2 text-center truncate w-full">
-                          {title}
-                        </div>
-                        <div
-                          className={`text-3xl font-extrabold leading-none ${color}`}
+                        {result.isGood
+                          ? 'Acceptable for Stock'
+                          : 'Needs Improvement'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                      <span className="text-gray-300">Professional Score:</span>
+                      <span className="font-semibold text-white">
+                        {result.score}/100
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                      <span className="text-gray-300">Analysis Method:</span>
+                      <span className="font-semibold text-cyan-400 capitalize">
+                        {result.method}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-white mb-4 mt-4">
+                      Reasons
+                    </h3>
+                    <ul className="space-y-2">
+                      {result.reasons.map((reason, index) => (
+                        <li
+                          key={index}
+                          className="text-sm text-gray-300 flex items-start p-2 bg-gray-700/30 rounded-lg"
                         >
-                          {Math.round(value * 10) / 10}
-                        </div>
-                        {illo && <CompositionIllustration type={illo} />}
-                      </div>
-                    ))}
+                          <span className="text-cyan-400 mr-2">•</span>
+                          {reason}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
+
+                <div>
+                  <h3 className="text-lg font-medium text-white mb-4">
+                    Stock Photo Assessment
+                  </h3>
+                  <div className="space-y-4">
+                    {result.method === 'local' && result.analysis.metrics && (
+                      <>
+                        {/* Stock Photo Quality Assessment */}
+                        <div className="p-4 bg-gray-700/30 rounded-lg border-l-4 border-cyan-500">
+                          <h4 className="text-cyan-400 font-semibold mb-2">
+                            Stock Photo Standards
+                          </h4>
+                          <div className="space-y-2 text-sm text-gray-300">
+                            {result.score >= 80 && (
+                              <div className="flex items-center">
+                                <span className="text-green-400 mr-2">✓</span>
+                                <span>
+                                  Excellent quality - Ready for premium stock
+                                  sites
+                                </span>
+                              </div>
+                            )}
+                            {result.score >= 70 && result.score < 80 && (
+                              <div className="flex items-center">
+                                <span className="text-yellow-400 mr-2">⚠</span>
+                                <span>
+                                  Good quality - Acceptable for standard stock
+                                  sites
+                                </span>
+                              </div>
+                            )}
+                            {result.score >= 60 && result.score < 70 && (
+                              <div className="flex items-center">
+                                <span className="text-orange-400 mr-2">⚠</span>
+                                <span>
+                                  Acceptable quality - May need minor
+                                  improvements
+                                </span>
+                              </div>
+                            )}
+                            {result.score < 60 && (
+                              <div className="flex items-center">
+                                <span className="text-red-400 mr-2">✗</span>
+                                <span>
+                                  Below stock standards - Significant
+                                  improvements needed
+                                </span>
+                              </div>
+                            )}
+
+                            {/* Basic Quality Assessment */}
+
+                            <div className="mt-3 bg-gray-800/50 rounded text-xs text-gray-400">
+                              <span className="text-yellow-400 mr-2">ⓘ</span>
+                              <strong>Stock Requirements:</strong> Sharpness
+                              ≥50, Color Balance ≥60, Brightness 30-80, Contrast
+                              ≥20
+                            </div>
+
+                            {/* Composition Assessment */}
+                            {result.analysis.metrics.composition && (
+                              <div className=" bg-gray-800/50 rounded text-xs text-gray-400">
+                                <span className="text-yellow-400 mr-2">ⓘ</span>
+                                <strong>Stock Standards:</strong> Overall ≥60,
+                                Rule of Thirds ≥50, Golden Ratio ≥40, Symmetry
+                                ≥30
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Stock Photo Recommendations */}
+                        <div className="p-4 bg-gray-700/30 rounded-lg border-l-4 border-green-500">
+                          <h4 className="text-green-400 font-semibold mb-2">
+                            Stock Photo Recommendations
+                          </h4>
+                          <div className="space-y-2 text-sm text-gray-300">
+                            {result.score >= 80 && (
+                              <>
+                                <div className="flex items-start">
+                                  <span className="text-green-400 mr-2 mt-1">
+                                    ✓
+                                  </span>
+                                  <span>
+                                    Premium stock sites: Shutterstock, iStock,
+                                    Adobe Stock
+                                  </span>
+                                </div>
+                                <div className="flex items-start">
+                                  <span className="text-green-400 mr-2 mt-1">
+                                    ✓
+                                  </span>
+                                  <span>High commercial value potential</span>
+                                </div>
+                              </>
+                            )}
+                            {result.score >= 70 && result.score < 80 && (
+                              <>
+                                <div className="flex items-start">
+                                  <span className="text-yellow-400 mr-2 mt-1">
+                                    ⚠
+                                  </span>
+                                  <span>
+                                    Standard stock sites: Shutterstock,
+                                    Dreamstime
+                                  </span>
+                                </div>
+                                <div className="flex items-start">
+                                  <span className="text-yellow-400 mr-2 mt-1">
+                                    ⚠
+                                  </span>
+                                  <span>
+                                    Consider minor adjustments for better
+                                    acceptance
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                            {result.score >= 60 && result.score < 70 && (
+                              <>
+                                <div className="flex items-start">
+                                  <span className="text-orange-400 mr-2 mt-1">
+                                    ⚠
+                                  </span>
+                                  <span>
+                                    Microstock sites: Pixabay, Unsplash
+                                  </span>
+                                </div>
+                                <div className="flex items-start">
+                                  <span className="text-orange-400 mr-2 mt-1">
+                                    ⚠
+                                  </span>
+                                  <span>
+                                    Improve quality before submitting to premium
+                                    sites
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                            {result.score < 60 && (
+                              <>
+                                <div className="flex items-start">
+                                  <span className="text-red-400 mr-2 mt-1">
+                                    ✗
+                                  </span>
+                                  <span>
+                                    Not suitable for commercial stock sites
+                                  </span>
+                                </div>
+                                <div className="flex items-start">
+                                  <span className="text-red-400 mr-2 mt-1">
+                                    ✗
+                                  </span>
+                                  <span>
+                                    Significant improvements needed for stock
+                                    acceptance
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+                {/* <div></div> */}
+              </div>
+
+              {result.method === 'local' && result.analysis.metrics && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-semibold text-white mb-6">
+                    Detailed Metrics
+                  </h3>
+
+                  {/* Basic Metrics */}
+                  <div className="mb-8">
+                    <h4 className="text-lg font-medium text-gray-200 mb-4">
+                      Basic Quality
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {Object.entries(result.analysis.metrics).map(
+                        ([key, value]) => {
+                          if (key === 'composition') return null; // Skip composition, handled separately
+                          const label = key.replace(/([A-Z])/g, ' $1').trim();
+                          const numeric =
+                            typeof value === 'number' ? value : Number(value);
+                          const formatted = Number.isFinite(numeric)
+                            ? Math.round(numeric * 10) / 10
+                            : 0;
+                          return (
+                            <div
+                              key={key}
+                              className="rounded-lg border border-gray-600 bg-gray-700/50 p-4 shadow-sm flex flex-col items-center justify-center hover:border-cyan-500/50 transition-all duration-300"
+                            >
+                              <div className="text-xs uppercase tracking-wide text-gray-400 mb-2 text-center truncate w-full">
+                                {label}
+                              </div>
+                              <div className="text-3xl font-extrabold text-cyan-400 leading-none">
+                                {formatted}
+                              </div>
+                              <div className="mt-2 text-[11px] leading-snug text-gray-400 text-center">
+                                {getMetricExplanation(key, numeric)}
+                              </div>
+                            </div>
+                          );
+                        }
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Composition Metrics */}
+                  {result.analysis.metrics.composition && (
+                    <div>
+                      <h4 className="text-lg font-medium text-gray-200 mb-4">
+                        Composition Analysis
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {(
+                          [
+                            [
+                              'Overall',
+                              result.analysis.metrics.composition.overall,
+                              'text-purple-400',
+                              'overall',
+                            ],
+                            [
+                              'Rule of Thirds',
+                              result.analysis.metrics.composition.ruleOfThirds,
+                              'text-green-400',
+                              'thirds',
+                            ],
+                            [
+                              'Golden Ratio',
+                              result.analysis.metrics.composition.goldenRatio,
+                              'text-yellow-400',
+                              'golden',
+                            ],
+                            [
+                              'Symmetry',
+                              result.analysis.metrics.composition.symmetry,
+                              'text-indigo-400',
+                              'symmetry',
+                            ],
+                            [
+                              'Leading Lines',
+                              result.analysis.metrics.composition.leadingLines,
+                              'text-orange-400',
+                              'lines',
+                            ],
+                            [
+                              'Horizon',
+                              result.analysis.metrics.composition
+                                .horizonPlacement,
+                              'text-red-400',
+                              'horizon',
+                            ],
+                          ] as Array<
+                            [
+                              string,
+                              number,
+                              string,
+                              (
+                                | 'overall'
+                                | 'thirds'
+                                | 'golden'
+                                | 'symmetry'
+                                | 'lines'
+                                | 'horizon'
+                              ),
+                            ]
+                          >
+                        ).map(([title, value, color, illo], idx) => (
+                          <div
+                            key={idx}
+                            className="rounded-lg border border-gray-600 bg-gray-700/50 p-4 shadow-sm flex flex-col items-center justify-center hover:border-purple-500/50 transition-all duration-300"
+                          >
+                            <div className="text-xs uppercase tracking-wide text-gray-400 mb-2 text-center truncate w-full">
+                              {title}
+                            </div>
+                            <div
+                              className={`text-3xl font-extrabold leading-none ${color}`}
+                            >
+                              {Math.round(value * 10) / 10}
+                            </div>
+                            {illo && <CompositionIllustration type={illo} />}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
-            </div>
+            </>
           )}
 
+          {/* Vision API Features section remains always visible */}
           {result.method === 'vision' && result.analysis.features && (
             <div className="mt-8">
               <h3 className="text-xl font-semibold text-white mb-6">
                 Vision API Features
               </h3>
               <div className="space-y-6">
-                {result.analysis.features.labelDetection && (
-                  <div className="bg-gray-700/50 rounded-lg p-4">
-                    <h4 className="font-medium text-white mb-3">
-                      Detected Objects:
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {result.analysis.features.labelDetection
-                        .slice(0, 5)
-                        .map((label: unknown, index: number) => (
-                          <span
-                            key={index}
-                            className="bg-cyan-500/20 text-cyan-300 text-xs px-3 py-1 rounded-full border border-cyan-500/30"
-                          >
-                            {(label as { description: string }).description}
-                          </span>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {result.analysis.features.faceDetection &&
-                  result.analysis.features.faceDetection.length > 0 && (
-                    <div className="bg-gray-700/50 rounded-lg p-4">
-                      <h4 className="font-medium text-white mb-2">
-                        Faces Detected:
+                <>
+                  {/* SafeSearch Section */}
+                  {result.analysis.features.safeSearch ? (
+                    <div className="bg-gray-700/50 rounded-lg p-4 mb-3">
+                      <h4 className="font-medium text-white mb-3">
+                        SafeSearch
                       </h4>
-                      <span className="text-sm text-gray-300">
-                        {result.analysis.features.faceDetection.length} face(s)
-                      </span>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        {Object.entries(
+                          result.analysis.features
+                            .safeSearch as SafeSearchAnnotation
+                        ).map(([key, value]) => (
+                          <div
+                            key={key}
+                            className="flex items-center space-x-2"
+                          >
+                            <span className="text-gray-300 capitalize w-32">
+                              {SAFE_SEARCH_LABELS[key] || key}
+                            </span>
+                            <span
+                              className={`px-2 py-1 rounded text-xs font-semibold ${
+                                value === 'VERY_UNLIKELY'
+                                  ? 'bg-green-500/20 text-green-400'
+                                  : value === 'UNLIKELY'
+                                    ? 'bg-yellow-500/20 text-yellow-400'
+                                    : value === 'POSSIBLE'
+                                      ? 'bg-orange-500/20 text-orange-400'
+                                      : value === 'LIKELY' ||
+                                          value === 'VERY_LIKELY'
+                                        ? 'bg-red-500/20 text-red-400'
+                                        : 'bg-gray-600/30 text-gray-300'
+                              }`}
+                            >
+                              {value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-gray-700/50 rounded-lg p-4">
+                      <h4 className="font-medium text-white mb-3">
+                        SafeSearch
+                      </h4>
+                      <p className="text-gray-300">
+                        No SafeSearch results available.
+                      </p>
                     </div>
                   )}
+
+                  {/* Label Detection Section */}
+                  <div className="bg-gray-700/50 rounded-lg p-4">
+                    {(
+                      result.analysis.features
+                        .labelDetection as LabelAnnotation[]
+                    )
+                      .slice(0, 5)
+                      .map((label, index) => (
+                        <strong
+                          key={index}
+                          className="bg-cyan-500/20 text-cyan-300 text-md px-3 py-1 rounded-full border border-cyan-500/30 m-2"
+                        >
+                          {label.description}
+                          {label.score !== undefined && (
+                            <strong className="ml-1 text-white">
+                              ({(label.score * 100).toFixed(0)}%)
+                            </strong>
+                          )}
+                        </strong>
+                      ))}
+                  </div>
+                  {/* Face Detection Section */}
+                  {result.analysis.features.faceDetection &&
+                    (result.analysis.features.faceDetection as FaceAnnotation[])
+                      .length > 0 && (
+                      <div className="bg-gray-700/50 rounded-lg p-4">
+                        <h4 className="font-medium text-white mb-2">
+                          Faces Detected:
+                        </h4>
+                        <span className="text-sm text-gray-300">
+                          {
+                            (
+                              result.analysis.features
+                                .faceDetection as FaceAnnotation[]
+                            ).length
+                          }{' '}
+                          face(s)
+                        </span>
+                      </div>
+                    )}
+
+                  {/* Text Detection Section */}
+                  {result.analysis.features.textDetection &&
+                    (result.analysis.features.textDetection as TextAnnotation[])
+                      .length > 0 && (
+                      <div className="bg-gray-700/50 rounded-lg p-4">
+                        <h4 className="font-medium text-white mb-2">
+                          Detected Text:
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {(
+                            result.analysis.features
+                              .textDetection as TextAnnotation[]
+                          )
+                            .map(text => text.description)
+                            .filter(
+                              (desc): desc is string =>
+                                !!desc && desc.trim().length > 0
+                            )
+                            .slice(0, 5)
+                            .map((desc, idx) => (
+                              <span
+                                key={idx}
+                                className="bg-purple-500/20 text-purple-300 text-xs px-3 py-1 rounded-full border border-purple-500/30"
+                              >
+                                {desc}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Image Properties Section (Dominant Colors) */}
+                  {result.analysis.features.imageProperties &&
+                    (
+                      result.analysis.features
+                        .imageProperties as ImagePropertiesAnnotation
+                    ).dominantColors && (
+                      <div className="bg-gray-700/50 rounded-lg p-4">
+                        <h4 className="font-medium text-white mb-2">
+                          Dominant Colors:
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {(
+                            (
+                              result.analysis.features
+                                .imageProperties as ImagePropertiesAnnotation
+                            ).dominantColors?.colors || []
+                          )
+                            .slice(0, 8)
+                            .map((colorObj, idx) => {
+                              const c = colorObj.color || {};
+                              const rgb = `rgb(${c.red || 0},${c.green || 0},${c.blue || 0})`;
+                              return (
+                                <span
+                                  key={idx}
+                                  className="inline-block w-8 h-8 rounded border border-gray-600 shadow"
+                                  style={{ backgroundColor: rgb }}
+                                  title={`R:${c.red} G:${c.green} B:${c.blue}`}
+                                ></span>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    )}
+                </>
               </div>
             </div>
           )}

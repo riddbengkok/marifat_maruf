@@ -42,11 +42,17 @@ export function extractOrderId(orderId: string): number {
 
 // Validate required fields
 export function validateRequiredFields(
-  body: Record<string, any>,
+  body: unknown,
   requiredFields: string[]
 ): string | null {
+  const obj = body as Record<string, unknown>;
   for (const field of requiredFields) {
-    if (!body[field]) {
+    const v = obj[field];
+    if (
+      v === undefined ||
+      v === null ||
+      (typeof v === 'string' && v.trim() === '')
+    ) {
       return `${field} is required`;
     }
   }

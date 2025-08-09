@@ -9,7 +9,7 @@ const Footer = () => {
       <div className="inner max-w-6xl mx-auto px-4 lg:px-8">
         <ul className="menu flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8 text-gray-400">
           <li>
-            &copy; {new Date().getFullYear()} Untitled. All rights reserved.
+            &copy; {new Date().getFullYear()} Marifat. All rights reserved.
           </li>
           <li className="flex items-center">
             Design:{' '}

@@ -176,6 +176,7 @@ const translations: Record<Language, Record<string, string>> = {
     'ui.viewFeatures': 'View Features',
     'ui.downloadResume': 'Download Resume',
     'ui.skills': 'Skills',
+    'ui.contactMe': 'Contact Me',
   },
   id: {
     // Navigation
@@ -287,5 +288,6 @@ const translations: Record<Language, Record<string, string>> = {
     'ui.viewFeatures': 'Lihat Fitur',
     'ui.downloadResume': 'Unduh Resume',
     'ui.skills': 'Keterampilan',
+    'ui.contactMe': 'Hubungi Saya',
   },
 };
