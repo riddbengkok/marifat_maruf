@@ -5,11 +5,11 @@ export interface VisionImageAnalysis {
   isGood: boolean;
   score: number;
   features: {
-    safeSearch: SafeSearchAnnotation | undefined;
+    safeSearch?: SafeSearchAnnotation;
     labelDetection: LabelAnnotation[];
     faceDetection: FaceAnnotation[];
     textDetection: TextAnnotation[];
-    imageProperties: ImagePropertiesAnnotation | undefined;
+    imageProperties?: ImagePropertiesAnnotation;
   };
   reasons: string[];
 }
@@ -84,7 +84,7 @@ export async function analyzeImageVision(
   }
 }
 
-type LikelihoodString =
+export type LikelihoodString =
   | 'UNKNOWN'
   | 'VERY_UNLIKELY'
   | 'UNLIKELY'
@@ -92,7 +92,7 @@ type LikelihoodString =
   | 'LIKELY'
   | 'VERY_LIKELY';
 
-interface SafeSearchAnnotation {
+export interface SafeSearchAnnotation {
   adult?: LikelihoodString | number;
   violence?: LikelihoodString | number;
   racy?: LikelihoodString | number;
@@ -100,21 +100,21 @@ interface SafeSearchAnnotation {
   spoof?: LikelihoodString | number;
 }
 
-interface LabelAnnotation {
+export interface LabelAnnotation {
   description?: string;
   score?: number;
   topicality?: number;
 }
 
-interface FaceAnnotation {
+export interface FaceAnnotation {
   detectionConfidence?: number;
 }
 
-interface TextAnnotation {
+export interface TextAnnotation {
   description?: string;
 }
 
-interface ImagePropertiesAnnotation {
+export interface ImagePropertiesAnnotation {
   dominantColors?: {
     colors?: Array<{
       color?: { red?: number; green?: number; blue?: number };

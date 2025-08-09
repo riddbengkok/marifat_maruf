@@ -127,15 +127,55 @@ export interface LocalImageAnalysis {
   reasons: string[];
 }
 
+export type LikelihoodString =
+  | 'UNKNOWN'
+  | 'VERY_UNLIKELY'
+  | 'UNLIKELY'
+  | 'POSSIBLE'
+  | 'LIKELY'
+  | 'VERY_LIKELY';
+
+export interface SafeSearchAnnotation {
+  adult?: LikelihoodString | number;
+  violence?: LikelihoodString | number;
+  racy?: LikelihoodString | number;
+  medical?: LikelihoodString | number;
+  spoof?: LikelihoodString | number;
+}
+
+export interface LabelAnnotation {
+  description?: string;
+  score?: number;
+  topicality?: number;
+}
+
+export interface FaceAnnotation {
+  detectionConfidence?: number;
+}
+
+export interface TextAnnotation {
+  description?: string;
+}
+
+export interface ImagePropertiesAnnotation {
+  dominantColors?: {
+    colors?: Array<{
+      color?: { red?: number; green?: number; blue?: number };
+      score?: number;
+      pixelFraction?: number;
+    }>;
+  };
+}
+
 export interface VisionImageAnalysis {
   isGood: boolean;
   score: number;
   features: {
-    safeSearch: any;
-    labelDetection: any[];
-    faceDetection: any[];
-    textDetection: any[];
-    imageProperties: any;
+    safeSearch?: SafeSearchAnnotation;
+    labelDetection: LabelAnnotation[];
+    faceDetection: FaceAnnotation[];
+    textDetection: TextAnnotation[];
+    imageProperties?: ImagePropertiesAnnotation;
   };
   reasons: string[];
 }
