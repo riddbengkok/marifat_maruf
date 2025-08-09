@@ -1,24 +1,22 @@
 // Add this at the top for TypeScript module declaration
-import { PrismaClient } from '@prisma/client';
-import crypto from 'crypto';
+import { NextRequest } from 'next/server';
 // @ts-expect-error: No types available for 'midtrans-client', safe to ignore for JS import
+import {
+  MidtransWebhookRequest,
+  PaymentRequest,
+  PaymentResponse,
+} from '@/lib/api-types';
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  extractOrderId,
+  getSubscriptionPrice,
+  isSuccessfulTransaction,
+  validateRequiredFields,
+  verifyMidtransSignature,
+} from '@/lib/api-utils';
+import { prisma } from '@/lib/prisma';
 import midtransClient from 'midtrans-client';
-import { NextRequest, NextResponse } from 'next/server';
-const prisma = new PrismaClient();
-
-type CustomerDetails = {
-  first_name: string;
-  last_name?: string;
-  email: string;
-  phone?: string;
-};
-
-type ItemDetail = {
-  id: string;
-  price: number;
-  quantity: number;
-  name: string;
-};
 
 // Function to generate Midtrans Snap token for an order
 async function generateMidtransToken({
@@ -27,8 +25,8 @@ async function generateMidtransToken({
   item_details,
 }: {
   order_id: string;
-  customer_details: CustomerDetails;
-  item_details: ItemDetail[];
+  customer_details: any;
+  item_details: any[];
 }) {
   const isProduction = process.env.MIDTRANS_IS_PRODUCTION === 'true';
   const snap = new midtransClient.Snap({
@@ -42,16 +40,12 @@ async function generateMidtransToken({
     ? 'https://app.midtrans.com/snap/v1'
     : 'https://app.sandbox.midtrans.com/snap/v1';
 
-  // Get subscribe price from env
-  const subscribePrice =
-    typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE
-      ? parseInt(process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE, 10)
-      : 10000;
+  const subscribePrice = getSubscriptionPrice();
 
   const parameter = {
     transaction_details: {
       order_id,
-      gross_amount: subscribePrice, // Use env price
+      gross_amount: subscribePrice,
     },
     customer_details,
     item_details,
@@ -67,24 +61,30 @@ async function generateMidtransToken({
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body: PaymentRequest = await req.json();
+
     // If this is a Midtrans notification (webhook), reject here (handled in notify route)
-    if (body.order_id && body.transaction_status) {
-      return NextResponse.json(
-        { error: 'Webhook not allowed here' },
-        { status: 405 }
-      );
+    if (body.order_id && (body as any).transaction_status) {
+      return createErrorResponse('Webhook not allowed here', 405);
     }
-    // --- Handle Snap Token Generation (frontend) ---
+
+    const validationError = validateRequiredFields(body, [
+      'customer_details',
+      'item_details',
+      'email',
+    ]);
+    if (validationError) {
+      return createErrorResponse(validationError, 400);
+    }
+
     const { customer_details, item_details, email } = body;
-    if (!email) {
-      return NextResponse.json({ error: 'email is required' }, { status: 400 });
-    }
+
     // 1. Find user by email
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return createErrorResponse('User not found', 404);
     }
+
     // 2. Check for existing pending order for this user
     let order = await prisma.order.findFirst({
       where: {
@@ -93,6 +93,7 @@ export async function POST(req: NextRequest) {
         statusPayment: 'pending',
       },
     });
+
     // 3. If not found, create a new order
     if (!order) {
       order = await prisma.order.create({
@@ -105,6 +106,7 @@ export async function POST(req: NextRequest) {
         },
       });
     }
+
     // 4. Use the order's id as order_id for Midtrans
     const order_id = `order-${order.id}`;
     const { token } = await generateMidtransToken({
@@ -112,22 +114,21 @@ export async function POST(req: NextRequest) {
       customer_details,
       item_details,
     });
-    return NextResponse.json({
-      token,
-      order_id,
-    });
+
+    const response: PaymentResponse = { token, order_id };
+    return createSuccessResponse(response);
   } catch (error) {
-    let message = 'Failed to process request';
-    if (error instanceof Error) message = error.message;
-    else if (typeof error === 'string') message = error;
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error('Payment processing error:', error);
+    const message =
+      error instanceof Error ? error.message : 'Failed to process request';
+    return createErrorResponse(message);
   }
 }
 
-// --- New: /api/subscription/notify for Midtrans webhook ---
+// Handle Midtrans webhook
 export async function PATCH(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body: MidtransWebhookRequest = await req.json();
     const {
       order_id,
       transaction_status,
@@ -135,50 +136,47 @@ export async function PATCH(req: NextRequest) {
       status_code,
       gross_amount,
     } = body;
-    if (
-      !order_id ||
-      !transaction_status ||
-      !signature_key ||
-      !status_code ||
-      !gross_amount
-    ) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+
+    const validationError = validateRequiredFields(body, [
+      'order_id',
+      'transaction_status',
+      'signature_key',
+      'status_code',
+      'gross_amount',
+    ]);
+    if (validationError) {
+      return createErrorResponse(validationError, 400);
     }
+
     // Signature verification
-    const serverKey = process.env.SERVER_KEY_MIDTRANS || '';
-    const input = order_id + status_code + gross_amount + serverKey;
-    const expectedSignature = crypto
-      .createHash('sha512')
-      .update(input)
-      .digest('hex');
-    if (signature_key !== expectedSignature) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 403 });
+    if (
+      !verifyMidtransSignature(
+        order_id,
+        status_code,
+        gross_amount,
+        signature_key
+      )
+    ) {
+      return createErrorResponse('Invalid signature', 403);
     }
+
     // Extract order id from order_id string
-    const orderIdNum = parseInt(order_id.replace('order-', ''));
+    const orderIdNum = extractOrderId(order_id);
     const order = await prisma.order.findUnique({
       where: { id: orderIdNum },
       include: { user: true },
     });
+
     if (!order || !order.user) {
-      return NextResponse.json(
-        { error: 'Order or user not found' },
-        { status: 404 }
-      );
+      return createErrorResponse('Order or user not found', 404);
     }
+
     // If payment is success, update subscription and order
-    if (
-      transaction_status === 'settlement' ||
-      transaction_status === 'capture' ||
-      transaction_status === 'success' ||
-      transaction_status === 'paid'
-    ) {
+    if (isSuccessfulTransaction(transaction_status)) {
       const now = new Date();
       const endsAt = new Date(now);
       endsAt.setFullYear(now.getFullYear() + 1);
+
       await prisma.subscription.upsert({
         where: { userId: order.user.id },
         update: {
@@ -195,6 +193,7 @@ export async function PATCH(req: NextRequest) {
           endsAt,
         },
       });
+
       await prisma.order.update({
         where: { id: order.id },
         data: { status: 'success', statusPayment: 'success' },
@@ -206,12 +205,13 @@ export async function PATCH(req: NextRequest) {
         data: { status: transaction_status, statusPayment: transaction_status },
       });
     }
-    return NextResponse.json({ success: true });
+
+    return createSuccessResponse({ success: true });
   } catch (error) {
-    let message = 'Failed to process notification';
-    if (error instanceof Error) message = error.message;
-    else if (typeof error === 'string') message = error;
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error('Webhook processing error:', error);
+    const message =
+      error instanceof Error ? error.message : 'Failed to process notification';
+    return createErrorResponse(message);
   }
 }
 
@@ -219,16 +219,19 @@ export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
+
     if (!id) {
-      return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+      return createErrorResponse('Missing id', 400);
     }
+
     const orderIdNum = parseInt(id);
     await prisma.order.delete({ where: { id: orderIdNum } });
-    return NextResponse.json({ success: true });
+
+    return createSuccessResponse({ success: true });
   } catch (error) {
-    let message = 'Failed to delete order';
-    if (error instanceof Error) message = error.message;
-    else if (typeof error === 'string') message = error;
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error('Order deletion error:', error);
+    const message =
+      error instanceof Error ? error.message : 'Failed to delete order';
+    return createErrorResponse(message);
   }
 }

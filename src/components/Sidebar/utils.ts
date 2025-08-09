@@ -84,4 +84,5 @@ export const PAGE_TITLES: Record<string, string> = {
   '/ai-video-prompt-generator': 'Video Prompt Generator',
   '/ai-audio-prompt-generator': 'Audio Prompt Generator',
   '/ai-story-prompt-generator': 'Story Prompt Generator',
+  '/image-analysis': 'Image Analysis',
 };

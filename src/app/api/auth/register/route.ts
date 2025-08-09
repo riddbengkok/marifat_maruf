@@ -1,15 +1,27 @@
-import { PrismaClient } from '@prisma/client';
-import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import {
+  SubscriptionStatusResponse,
+  UserRegistrationRequest,
+  UserRegistrationResponse,
+} from '@/lib/api-types';
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  validateRequiredFields,
+} from '@/lib/api-utils';
+import { prisma } from '@/lib/prisma';
+import { NextRequest } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { email, name, firebaseUid } = body;
-    if (!email) {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+    const body: UserRegistrationRequest = await req.json();
+
+    const validationError = validateRequiredFields(body, ['email']);
+    if (validationError) {
+      return createErrorResponse(validationError, 400);
     }
+
+    const { email, name, firebaseUid } = body;
+
     // Upsert user: create if not exists, update if exists
     const user = await prisma.user.upsert({
       where: { email },
@@ -25,27 +37,26 @@ export async function POST(req: NextRequest) {
         ...(firebaseUid ? { firebaseUid } : {}),
       },
     });
-    return NextResponse.json({ user });
+
+    const response: UserRegistrationResponse = { user };
+    return createSuccessResponse(response);
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to register user' },
-      { status: 500 }
-    );
+    console.error('User registration error:', error);
+    return createErrorResponse('Failed to register user');
   }
 }
 
-// New API route for subscription status
+// Get subscription status
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const firebaseUid = searchParams.get('firebaseUid');
     const email = searchParams.get('email');
+
     if (!firebaseUid && !email) {
-      return NextResponse.json(
-        { error: 'firebaseUid or email is required' },
-        { status: 400 }
-      );
+      return createErrorResponse('firebaseUid or email is required', 400);
     }
+
     // Find user by firebaseUid or email
     let user = null;
     if (firebaseUid) {
@@ -57,27 +68,35 @@ export async function GET(req: NextRequest) {
         where: { email },
       });
     }
+
     if (!user) {
-      return NextResponse.json({ status: 'none' });
+      const response: SubscriptionStatusResponse = { status: 'none' };
+      return createSuccessResponse(response);
     }
+
     // Fetch subscription separately
     const subscription = await prisma.subscription.findUnique({
       where: { userId: user.id },
     });
+
     if (!subscription) {
-      return NextResponse.json({ status: 'none' });
+      const response: SubscriptionStatusResponse = { status: 'none' };
+      return createSuccessResponse(response);
     }
+
     // Consider 'active' if status is 'active' and not expired
     const now = new Date();
     const isActive =
       subscription.status === 'active' &&
       (!subscription.endsAt || new Date(subscription.endsAt) > now);
-    return NextResponse.json({ status: isActive ? 'active' : 'inactive' });
+
+    const response: SubscriptionStatusResponse = {
+      status: isActive ? 'active' : 'inactive',
+    };
+    return createSuccessResponse(response);
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch subscription status' },
-      { status: 500 }
-    );
+    console.error('Subscription status error:', error);
+    return createErrorResponse('Failed to fetch subscription status');
   }
 }
 
@@ -86,19 +105,20 @@ export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
     const { firebaseUid, email, plan = 'pro' } = body;
+
     if (!firebaseUid && !email) {
-      return NextResponse.json(
-        { error: 'firebaseUid or email is required' },
-        { status: 400 }
-      );
+      return createErrorResponse('firebaseUid or email is required', 400);
     }
+
     // Find user by firebaseUid or email
     const user = await prisma.user.findFirst({
       where: firebaseUid ? { firebaseUid } : { email },
     });
+
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return createErrorResponse('User not found', 404);
     }
+
     // Upsert subscription
     const subscription = await prisma.subscription.upsert({
       where: { userId: user.id },
@@ -115,11 +135,10 @@ export async function PUT(req: NextRequest) {
         startedAt: new Date(),
       },
     });
-    return NextResponse.json({ success: true, subscription });
+
+    return createSuccessResponse({ success: true, subscription });
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to subscribe user' },
-      { status: 500 }
-    );
+    console.error('Subscribe user error:', error);
+    return createErrorResponse('Failed to subscribe user');
   }
 }

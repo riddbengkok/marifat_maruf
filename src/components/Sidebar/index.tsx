@@ -19,6 +19,7 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [anonLeft, setAnonLeft] = useState(10);
 
   // Hooks
   const pathname = usePathname();
@@ -49,6 +50,12 @@ const Sidebar = () => {
       handleSubscribePayment({ email: user.email });
     }
   };
+
+  useEffect(() => {
+    const used =
+      parseInt(localStorage.getItem('anonImageAnalysisCount') || '0', 10) || 0;
+    setAnonLeft(Math.max(0, 10 - used));
+  }, [user]); // resets when user logs in
 
   return (
     <SidebarContext.Provider
@@ -134,6 +141,15 @@ const Sidebar = () => {
             subLoading={subLoading}
             onSubscribe={handleSubscribe}
           />
+
+          {/* Non-login free quota notice */}
+          {!user && (
+            <div className="mt-3 p-2 text-xs rounded bg-gray-800/60 border border-gray-700/60 text-gray-300">
+              Free image analyses left:{' '}
+              <span className="font-semibold">{anonLeft}/10</span>. Sign in for
+              unlimited usage.
+            </div>
+          )}
 
           {/* Footer */}
           <div className="pt-4 border-t border-white/20">
