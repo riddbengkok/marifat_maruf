@@ -134,46 +134,6 @@ export const NavigationLinks = memo<NavigationLinksProps>(
             Home
           </button>
         </li>
-        <li>
-          <button
-            onClick={() => handleScrollToSection('about')}
-            className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium"
-          >
-            About
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => handleScrollToSection('skills')}
-            className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium"
-          >
-            Skills
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => handleScrollToSection('experience')}
-            className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium"
-          >
-            Experience
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => handleScrollToSection('projects')}
-            className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium"
-          >
-            Projects
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => handleScrollToSection('education')}
-            className="w-full text-left text-white hover:text-cyan-300 transition-colors duration-200 text-lg font-medium"
-          >
-            Education
-          </button>
-        </li>
         <li className="pt-4 border-t border-white/20">
           <Link
             href="/features"

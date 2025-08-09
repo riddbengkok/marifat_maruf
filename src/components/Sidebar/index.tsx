@@ -128,8 +128,8 @@ const Sidebar = () => {
               <NavigationLinks
                 pathname={pathname}
                 setIsOpen={setIsOpen}
-                isFeaturesPage={isFeaturesPage}
-                isGeneratorPage={isGeneratorPage}
+                isFeaturesPage={false}
+                isGeneratorPage={false}
               />
             </ul>
           </nav>
