@@ -8,22 +8,26 @@ function isAuthorized(req: NextRequest): boolean {
   return req.headers.get('x-admin-secret') === adminSecret;
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = Number(params.id);
-  const item = await prisma.visionTest.findUnique({ where: { id } });
-  if (!item) return createErrorResponse('Not found', 404);
-  return createSuccessResponse({ item });
+interface RouteContext {
+  params: { id: string };
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_req: NextRequest, context: RouteContext) {
+  const id = Number(context.params.id);
+  const item = await prisma.visionTest.findUnique({ where: { id } });
+
+  if (!item) {
+    return new Response(JSON.stringify({ error: 'Not found' }), {
+      status: 404,
+    });
+  }
+
+  return new Response(JSON.stringify({ item }), { status: 200 });
+}
+
+export async function PATCH(req: NextRequest, context: RouteContext) {
   if (!isAuthorized(req)) return createErrorResponse('Unauthorized', 401);
-  const id = Number(params.id);
+  const id = Number(context.params.id);
   const body = await req.json();
   const item = await prisma.visionTest.update({
     where: { id },
@@ -36,12 +40,9 @@ export async function PATCH(
   return createSuccessResponse({ item });
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest, context: RouteContext) {
   if (!isAuthorized(req)) return createErrorResponse('Unauthorized', 401);
-  const id = Number(params.id);
+  const id = Number(context.params.id);
   await prisma.visionTest.delete({ where: { id } });
   return createSuccessResponse({ success: true });
 }
