@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from 'react';
 
 export default function ImageAnalysisPage() {
   const [mounted, setMounted] = useState(false);
-  const { isOpen, sidebarExpanded } = useContext(SidebarContext);
+  const { sidebarExpanded } = useContext(SidebarContext);
 
   useEffect(() => {
     setMounted(true);

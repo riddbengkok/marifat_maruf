@@ -51,7 +51,7 @@ export default function TestImageAnalysisPage() {
             setTestResult(`✅ API Test Successful!
 
 Score: ${localAnalysis.score}
-Quality: ${localAnalysis.isGood ? 'Good' : 'Bad'}
+Quality: ${localAnalysis.quality}
 Method: ${result.method}
 
 Composition Analysis:

@@ -16,7 +16,7 @@ export const projects: Project[] = [
     title: 'User Transfer Report',
     description:
       'Comprehensive user transfer reporting system with detailed analytics and data visualization for financial transactions.',
-    image: '/images/rifat.jpg',
+    image: '/images/rifat2.JPG',
     technologies: ['Vue.js', 'Laravel', 'Figma', 'MySQL'],
     link: 'https://www.figma.com/design/H9S7zoLuAu2A2zRJdtbGcK/user-transfer-report---vue-laravel?node-id=0-1&p=f&t=7lHb8MkXkTdsN6c4-0',
     category: 'Full Stack',
@@ -285,7 +285,7 @@ export const achievements = [
     description:
       'Proficient in both frontend and backend development with modern tech stacks.',
   },
-  '12+ years of experience in web development and programming',
+  '9+ years of experience in web development and programming',
   'Specialized in frontend development with React.js and Vue.js',
   'Worked with multiple frameworks including Laravel, Ruby on Rails, and WordPress',
   'Successfully transitioned from fullstack to specialized frontend development',

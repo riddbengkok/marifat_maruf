@@ -20,11 +20,11 @@ const SAFE_SEARCH_LABELS: Record<string, string> = {
 };
 
 interface AnalysisResult {
-  isGood: boolean;
+  quality: 'Good' | 'Standard' | 'Bad';
   score: number;
   method: 'local' | 'vision';
   analysis: {
-    isGood: boolean;
+    quality: 'Good' | 'Standard' | 'Bad';
     score: number;
     metrics?: {
       brightness: number;
@@ -162,11 +162,11 @@ export const ImageAnalysisDemo: React.FC = () => {
 
           // Update the result with the actual analysis, preserving the shape expected by the UI
           setResult({
-            isGood: localAnalysis.isGood,
+            quality: localAnalysis.quality,
             score: localAnalysis.score,
             method: 'local',
             analysis: {
-              isGood: localAnalysis.isGood,
+              quality: localAnalysis.quality,
               score: localAnalysis.score,
               metrics: localAnalysis.metrics,
               reasons: localAnalysis.reasons,
@@ -221,6 +221,9 @@ export const ImageAnalysisDemo: React.FC = () => {
               onChange={handleFileSelect}
               className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-500/20 file:text-cyan-400 hover:file:bg-cyan-500/30"
             />
+            <p className="mt-1 text-xs text-gray-400">
+              Maximum file size: 3.3 MB. Supported formats: JPG, PNG, WebP, GIF.
+            </p>
           </div>
 
           {previewUrl && (
@@ -294,14 +297,18 @@ export const ImageAnalysisDemo: React.FC = () => {
                       </span>
                       <span
                         className={`font-semibold px-3 py-1 rounded-full text-sm ${
-                          result.isGood
+                          result.quality === 'Good'
                             ? 'bg-green-500/20 text-green-400'
-                            : 'bg-red-500/20 text-red-400'
+                            : result.quality === 'Standard'
+                              ? 'bg-yellow-500/20 text-yellow-400'
+                              : 'bg-red-500/20 text-red-400'
                         }`}
                       >
-                        {result.isGood
-                          ? 'Acceptable for Stock'
-                          : 'Needs Improvement'}
+                        {result.quality === 'Good'
+                          ? 'Good Quality'
+                          : result.quality === 'Standard'
+                            ? 'Standard Quality'
+                            : 'Needs Improvement'}
                       </span>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">

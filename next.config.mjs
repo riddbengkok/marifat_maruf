@@ -10,6 +10,11 @@ const nextConfig = {
       },
     ],
   },
+  api: {
+    bodyParser: {
+      sizeLimit: '6mb', // Increased to 6MB as requested
+    },
+  },
 };
 
 export default nextConfig;

@@ -1,0 +1,26 @@
+@@ -1427,15 +1427,15 @@
+   // Define optimal ranges for each metric (day vs night)
+   const ranges = isNight
+     ? {
+-        brightness: { min: 20, max: 90, optimal: 55 },
+-        contrast: { min: 15, max: 60, optimal: 35 },
+-        sharpness: { min: 25, max: 80, optimal: 50 },
+-        colorBalance: { min: 40, max: 85, optimal: 65 },
+-        noiseLevel: { min: 30, max: 70, optimal: 50 },
++        brightness: { min: 16, max: 72, optimal: 44 },
++        contrast: { min: 12, max: 48, optimal: 28 },
++        sharpness: { min: 20, max: 64, optimal: 40 },
++        colorBalance: { min: 32, max: 68, optimal: 52 },
++        noiseLevel: { min: 24, max: 56, optimal: 40 },
+       }
+     : {
+-        brightness: { min: 30, max: 80, optimal: 55 },
+-        contrast: { min: 20, max: 70, optimal: 45 },
+-        sharpness: { min: 40, max: 90, optimal: 65 },
+-        colorBalance: { min: 50, max: 90, optimal: 70 },
+-        noiseLevel: { min: 60, max: 95, optimal: 80 },
++        brightness: { min: 24, max: 64, optimal: 44 },
++        contrast: { min: 16, max: 56, optimal: 36 },
++        sharpness: { min: 32, max: 72, optimal: 52 },
++        colorBalance: { min: 40, max: 72, optimal: 56 },
++        noiseLevel: { min: 48, max: 76, optimal: 64 },

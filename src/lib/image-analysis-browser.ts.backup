@@ -1,9 +1,6 @@
 // Local image analysis using browser canvas (no server-side canvas dependency)
-import { calculateContextAwareMetrics } from './context-aware-metrics';
-import { analyzeImageContext } from './subject-detection';
-
 export interface LocalImageAnalysis {
-  quality: 'Good' | 'Standard' | 'Bad';
+  isGood: boolean;
   score: number;
   isNight: boolean;
   metrics: {
@@ -24,14 +21,6 @@ export interface LocalImageAnalysis {
     };
   };
   reasons: string[];
-  context?: {
-    isBlackAndWhite: boolean;
-    isLowKey: boolean;
-    isHighKey: boolean;
-    isPortrait: boolean;
-    hasBackgroundBlur: boolean;
-    subjectDetected: boolean;
-  };
 }
 
 interface CompositionMetrics {
@@ -132,38 +121,29 @@ export async function analyzeImageLocalBrowser(
 
     console.log('Starting metric calculations...');
 
-    // Analyze image context first
-    const context = analyzeImageContext(
+    // Calculate basic metrics
+    const brightness = calculateBrightness(imageData.data);
+    const contrast = calculateContrast(imageData.data);
+    const sharpness = calculateSharpness(
       imageData.data,
       imageData.width,
       imageData.height
     );
+    const colorBalance = calculateColorBalance(imageData.data);
 
-    console.log('Image context detected:', context);
-
-    // Calculate context-aware metrics
-    const contextAwareMetrics = calculateContextAwareMetrics(
-      imageData.data,
-      imageData.width,
-      imageData.height,
-      context
-    );
-
-    // Use context-aware metrics
-    const brightness = contextAwareMetrics.brightness;
-    const contrast = contextAwareMetrics.contrast;
-    const sharpness = contextAwareMetrics.sharpness;
-    const colorBalance = contextAwareMetrics.colorBalance;
-    const noiseLevel = contextAwareMetrics.noiseLevel;
-
-    console.log('Context-aware metrics calculated:', {
+    console.log('Basic metrics calculated:', {
       brightness,
       contrast,
       sharpness,
       colorBalance,
-      noiseLevel,
-      context: context,
     });
+
+    // Calculate noise level
+    const noiseLevel = calculateNoiseLevel(
+      imageData.data,
+      imageData.width,
+      imageData.height
+    );
 
     // Calculate advanced composition metrics
     const composition = calculateAdvancedComposition(
@@ -342,23 +322,19 @@ export async function analyzeImageLocalBrowser(
     const meetsTechnical = isNight
       ? // Night photo criteria - more lenient
         (subjectSharpness >= 30 || finalSharpness >= 25) &&
-        finalBrightness >= 20
-      : // Day photo criteria
+        finalBrightness >= 20 &&
+        finalBrightness <= 90 &&
+        finalContrast >= 15 &&
+        finalColorBalance >= 40
+      : // Day photo criteria - stricter
         (subjectSharpness >= 50 || finalSharpness >= 40) &&
         finalBrightness >= 30 &&
         finalBrightness <= 80 &&
         finalContrast >= 20 &&
         finalColorBalance >= 50;
 
-    // Determine quality level based on score and technical requirements
-    let quality: 'Good' | 'Standard' | 'Bad';
-    if (score >= 75 && meetsTechnical) {
-      quality = 'Good';
-    } else if (score >= 50 && meetsTechnical) {
-      quality = 'Standard';
-    } else {
-      quality = 'Bad';
-    }
+    // Final judgment - improved threshold based on technical quality
+    const isGood = score >= 75 && meetsTechnical;
 
     // Generate reasons
     const reasons = generateReasons({
@@ -372,7 +348,7 @@ export async function analyzeImageLocalBrowser(
     });
 
     const result = {
-      quality,
+      isGood,
       score,
       isNight,
       metrics: {
@@ -388,14 +364,6 @@ export async function analyzeImageLocalBrowser(
         },
       },
       reasons,
-      context: {
-        isBlackAndWhite: context.isBlackAndWhite,
-        isLowKey: context.isLowKey,
-        isHighKey: context.isHighKey,
-        isPortrait: context.isPortrait,
-        hasBackgroundBlur: context.hasBackgroundBlur,
-        subjectDetected: context.subjectRegion !== null,
-      },
     };
 
     console.log('Analysis completed successfully:', result);
@@ -788,13 +756,12 @@ function calculateHorizonPlacement(
 function generateReasons(metrics: CompositionMetrics): string[] {
   const reasons: string[] = [];
 
-  // Quality level feedback
-  if (metrics.score >= 75) {
+  if (metrics.score > 80) {
     reasons.push('Excellent overall image quality');
-  } else if (metrics.score >= 50) {
-    reasons.push('Good image quality with room for improvement');
+  } else if (metrics.score > 60) {
+    reasons.push('Good image quality');
   } else {
-    reasons.push('Image quality needs significant improvement');
+    reasons.push('Image quality needs improvement');
   }
 
   // Basic metrics
@@ -1459,18 +1426,18 @@ function calculateTechnicalScore(metrics: {
   // Define optimal ranges for each metric (day vs night)
   const ranges = isNight
     ? {
-        brightness: { min: 14, max: 65, optimal: 40 },
-        contrast: { min: 12, max: 48, optimal: 28 },
-        sharpness: { min: 18, max: 58, optimal: 36 },
-        colorBalance: { min: 32, max: 68, optimal: 52 },
-        noiseLevel: { min: 24, max: 56, optimal: 40 },
+        brightness: { min: 20, max: 90, optimal: 55 },
+        contrast: { min: 15, max: 60, optimal: 35 },
+        sharpness: { min: 25, max: 80, optimal: 50 },
+        colorBalance: { min: 40, max: 85, optimal: 65 },
+        noiseLevel: { min: 30, max: 70, optimal: 50 },
       }
     : {
-        brightness: { min: 22, max: 58, optimal: 40 },
-        contrast: { min: 16, max: 56, optimal: 36 },
-        sharpness: { min: 29, max: 65, optimal: 47 },
-        colorBalance: { min: 40, max: 72, optimal: 56 },
-        noiseLevel: { min: 48, max: 76, optimal: 64 },
+        brightness: { min: 30, max: 80, optimal: 55 },
+        contrast: { min: 20, max: 70, optimal: 45 },
+        sharpness: { min: 40, max: 90, optimal: 65 },
+        colorBalance: { min: 50, max: 90, optimal: 70 },
+        noiseLevel: { min: 60, max: 95, optimal: 80 },
       };
 
   // Calculate individual metric scores with penalty for being outside optimal range

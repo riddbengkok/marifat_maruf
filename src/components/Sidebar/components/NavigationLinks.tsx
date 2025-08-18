@@ -170,6 +170,27 @@ export const NavigationLinks = memo<NavigationLinksProps>(
               </svg>
             ),
           },
+          {
+            href: '/bulk-image-analyze',
+            label: 'Bulk Image Analysis',
+            icon: (
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                viewBox="0 0 24 24"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <rect x="9" y="9" width="3" height="3" />
+                <rect x="14" y="9" width="3" height="3" />
+                <rect x="9" y="14" width="3" height="3" />
+                <rect x="14" y="14" width="3" height="3" />
+                <path d="M21 15l-5-5-4 4-7 7" />
+              </svg>
+            ),
+          },
         ].map(link => (
           <li key={link.href}>
             <Link

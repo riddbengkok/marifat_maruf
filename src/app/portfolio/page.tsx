@@ -106,7 +106,7 @@ const Portfolio = () => {
             <div className="flex justify-center mb-6">
               <div className="relative w-32 h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden border-4 border-cyan-400/30 shadow-2xl transition-all duration-300 transform hover:scale-105">
                 <Image
-                  src="/images/rifat.jpg"
+                  src="/images/rifat2.JPG"
                   alt="Marifat Maruf"
                   fill
                   className="object-cover"
