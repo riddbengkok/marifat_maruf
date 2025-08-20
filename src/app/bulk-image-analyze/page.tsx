@@ -38,6 +38,64 @@ export default function ImageAnalysisPage() {
     };
   }, []);
 
+  // Add structured data for SEO
+  useEffect(() => {
+    const structuredData = {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Bulk Image Analysis Tool',
+      description:
+        'Free bulk image analysis tool that evaluates image quality using advanced algorithms. Analyze brightness, contrast, sharpness, composition, noise levels, and more for multiple images at once.',
+      url: 'https://marifat-maruf.vercel.app/bulk-image-analyze',
+      applicationCategory: 'MultimediaApplication',
+      operatingSystem: 'Web Browser',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+      featureList: [
+        'Bulk image processing',
+        'Image quality assessment',
+        'Composition analysis',
+        'Brightness and contrast measurement',
+        'Sharpness analysis',
+        'Noise level detection',
+        'Horizon tilt analysis',
+        'Subject centering evaluation',
+        'Context-aware analysis',
+        '3-tier quality classification',
+      ],
+      author: {
+        '@type': 'Person',
+        name: 'Marifat Maruf',
+      },
+      creator: {
+        '@type': 'Person',
+        name: 'Marifat Maruf',
+      },
+      publisher: {
+        '@type': 'Person',
+        name: 'Marifat Maruf',
+      },
+      potentialAction: {
+        '@type': 'UseAction',
+        target: 'https://marifat-maruf.vercel.app/bulk-image-analyze',
+      },
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(structuredData);
+    document.head.appendChild(script);
+
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, []);
+
   if (!mounted) {
     return null;
   }
@@ -78,6 +136,28 @@ export default function ImageAnalysisPage() {
           <section className="relative py-20 bg-gradient-to-b from-gray-900 to-black">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="fade-up visible transition-all duration-1000 ease-out">
+                {/* SEO-friendly header */}
+                <header className="text-center mb-12">
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                    Bulk
+                    <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                      {' '}
+                      Image Analysis
+                    </span>
+                  </h1>
+                  <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-400">
+                    <span className="bg-gray-800 px-3 py-1 rounded-full">
+                      Free Tool
+                    </span>
+                    <span className="bg-gray-800 px-3 py-1 rounded-full">
+                      Batch Processing
+                    </span>
+                    <span className="bg-gray-800 px-3 py-1 rounded-full">
+                      Advanced Metrics
+                    </span>
+                  </div>
+                </header>
+
                 <BulkImageAnalysis />
               </div>
             </div>

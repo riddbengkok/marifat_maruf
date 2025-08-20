@@ -1,5 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { fileToBase64 } from '@/lib/browser-utils';
+import { convertHeicToJpeg, isHeicFile } from '@/lib/heic-converter';
 import { analyzeImageLocalBrowser } from '@/lib/image-analysis-browser';
 import {
   AnalysisResult,
@@ -21,6 +22,7 @@ export const useBulkImageAnalysis = () => {
   );
   const [sortBy, setSortBy] = useState<'score' | 'name'>('score');
   const [anonUsed, setAnonUsed] = useState(0);
+  const [convertingFiles, setConvertingFiles] = useState(false);
 
   const FREE_LIMIT = 50; // Higher limit for bulk analysis
 
@@ -41,47 +43,97 @@ export const useBulkImageAnalysis = () => {
     };
   }, [images]);
 
-  const handleFileSelect = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(event.target.files || []);
-      const imageFiles = files.filter(file => file.type.startsWith('image/'));
+  const processFiles = useCallback(
+    async (files: File[]): Promise<ImageFile[]> => {
+      const imageFiles = files.filter(
+        file => file.type.startsWith('image/') || isHeicFile(file)
+      );
 
       if (imageFiles.length === 0) {
-        alert('Please select valid image files');
-        return;
+        throw new Error('Please select valid image files (including HEIC)');
       }
 
-      const newImages: ImageFile[] = imageFiles.map(file => ({
-        id: `${Date.now()}-${Math.random()}`,
-        file,
-        previewUrl: URL.createObjectURL(file),
-        status: 'pending',
-      }));
+      setConvertingFiles(true);
 
-      setImages(prev => [...prev, ...newImages]);
+      try {
+        const processedImages: ImageFile[] = [];
+
+        for (const file of imageFiles) {
+          try {
+            // Only attempt HEIC conversion on the client side
+            if (typeof window !== 'undefined') {
+              const converted = await convertHeicToJpeg(file);
+              processedImages.push({
+                id: `${Date.now()}-${Math.random()}`,
+                file: converted.file,
+                previewUrl: converted.previewUrl,
+                status: 'pending',
+                originalName: converted.originalName,
+              });
+            } else {
+              // Fallback for server-side rendering
+              processedImages.push({
+                id: `${Date.now()}-${Math.random()}`,
+                file,
+                previewUrl: URL.createObjectURL(file),
+                status: 'pending',
+                originalName: file.name,
+              });
+            }
+          } catch (error) {
+            console.error(`Failed to process file ${file.name}:`, error);
+            // Continue with other files even if one fails
+            // Add the original file as fallback
+            processedImages.push({
+              id: `${Date.now()}-${Math.random()}`,
+              file,
+              previewUrl: URL.createObjectURL(file),
+              status: 'pending',
+              originalName: file.name,
+            });
+          }
+        }
+
+        return processedImages;
+      } finally {
+        setConvertingFiles(false);
+      }
     },
     []
   );
 
-  const handleDrop = useCallback((event: React.DragEvent) => {
-    event.preventDefault();
-    const files = Array.from(event.dataTransfer.files);
-    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+  const handleFileSelect = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(event.target.files || []);
 
-    if (imageFiles.length === 0) {
-      alert('Please drop valid image files');
-      return;
-    }
+      try {
+        const newImages = await processFiles(files);
+        setImages(prev => [...prev, ...newImages]);
+      } catch (error) {
+        alert(
+          error instanceof Error ? error.message : 'Failed to process files'
+        );
+      }
+    },
+    [processFiles]
+  );
 
-    const newImages: ImageFile[] = imageFiles.map(file => ({
-      id: `${Date.now()}-${Math.random()}`,
-      file,
-      previewUrl: URL.createObjectURL(file),
-      status: 'pending',
-    }));
+  const handleDrop = useCallback(
+    async (event: React.DragEvent) => {
+      event.preventDefault();
+      const files = Array.from(event.dataTransfer.files);
 
-    setImages(prev => [...prev, ...newImages]);
-  }, []);
+      try {
+        const newImages = await processFiles(files);
+        setImages(prev => [...prev, ...newImages]);
+      } catch (error) {
+        alert(
+          error instanceof Error ? error.message : 'Failed to process files'
+        );
+      }
+    },
+    [processFiles]
+  );
 
   const handleDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -301,6 +353,7 @@ export const useBulkImageAnalysis = () => {
     filteredAndSortedImages,
     summary,
     user,
+    convertingFiles,
 
     // Actions
     handleFileSelect,

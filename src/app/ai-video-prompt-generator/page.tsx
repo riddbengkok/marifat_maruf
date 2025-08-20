@@ -599,6 +599,7 @@ export default function AIVideoPromptGenerator() {
               onReset={resetFormDataWithCount}
               disabled={subscriptionStatus !== 'active' && genCount <= 0}
               hasGeneratedPrompt={!!generatedPrompt}
+              isEnhancing={isGeneratingStory}
             />
 
             {showPrompt && !hasEnhancedWithAI && (

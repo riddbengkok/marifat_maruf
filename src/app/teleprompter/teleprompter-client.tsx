@@ -24,7 +24,7 @@ export default function Teleprompter() {
   const [text, setText] = useState(
     'Paste your script here. The teleprompter will scroll this text. You can adjust the speed and font size from the settings panel. To start or stop scrolling, press the Play/Pause button or use the Spacebar. To reset to the top, press the Reset button or use the Escape key. You can also enable your camera to record yourself while reading the script. The recording will be saved in WebM format.'
   );
-  const [speed, setSpeed] = useState(0.5);
+  const [speed, setSpeed] = useState(0.2);
   const [fontSize, setFontSize] = useState(2.5);
   const [mirror, setMirror] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -35,13 +35,18 @@ export default function Teleprompter() {
 
   // Camera and recording state
   const [showCamera, setShowCamera] = useState(false);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
 
+  // UI state
+  const [showTextArea, setShowTextArea] = useState(true);
+
   // Refs for DOM elements and other instances
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
   const animationRef = useRef<number | null>(null);
@@ -108,7 +113,9 @@ export default function Teleprompter() {
 
         const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
           ? 'video/webm;codecs=vp9'
-          : 'video/webm';
+          : MediaRecorder.isTypeSupported('video/webm;codecs=vp8')
+            ? 'video/webm;codecs=vp8'
+            : 'video/webm';
 
         const recorder = new MediaRecorder(stream, { mimeType });
         mediaRecorderRef.current = recorder;
@@ -153,7 +160,7 @@ export default function Teleprompter() {
       lastTimeRef.current = time;
 
       if (containerRef.current) {
-        containerRef.current.scrollTop += (speed * deltaTime) / 10;
+        containerRef.current.scrollTop += (speed * deltaTime) / 20;
       }
       animationRef.current = requestAnimationFrame(animateScroll);
     },
@@ -172,23 +179,25 @@ export default function Teleprompter() {
       try {
         if (showCamera) {
           // If camera is on, turn it off
+          if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+          }
           if (videoRef.current?.srcObject) {
-            const stream = videoRef.current.srcObject as MediaStream;
-            stream.getTracks().forEach(track => track.stop());
             videoRef.current.srcObject = null;
           }
           setShowCamera(false);
+          setCameraStream(null);
           setIsRecording(false);
           return null;
         } else {
           // If camera is off, turn it on
           const constraints = {
             video: {
-              width: { ideal: 1280 },
-              height: { ideal: 720 },
+              width: { ideal: 1920 },
+              height: { ideal: 1080 },
               facingMode: 'user',
             },
-            audio: false,
+            audio: true, // Enable audio for WebM recording
           };
 
           const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -208,6 +217,7 @@ export default function Teleprompter() {
           }
 
           setShowCamera(true);
+          setCameraStream(stream);
           setCameraError(null);
           return stream;
         }
@@ -220,9 +230,10 @@ export default function Teleprompter() {
 
         setCameraError(`Failed to access camera: ${errorMsg}`);
         setShowCamera(false);
+        setCameraStream(null);
         return null;
       }
-    }, [showCamera]);
+    }, [showCamera, cameraStream]);
 
   // Define aliases after all functions are defined to avoid circular dependencies
   const reset = handleReset;
@@ -244,31 +255,34 @@ export default function Teleprompter() {
       try {
         setIsPlaying(true);
 
-        // Get or initialize camera stream
-        let stream: MediaStream | null = videoRef.current
-          ?.srcObject as MediaStream;
-        if (!stream || !stream.active) {
-          stream = await handleToggleCamera();
-          if (!stream) throw new Error('Could not access camera');
-        }
-
-        // Verify stream is active before starting recording
-        if (stream && stream.active) {
-          await startRecording(stream);
+        // Only start recording if camera is already active
+        if (showCamera && cameraStream && cameraStream.active) {
+          await startRecording(cameraStream);
           setCameraError(null);
-        } else {
-          throw new Error('Camera stream is not active');
         }
+        // If camera is not active, just start scrolling without recording
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : 'Unknown error occurred';
         setCameraError(
-          `Failed to start: ${errorMessage}. Please check camera permissions.`
+          `Failed to start recording: ${errorMessage}. Please enable camera first.`
         );
-        setIsPlaying(false);
+        // Don't stop playing, just show the error
       }
     }
-  }, [isPlaying, isRecording, stopRecording, startRecording, toggleCamera]);
+  }, [isPlaying, isRecording, stopRecording, startRecording, showCamera]);
+
+  // Ensure video elements are connected to camera stream
+  useEffect(() => {
+    if (showCamera && cameraStream) {
+      if (videoRef.current) {
+        videoRef.current.srcObject = cameraStream;
+      }
+      if (backgroundVideoRef.current) {
+        backgroundVideoRef.current.srcObject = cameraStream;
+      }
+    }
+  }, [showCamera, cameraStream]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -319,43 +333,87 @@ export default function Teleprompter() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Script Editor */}
-          <div className="lg:col-span-1">
-            <textarea
-              value={text}
-              onChange={e => setText(e.target.value)}
-              className="w-full h-96 p-4 border rounded-md bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500"
-              placeholder="Paste your script here..."
-            />
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
+          {/* Script Editor - Collapsible */}
+          <div className="xl:col-span-1">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
+              {/* Header with toggle button */}
+              <div className="flex items-center justify-between p-3 border-b border-gray-300 dark:border-gray-600">
+                <h3 className="font-medium text-gray-900 dark:text-white">
+                  Script Editor
+                </h3>
+                <button
+                  onClick={() => setShowTextArea(!showTextArea)}
+                  className="p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  title={
+                    showTextArea ? 'Hide Script Editor' : 'Show Script Editor'
+                  }
+                >
+                  {showTextArea ? (
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 15l7-7 7 7"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  )}
+                </button>
+              </div>
+
+              {/* Collapsible Text Area */}
+              <div
+                className={`transition-all duration-300 ease-in-out ${
+                  showTextArea
+                    ? 'max-h-96 opacity-100'
+                    : 'max-h-0 opacity-0 overflow-hidden'
+                }`}
+              >
+                <textarea
+                  value={text}
+                  onChange={e => setText(e.target.value)}
+                  className="w-full h-80 p-4 bg-transparent border-0 focus:ring-0 resize-none"
+                  placeholder="Paste your script here..."
+                />
+              </div>
+            </div>
           </div>
 
           {/* Teleprompter Display */}
-          <div className="lg:col-span-2 relative">
+          <div className="xl:col-span-2 relative">
             <div className="relative w-full h-[70vh] overflow-hidden rounded-lg border-2 border-gray-300 dark:border-gray-700">
-              {/* Video Background */}
-              <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
-                {showCamera && !isPlaying && videoRef.current?.srcObject && (
+              {/* Camera Background */}
+              {showCamera && (
+                <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
                   <video
-                    ref={videoRef}
+                    ref={backgroundVideoRef}
                     autoPlay
                     playsInline
                     muted
                     className="w-full h-full object-cover"
                   />
-                )}
-                {recordedVideoUrl && isPlaying && (
-                  <video
-                    src={recordedVideoUrl}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    onEnded={() => setIsPlaying(false)}
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Text Container */}
               <div
@@ -364,10 +422,9 @@ export default function Teleprompter() {
                 style={{
                   fontSize: `${fontSize}rem`,
                   lineHeight: 1.5,
-                  backgroundColor:
-                    showCamera || isPlaying
-                      ? 'rgba(0, 0, 0, 0.7)'
-                      : 'rgba(0, 0, 0, 0.85)',
+                  backgroundColor: showCamera
+                    ? 'rgba(0, 0, 0, 0.6)'
+                    : 'rgba(0, 0, 0, 0.85)',
                   color: 'white',
                   textShadow: '0 0 10px rgba(0,0,0,0.8)',
                   position: 'relative',
@@ -385,71 +442,115 @@ export default function Teleprompter() {
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Controls */}
-            <div className="mt-4 p-6 bg-gray-100 dark:bg-gray-800 rounded-md">
-              <div className="flex flex-col items-center space-y-2">
-                <div className="flex items-center justify-center space-x-6">
-                  <div className="flex flex-col items-center">
-                    <button
-                      onClick={() => void handleStartStop()}
-                      className="p-4 rounded-full bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
-                      title={isPlaying ? 'Pause' : 'Play'}
-                    >
-                      {isPlaying ? <Pause size={28} /> : <Play size={28} />}
-                    </button>
-                    <span className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                      {isPlaying ? 'Pause' : 'Play'} (Space)
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col items-center">
-                    <button
-                      onClick={handleReset}
-                      className="p-4 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors"
-                      title="Reset to Top"
-                    >
-                      <RotateCcw size={28} />
-                    </button>
-                    <span className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                      Reset (Esc)
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col items-center">
-                    <button
-                      onClick={handleToggleCamera}
-                      className={`p-4 rounded-full ${
-                        showCamera
-                          ? 'bg-red-500 hover:bg-red-600 text-white'
-                          : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                      } focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                        showCamera
-                          ? 'focus:ring-red-500'
-                          : 'focus:ring-gray-400'
-                      } transition-colors`}
-                      title={showCamera ? 'Off Camera' : 'On Camera'}
-                    >
-                      <Camera size={28} />
-                    </button>
-                    <span className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                      {showCamera ? 'Off Camera' : 'On Camera'}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col items-center">
-                    <button
-                      onClick={() => setShowSettings(true)}
-                      className="p-4 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors"
-                      title="Settings"
-                    >
-                      <Settings size={28} />
-                    </button>
-                    <span className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                      Settings
-                    </span>
+          {/* Camera Display - Hidden on mobile, shown on larger screens */}
+          <div className="hidden lg:block xl:col-span-1">
+            <div className="relative w-full h-[70vh] overflow-hidden rounded-lg border-2 border-gray-300 dark:border-gray-700 bg-gray-900">
+              {showCamera ? (
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-400">
+                  <div className="text-center">
+                    <Camera size={48} className="mx-auto mb-2 opacity-50" />
+                    <p>Camera Off</p>
+                    <p className="text-sm">
+                      Click &quot;On Camera&quot; to start
+                    </p>
                   </div>
                 </div>
+              )}
+
+              {/* Recording indicator */}
+              {isRecording && (
+                <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium animate-pulse">
+                  REC
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="mt-4 p-6 bg-gray-100 dark:bg-gray-800 rounded-md">
+          {/* Mobile Camera Status */}
+          <div className="lg:hidden mb-4 p-3 bg-gray-200 dark:bg-gray-700 rounded-md">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Camera Status: {showCamera ? 'On' : 'Off'}
+              </span>
+              {isRecording && (
+                <div className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium animate-pulse">
+                  REC
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center space-y-2">
+            <div className="flex items-center justify-center space-x-4 lg:space-x-6">
+              <div className="flex flex-col items-center">
+                <button
+                  onClick={() => void handleStartStop()}
+                  className="p-4 rounded-full bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+                  title={isPlaying ? 'Pause' : 'Play'}
+                >
+                  {isPlaying ? <Pause size={28} /> : <Play size={28} />}
+                </button>
+                <span className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                  {isPlaying ? 'Pause' : 'Play'} (Space)
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <button
+                  onClick={handleReset}
+                  className="p-4 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors"
+                  title="Reset to Top"
+                >
+                  <RotateCcw size={28} />
+                </button>
+                <span className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                  Reset (Esc)
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <button
+                  onClick={handleToggleCamera}
+                  className={`p-4 rounded-full ${
+                    showCamera
+                      ? 'bg-red-500 hover:bg-red-600 text-white'
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                  } focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                    showCamera ? 'focus:ring-red-500' : 'focus:ring-gray-400'
+                  } transition-colors`}
+                  title={showCamera ? 'Off Camera' : 'On Camera'}
+                >
+                  <Camera size={28} />
+                </button>
+                <span className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                  {showCamera ? 'Off Camera' : 'On Camera'}
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <button
+                  onClick={() => setShowSettings(true)}
+                  className="p-4 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors"
+                  title="Settings"
+                >
+                  <Settings size={28} />
+                </button>
+                <span className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                  Settings
+                </span>
               </div>
             </div>
           </div>
@@ -497,9 +598,9 @@ export default function Teleprompter() {
                   Speed: {speed.toFixed(1)}x
                 </label>
                 <Slider
-                  min={0.1}
-                  max={5}
-                  step={0.1}
+                  min={0.05}
+                  max={3}
+                  step={0.05}
                   value={[speed]}
                   onValueChange={([value]) => setSpeed(value)}
                   className="w-full"

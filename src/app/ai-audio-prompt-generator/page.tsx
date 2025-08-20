@@ -29,14 +29,20 @@ const MAX_GEN_COUNT =
     : 4;
 
 // Define the mapping of form sections to their required fields
-const sectionFields: { name: string; fields: (keyof AudioFormData)[] }[] = [
+const sectionFields: {
+  name: string;
+  fields: (keyof AudioFormData)[];
+  requiredFields: (keyof AudioFormData)[];
+}[] = [
   {
     name: 'Core Elements',
     fields: ['subject', 'style', 'genre', 'soundType', 'mood'],
+    requiredFields: ['subject', 'soundType'], // Subject and soundType are required
   },
   {
     name: 'Audio Parameters',
     fields: ['tempo', 'key', 'timeSignature', 'duration', 'audioQuality'],
+    requiredFields: [], // All are optional
   },
   {
     name: 'Sound & Texture',
@@ -50,28 +56,50 @@ const sectionFields: { name: string; fields: (keyof AudioFormData)[] }[] = [
       'materials',
       'sensations',
     ],
+    requiredFields: [], // All are optional
   },
   {
     name: 'Mood & Atmosphere',
     fields: ['atmosphere', 'emotions', 'energy', 'intensity'],
+    requiredFields: [], // All are optional
   },
   {
     name: 'Environment & Context',
     fields: ['setting', 'timeOfDay', 'season', 'location'],
+    requiredFields: [], // All are optional
   },
-  { name: 'Technical', fields: ['model'] },
+  {
+    name: 'Technical',
+    fields: ['model'],
+    requiredFields: [], // Model has a default value
+  },
 ];
 
 const progressSteps = sectionFields.map(s => s.name);
 
 function isSectionComplete(
-  section: { name: string; fields: (keyof AudioFormData)[] },
+  section: {
+    name: string;
+    fields: (keyof AudioFormData)[];
+    requiredFields: (keyof AudioFormData)[];
+  },
   formData: AudioFormData
 ): boolean {
-  return section.fields.every(
+  // Check if all required fields are filled
+  const requiredFieldsComplete = section.requiredFields.every(
     (field: keyof AudioFormData) =>
       formData[field] && formData[field].trim() !== ''
   );
+
+  // If there are no required fields, consider the section complete if at least one field is filled
+  if (section.requiredFields.length === 0) {
+    return section.fields.some(
+      (field: keyof AudioFormData) =>
+        formData[field] && formData[field].trim() !== ''
+    );
+  }
+
+  return requiredFieldsComplete;
 }
 
 export default function AIAudioPromptGenerator() {
@@ -533,8 +561,25 @@ export default function AIAudioPromptGenerator() {
     setGeneratedPrompt(finalPrompt);
     setShowPrompt(true);
     setCopied(false);
+    setGeneratedStory(''); // Reset the enhanced story
 
-    // Call ChatGPT API to generate story
+    // Decrement count in backend
+    if (user?.email && subscriptionStatus !== 'active') {
+      try {
+        const res = await fetch('/api/prompt-usage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: user.email }),
+        });
+        const data = await res.json();
+        if (typeof data.count === 'number') setGenCount(data.count);
+      } catch {}
+    }
+  };
+
+  const enhanceWithChatGPT = async () => {
+    if (!generatedPrompt) return;
+
     try {
       setIsGeneratingStory(true);
       const response = await fetch('/api/generate-story', {
@@ -543,7 +588,7 @@ export default function AIAudioPromptGenerator() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt: `Create a detailed audio description based on this prompt: ${finalPrompt}. The description should capture the mood, atmosphere, and key audio elements in a vivid and engaging way.`,
+          prompt: `Create a detailed audio description based on this prompt: ${generatedPrompt}. The description should capture the mood, atmosphere, and key audio elements in a vivid and engaging way.`,
         }),
       });
 
@@ -560,19 +605,6 @@ export default function AIAudioPromptGenerator() {
       );
     } finally {
       setIsGeneratingStory(false);
-    }
-
-    // Decrement count in backend
-    if (user?.email && subscriptionStatus !== 'active') {
-      try {
-        const res = await fetch('/api/prompt-usage', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: user.email }),
-        });
-        const data = await res.json();
-        if (typeof data.count === 'number') setGenCount(data.count);
-      } catch {}
     }
   };
 
@@ -601,6 +633,7 @@ export default function AIAudioPromptGenerator() {
     resetFormData();
     setGenCount(0); // Optionally, you may want to reset in backend too
     setShowPrompt(false);
+    setGeneratedStory(''); // Clear the enhanced story
   };
 
   // --- Subscription Payment Logic (copied from Sidebar) ---
@@ -630,9 +663,30 @@ export default function AIAudioPromptGenerator() {
   const completedSections = sectionFields.filter(section =>
     isSectionComplete(section, formData)
   );
-  const currentStep = Math.min(
-    completedSections.length + 1,
-    progressSteps.length
+
+  // Calculate progress more intelligently
+  const totalFields = sectionFields.reduce(
+    (acc, section) => acc + section.fields.length,
+    0
+  );
+  const filledFields = sectionFields.reduce((acc, section) => {
+    return (
+      acc +
+      section.fields.filter(
+        field => formData[field] && formData[field].trim() !== ''
+      ).length
+    );
+  }, 0);
+
+  // Calculate current step based on progress through the form
+  const progressPercentage =
+    totalFields > 0 ? (filledFields / totalFields) * 100 : 0;
+  const currentStep = Math.max(
+    1,
+    Math.min(
+      Math.ceil((progressPercentage / 100) * progressSteps.length),
+      progressSteps.length
+    )
   );
 
   return (
@@ -737,8 +791,11 @@ export default function AIAudioPromptGenerator() {
           )}
           <GenerateButton
             onGenerate={generatePrompt}
+            onEnhance={enhanceWithChatGPT}
             onReset={resetFormDataWithCount}
             disabled={subscriptionStatus !== 'active' && genCount <= 0}
+            hasGeneratedPrompt={showPrompt}
+            isEnhancing={isGeneratingStory}
           />
 
           <SubscribePrompt
@@ -756,39 +813,41 @@ export default function AIAudioPromptGenerator() {
                 copied={copied}
               />
 
-              <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                <h3 className="text-xl font-bold text-white mb-4">
-                  🤖 Enhance with ChatGPT :
-                </h3>
-                {isGeneratingStory ? (
-                  <div className="flex justify-center my-8">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
-                    <span className="ml-4 text-cyan-400 text-lg">
-                      Generating your audio description...
-                    </span>
-                  </div>
-                ) : (
-                  <>
-                    <div className="prose prose-invert max-w-none">
-                      {generatedStory.split('\n').map((paragraph, i) => (
-                        <p key={i} className="mb-4">
-                          {paragraph}
-                        </p>
-                      ))}
+              {generatedStory && (
+                <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    🤖 Enhanced with ChatGPT :
+                  </h3>
+                  {isGeneratingStory ? (
+                    <div className="flex justify-center my-8">
+                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+                      <span className="ml-4 text-cyan-400 text-lg">
+                        Generating your audio description...
+                      </span>
                     </div>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(generatedStory);
-                        setCopied(true);
-                        setTimeout(() => setCopied(false), 2000);
-                      }}
-                      className="mt-4 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md transition-colors"
-                    >
-                      {copied ? 'Copied!' : 'Copy Description'}
-                    </button>
-                  </>
-                )}
-              </div>
+                  ) : (
+                    <>
+                      <div className="prose prose-invert max-w-none">
+                        {generatedStory.split('\n').map((paragraph, i) => (
+                          <p key={i} className="mb-4">
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(generatedStory);
+                          setCopied(true);
+                          setTimeout(() => setCopied(false), 2000);
+                        }}
+                        className="mt-4 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md transition-colors"
+                      >
+                        {copied ? 'Copied!' : 'Copy Description'}
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
 
               {/* Tips Section */}
               <div className="audio-tips-section">

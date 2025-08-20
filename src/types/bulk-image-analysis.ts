@@ -3,6 +3,7 @@ export interface ImageFile {
   file: File;
   previewUrl: string;
   status: 'pending' | 'analyzing' | 'completed' | 'error';
+  originalName?: string; // Original filename for HEIC files
   result?: {
     quality: 'Good' | 'Standard' | 'Bad';
     score: number;

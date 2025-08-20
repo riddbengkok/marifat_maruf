@@ -46,36 +46,57 @@ const MAX_GEN_COUNT =
 
 // Define the mapping of form sections to their required fields
 const sectionFields = [
-  { name: 'Core Elements', fields: ['subject', 'style', 'setting'] },
+  {
+    name: 'Core Elements',
+    fields: ['subject', 'style', 'setting'],
+    requiredFields: ['subject'], // Only subject is truly required
+  },
   {
     name: 'Visual & Technical',
     fields: ['lighting', 'pov', 'composition', 'aspectRatio', 'quality'],
+    requiredFields: [], // All are optional, aspectRatio and quality have defaults
   },
   {
     name: 'Atmosphere & Mood',
     fields: ['vibe', 'mood', 'atmosphere', 'emotions'],
+    requiredFields: [], // All are optional
   },
-  { name: 'Environment & Context', fields: ['weather', 'timeOfDay', 'season'] },
+  {
+    name: 'Environment & Context',
+    fields: ['weather', 'timeOfDay', 'season'],
+    requiredFields: [], // All are optional
+  },
   {
     name: 'Sensory & Material',
     fields: ['sense', 'colors', 'textures', 'materials'],
+    requiredFields: [], // All are optional
   },
   {
     name: 'Action & Details',
     fields: ['actions', 'details', 'additionalDetails'],
+    requiredFields: [], // All are optional
   },
-  { name: 'Technical', fields: ['model'] },
 ];
 
 const progressSteps = sectionFields.map((s: { name: string }) => s.name);
 
 function isSectionComplete(
-  section: { fields: string[] },
+  section: { fields: string[]; requiredFields: string[] },
   formData: Record<string, string>
 ): boolean {
-  return section.fields.every(
+  // Check if all required fields are filled
+  const requiredFieldsComplete = section.requiredFields.every(
     (field: string) => formData[field] && formData[field].trim() !== ''
   );
+
+  // If there are no required fields, consider the section complete if at least one field is filled
+  if (section.requiredFields.length === 0) {
+    return section.fields.some(
+      (field: string) => formData[field] && formData[field].trim() !== ''
+    );
+  }
+
+  return requiredFieldsComplete;
 }
 
 export default function PromptGenerator() {
@@ -311,8 +332,25 @@ export default function PromptGenerator() {
     setGeneratedPrompt(finalPrompt);
     setShowPrompt(true);
     setCopied(false);
+    setGeneratedStory(''); // Reset the enhanced story
 
-    // Call ChatGPT API to generate story
+    // Decrement count in backend
+    if (user?.email && subscriptionStatus !== 'active') {
+      try {
+        const res = await fetch('/api/prompt-usage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: user.email }),
+        });
+        const data = await res.json();
+        if (typeof data.count === 'number') setGenCount(data.count);
+      } catch {}
+    }
+  };
+
+  const enhanceWithChatGPT = async () => {
+    if (!generatedPrompt) return;
+
     try {
       setIsGeneratingStory(true);
       const response = await fetch('/api/generate-story', {
@@ -321,7 +359,7 @@ export default function PromptGenerator() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt: `Improve this prompt to make it more sensible and meet the rules of photography or design theory : ${finalPrompt}.`,
+          prompt: `Improve this prompt to make it more sensible and meet the rules of photography or design theory : ${generatedPrompt}.`,
         }),
       });
 
@@ -336,19 +374,6 @@ export default function PromptGenerator() {
       setGeneratedStory('Failed to generate description. Please try again.');
     } finally {
       setIsGeneratingStory(false);
-    }
-
-    // Decrement count in backend
-    if (user?.email && subscriptionStatus !== 'active') {
-      try {
-        const res = await fetch('/api/prompt-usage', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: user.email }),
-        });
-        const data = await res.json();
-        if (typeof data.count === 'number') setGenCount(data.count);
-      } catch {}
     }
   };
 
@@ -377,6 +402,7 @@ export default function PromptGenerator() {
     resetFormData();
     setGenCount(0); // Optionally, you may want to reset in backend too
     setShowPrompt(false); // Ensure prompt is hidden after reset
+    setGeneratedStory(''); // Clear the enhanced story
   };
 
   // --- Subscription Payment Logic (copied from Sidebar) ---
@@ -406,9 +432,32 @@ export default function PromptGenerator() {
   const completedSections = sectionFields.filter(section =>
     isSectionComplete(section, formData as unknown as Record<string, string>)
   );
-  const currentStep = Math.min(
-    completedSections.length + 1,
-    progressSteps.length
+
+  // Calculate progress more intelligently
+  const totalFields = sectionFields.reduce(
+    (acc, section) => acc + section.fields.length,
+    0
+  );
+  const filledFields = sectionFields.reduce((acc, section) => {
+    return (
+      acc +
+      section.fields.filter(
+        field =>
+          formData[field as keyof typeof formData] &&
+          formData[field as keyof typeof formData].trim() !== ''
+      ).length
+    );
+  }, 0);
+
+  // Calculate current step based on progress through the form
+  const progressPercentage =
+    totalFields > 0 ? (filledFields / totalFields) * 100 : 0;
+  const currentStep = Math.max(
+    1,
+    Math.min(
+      Math.ceil((progressPercentage / 100) * progressSteps.length),
+      progressSteps.length
+    )
   );
 
   return (
@@ -459,7 +508,7 @@ export default function PromptGenerator() {
       <StructuredData
         type="image-generator"
         title="AI Image Prompt Generator - Create Stunning Image Prompts"
-        description="Generate professional AI image prompts with our comprehensive tool. Create artistic, realistic, and creative image prompts for DALL-E, Midjourney, Stable Diffusion, and other AI image generators."
+        description="Generate AI image prompts with our comprehensive tool. Create artistic, realistic, and creative image prompts for DALL-E, Midjourney, Stable Diffusion, and other AI image generators."
         url="https://marifat-maruf.vercel.app/ai-image-prompt-generator"
       />
 
@@ -474,7 +523,7 @@ export default function PromptGenerator() {
           >
             <Header
               title="AI Image Prompt Generator"
-              subtitle="Create professional image prompts for AI generators"
+              subtitle="Create image prompts for AI generators"
               icon="🖼️"
             />
 
@@ -484,7 +533,7 @@ export default function PromptGenerator() {
                 'Enter your main subject or concept',
                 'Select visual and technical parameters',
                 'Add atmosphere and details',
-                'Generate your professional image prompt',
+                'Generate your image prompt',
                 'Copy and use with AI image generators',
               ]}
             />
@@ -523,8 +572,11 @@ export default function PromptGenerator() {
             )}
             <GenerateButton
               onGenerate={generatePrompt}
+              onEnhance={enhanceWithChatGPT}
               onReset={resetFormDataWithCount}
               disabled={subscriptionStatus !== 'active' && genCount <= 0}
+              hasGeneratedPrompt={showPrompt}
+              isEnhancing={isGeneratingStory}
             />
 
             <SubscribePrompt
@@ -542,39 +594,41 @@ export default function PromptGenerator() {
                   copied={copied}
                 />
 
-                <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                  <h3 className="text-xl font-bold text-white mb-4">
-                    🤖 Enhance with ChatGPT :
-                  </h3>
-                  {isGeneratingStory ? (
-                    <div className="flex justify-center my-8">
-                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
-                      <span className="ml-4 text-cyan-400 text-lg">
-                        Generating your description...
-                      </span>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="prose prose-invert max-w-none">
-                        {generatedStory.split('\n').map((paragraph, i) => (
-                          <p key={i} className="mb-4">
-                            {paragraph}
-                          </p>
-                        ))}
+                {generatedStory && (
+                  <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                    <h3 className="text-xl font-bold text-white mb-4">
+                      🤖 Enhanced with ChatGPT :
+                    </h3>
+                    {isGeneratingStory ? (
+                      <div className="flex justify-center my-8">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+                        <span className="ml-4 text-cyan-400 text-lg">
+                          Generating your description...
+                        </span>
                       </div>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(generatedStory);
-                          setCopied(true);
-                          setTimeout(() => setCopied(false), 2000);
-                        }}
-                        className="mt-4 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md transition-colors"
-                      >
-                        {copied ? 'Copied!' : 'Copy Description'}
-                      </button>
-                    </>
-                  )}
-                </div>
+                    ) : (
+                      <>
+                        <div className="prose prose-invert max-w-none">
+                          {generatedStory.split('\n').map((paragraph, i) => (
+                            <p key={i} className="mb-4">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(generatedStory);
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                          }}
+                          className="mt-4 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md transition-colors"
+                        >
+                          {copied ? 'Copied!' : 'Copy Description'}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 

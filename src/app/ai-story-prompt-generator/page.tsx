@@ -27,11 +27,31 @@ const MAX_GEN_COUNT =
 
 // Define the mapping of form sections to their required fields
 const sectionFields = [
-  { name: 'Core Elements', fields: ['genre', 'setting', 'mainCharacter'] },
-  { name: 'Conflict & Theme', fields: ['conflict', 'theme', 'goal'] },
-  { name: 'Plot Structure', fields: ['beginning', 'middle', 'end', 'twist'] },
-  { name: 'Style & Tone', fields: ['tone', 'style', 'pov'] },
-  { name: 'Additional Details', fields: ['inspiration', 'customInstructions'] },
+  {
+    name: 'Core Elements',
+    fields: ['genre', 'setting', 'mainCharacter'],
+    requiredFields: ['genre', 'setting'], // Genre and setting are required
+  },
+  {
+    name: 'Conflict & Theme',
+    fields: ['conflict', 'theme', 'goal'],
+    requiredFields: [], // All are optional
+  },
+  {
+    name: 'Plot Structure',
+    fields: ['beginning', 'middle', 'end', 'twist'],
+    requiredFields: [], // All are optional
+  },
+  {
+    name: 'Style & Tone',
+    fields: ['tone', 'style', 'pov'],
+    requiredFields: [], // All are optional
+  },
+  {
+    name: 'Additional Details',
+    fields: ['inspiration', 'customInstructions'],
+    requiredFields: [], // All are optional
+  },
 ];
 
 const progressSteps: string[] = sectionFields.map(
@@ -39,12 +59,22 @@ const progressSteps: string[] = sectionFields.map(
 );
 
 function isSectionComplete(
-  section: { fields: string[] },
+  section: { fields: string[]; requiredFields: string[] },
   formData: Record<string, string>
 ): boolean {
-  return section.fields.every(
+  // Check if all required fields are filled
+  const requiredFieldsComplete = section.requiredFields.every(
     (field: string) => formData[field] && formData[field].trim() !== ''
   );
+
+  // If there are no required fields, consider the section complete if at least one field is filled
+  if (section.requiredFields.length === 0) {
+    return section.fields.some(
+      (field: string) => formData[field] && formData[field].trim() !== ''
+    );
+  }
+
+  return requiredFieldsComplete;
 }
 
 export default function AIStoryPromptGenerator() {
@@ -232,24 +262,8 @@ export default function AIStoryPromptGenerator() {
       setGeneratedPrompt(prompt);
       setShowPrompt(true);
       setCopied(false);
-
-      // Call the API to generate the story
-      const response = await fetch('/api/generate-story', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate story');
-      }
-
-      const data = await response.json();
-      setGeneratedStory(data.story);
-      setShowStory(true); // Make sure to show the story section
-      setShowStory(true);
+      setGeneratedStory(''); // Reset the enhanced story
+      setShowStory(false);
 
       // Decrement count in backend
       if (user?.email && subscriptionStatus !== 'active') {
@@ -273,12 +287,42 @@ export default function AIStoryPromptGenerator() {
     }
   };
 
+  const enhanceWithChatGPT = async () => {
+    if (!generatedPrompt) return;
+
+    try {
+      setIsGenerating(true);
+      const response = await fetch('/api/generate-story', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: generatedPrompt }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate story');
+      }
+
+      const data = await response.json();
+      setGeneratedStory(data.story);
+      setShowStory(true);
+    } catch (error) {
+      console.error('Error generating story:', error);
+      setSubjectError('Failed to generate story. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const resetFormData = () => {
     setFormData(initialFormData);
     setShowPrompt(false);
     setGeneratedPrompt('');
     setCopied(false);
     setGenCount(0);
+    setGeneratedStory(''); // Clear the enhanced story
+    setShowStory(false);
   };
 
   const copyToClipboard = async () => {
@@ -327,9 +371,32 @@ export default function AIStoryPromptGenerator() {
   const completedSections = sectionFields.filter(section =>
     isSectionComplete(section, formData as unknown as Record<string, string>)
   );
-  const currentStep = Math.min(
-    completedSections.length + 1,
-    progressSteps.length
+
+  // Calculate progress more intelligently
+  const totalFields = sectionFields.reduce(
+    (acc, section) => acc + section.fields.length,
+    0
+  );
+  const filledFields = sectionFields.reduce((acc, section) => {
+    return (
+      acc +
+      section.fields.filter(
+        field =>
+          formData[field as keyof typeof formData] &&
+          formData[field as keyof typeof formData].trim() !== ''
+      ).length
+    );
+  }, 0);
+
+  // Calculate current step based on progress through the form
+  const progressPercentage =
+    totalFields > 0 ? (filledFields / totalFields) * 100 : 0;
+  const currentStep = Math.max(
+    1,
+    Math.min(
+      Math.ceil((progressPercentage / 100) * progressSteps.length),
+      progressSteps.length
+    )
   );
 
   return (
@@ -416,11 +483,14 @@ export default function AIStoryPromptGenerator() {
             )}
             <GenerateButton
               onGenerate={generatePrompt}
+              onEnhance={enhanceWithChatGPT}
               onReset={resetFormData}
               disabled={
                 (subscriptionStatus !== 'active' && genCount <= 0) ||
                 isGenerating
               }
+              hasGeneratedPrompt={showPrompt}
+              isEnhancing={isGenerating}
             />
 
             <SubscribePrompt
@@ -446,36 +516,38 @@ export default function AIStoryPromptGenerator() {
                   copied={copied}
                 />
 
-                <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                  <h3 className="text-xl font-bold text-white mb-4">
-                    Story By Chatgpt Result :
-                  </h3>
-                  <div className="prose prose-invert max-w-none">
-                    {isGenerating && (
-                      <div className="flex justify-center my-8">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
-                        <span className="ml-4 text-cyan-400 text-lg">
-                          Generating your story...
-                        </span>
-                      </div>
-                    )}
-                    {generatedStory.split('\n').map((paragraph, i) => (
-                      <p key={i} className="mb-4">
-                        {paragraph}
-                      </p>
-                    ))}
+                {generatedStory && (
+                  <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                    <h3 className="text-xl font-bold text-white mb-4">
+                      🤖 Enhanced with ChatGPT :
+                    </h3>
+                    <div className="prose prose-invert max-w-none">
+                      {isGenerating && (
+                        <div className="flex justify-center my-8">
+                          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+                          <span className="ml-4 text-cyan-400 text-lg">
+                            Generating your story...
+                          </span>
+                        </div>
+                      )}
+                      {generatedStory.split('\n').map((paragraph, i) => (
+                        <p key={i} className="mb-4">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(generatedStory);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      }}
+                      className="mt-4 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md transition-colors"
+                    >
+                      {copied ? 'Copied!' : 'Copy Story'}
+                    </button>
                   </div>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(generatedStory);
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
-                    }}
-                    className="mt-4 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md transition-colors"
-                  >
-                    {copied ? 'Copied!' : 'Copy Story'}
-                  </button>
-                </div>
+                )}
               </div>
             )}
           </div>

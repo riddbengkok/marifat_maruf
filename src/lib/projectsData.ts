@@ -13,6 +13,17 @@ export interface Project {
 export const projects: Project[] = [
   {
     id: 1,
+    title: 'Bulk Image Analysis Tool',
+    description:
+      'Advanced image quality assessment tool that analyzes multiple images using algorithmic metrics including brightness, contrast, sharpness, composition, and noise levels. Features context-aware analysis and 3-tier quality classification.',
+    image: '/images/prompt-generator-screenshot.jpg',
+    technologies: ['Next.js', 'TypeScript', 'Canvas API', 'Image Processing'],
+    link: '/bulk-image-analyze',
+    category: 'AI Tools',
+    placeholderColor: 'from-cyan-500 to-blue-500',
+  },
+  {
+    id: 2,
     title: 'User Transfer Report',
     description:
       'Comprehensive user transfer reporting system with detailed analytics and data visualization for financial transactions.',
@@ -23,7 +34,7 @@ export const projects: Project[] = [
     placeholderColor: 'from-blue-500 to-cyan-500',
   },
   {
-    id: 2,
+    id: 3,
     title: 'Component Edit System',
     description:
       'Advanced component editing interface with real-time updates and seamless integration for Vue.js to Next.js migration.',
@@ -34,7 +45,7 @@ export const projects: Project[] = [
     placeholderColor: 'from-purple-500 to-pink-500',
   },
   {
-    id: 3,
+    id: 4,
     title: 'KoinBill Add Product',
     description:
       'Product management system for KoinBill platform with intuitive interface for adding and managing digital products.',
@@ -45,7 +56,7 @@ export const projects: Project[] = [
     placeholderColor: 'from-green-500 to-teal-500',
   },
   {
-    id: 4,
+    id: 5,
     title: 'Porto Incoming Cash',
     description:
       'Financial management system for tracking incoming cash flows with comprehensive reporting and analytics dashboard.',
@@ -56,7 +67,7 @@ export const projects: Project[] = [
     placeholderColor: 'from-orange-500 to-red-500',
   },
   {
-    id: 5,
+    id: 6,
     title: 'Coupon Campaign System',
     description:
       'Dynamic coupon campaign management platform with automated distribution and tracking capabilities.',
@@ -67,7 +78,7 @@ export const projects: Project[] = [
     placeholderColor: 'from-indigo-500 to-purple-500',
   },
   {
-    id: 6,
+    id: 7,
     title: 'KScore Dashboard',
     description:
       'Credit scoring and financial assessment dashboard with real-time data processing and user-friendly interface.',

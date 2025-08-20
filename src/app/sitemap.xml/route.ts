@@ -8,6 +8,8 @@ export async function GET() {
     'ai-video-prompt-generator',
     'ai-audio-prompt-generator',
     'ai-story-prompt-generator',
+    'bulk-image-analyze',
+    'image-analysis',
     'features',
     'portfolio',
   ];
@@ -15,7 +17,7 @@ export async function GET() {
   const urls = pages
     .map(
       page =>
-        `<url><loc>${baseUrl}/${page}</loc><changefreq>weekly</changefreq><priority>${page === '' ? '1.0' : '0.8'}</priority></url>`
+        `<url><loc>${baseUrl}/${page}</loc><changefreq>weekly</changefreq><priority>${page === '' ? '1.0' : page === 'bulk-image-analyze' ? '0.9' : '0.8'}</priority></url>`
     )
     .join('');
 

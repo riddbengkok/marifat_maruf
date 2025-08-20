@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://marifat-maruf.vercel.app/sitemap.xml
+
+# Allow crawling of image analysis tools
+Allow: /bulk-image-analyze
+Allow: /image-analysis
+
+# Crawl delay (optional)
+Crawl-delay: 1

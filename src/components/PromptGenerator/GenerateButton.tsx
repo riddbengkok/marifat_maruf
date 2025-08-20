@@ -11,6 +11,7 @@ interface GenerateButtonProps {
   onReset?: () => void;
   disabled?: boolean;
   hasGeneratedPrompt?: boolean;
+  isEnhancing?: boolean;
 }
 
 export default function GenerateButton({
@@ -19,6 +20,7 @@ export default function GenerateButton({
   onReset,
   disabled = false,
   hasGeneratedPrompt = false,
+  isEnhancing = false,
 }: GenerateButtonProps) {
   const { user, signInWithGoogle } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +75,7 @@ export default function GenerateButton({
           {hasGeneratedPrompt && onEnhance && (
             <button
               onClick={handleEnhanceClick}
-              disabled={isLoading || disabled}
+              disabled={isLoading || disabled || isEnhancing}
               className="btn-secondary"
               style={{
                 background: 'linear-gradient(135deg, #7dd8e0, #6b9ac4)',
@@ -88,6 +90,7 @@ export default function GenerateButton({
                 boxShadow: '0 4px 20px rgba(125, 216, 224, 0.3)',
               }}
             >
+              {isEnhancing && <div className="loading-spinner"></div>}
               🤖 Enhance with AI
             </button>
           )}

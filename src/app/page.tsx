@@ -115,9 +115,9 @@ export default function Home() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
                 {/* Left Column - Profile and Content */}
-                <div className="text-left space-y-8 animate-fade-in-left">
+                <div className="text-center lg:text-left space-y-8 animate-fade-in-left">
                   {/* Profile Picture - Circular */}
-                  <div className="flex justify-start">
+                  <div className="flex justify-center lg:justify-start">
                     <div className="relative w-32 h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden shadow-2xl border-4 border-white/10 hover:border-cyan-400/30 transition-all duration-500 transform hover:scale-105 animate-scale-in">
                       <Image
                         src="/images/rifat2.JPG"
@@ -145,7 +145,7 @@ export default function Home() {
                   </div>
 
                   {/* Description */}
-                  <div className="space-y-6 max-w-2xl">
+                  <div className="space-y-6 max-w-2xl mx-auto lg:mx-0">
                     <p className="text-xl text-gray-300 leading-relaxed">
                       Crafting performant, elegant, and efficient web
                       experiences.
@@ -161,7 +161,7 @@ export default function Home() {
                   </div>
 
                   {/* Call to Action */}
-                  <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                  <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
                     <button
                       onClick={() => scrollToSection('about')}
                       className="relative group bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/30 overflow-hidden"
@@ -179,8 +179,8 @@ export default function Home() {
                   </div>
 
                   {/* Bottom CTA */}
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-8 border-t border-white/10">
-                    <div className="text-gray-300 mb-4 sm:mb-0">
+                  <div className="flex flex-col sm:flex-row justify-center lg:justify-between items-center lg:items-start pt-8 border-t border-white/10">
+                    <div className="text-gray-300 mb-4 sm:mb-0 text-center lg:text-left">
                       <p className="text-lg">
                         Let&apos;s build something amazing together 🚀
                       </p>
@@ -199,7 +199,7 @@ export default function Home() {
 
                 {/* Right Column - Skills Cards */}
                 <div className="space-y-8 animate-fade-in-right">
-                  <div className="text-center lg:text-left">
+                  <div className="text-center">
                     <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
                       Skills
                     </h2>
