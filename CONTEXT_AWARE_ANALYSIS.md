@@ -9,17 +9,19 @@ The bulk image analysis feature has been enhanced with context-aware analysis th
 The analysis now uses a **3-tier quality system**:
 
 - **Good** (75-100 points): Excellent image quality with high technical standards
-- **Standard** (50-74 points): Good image quality with room for improvement  
+- **Standard** (50-74 points): Good image quality with room for improvement
 - **Bad** (0-49 points): Image quality needs significant improvement
 
 ## New Features
 
 ### 1. Subject Detection
+
 - **Saliency Mapping**: Detects the main subject in the image using center-surround contrast analysis
 - **Subject-Focused Metrics**: Calculates brightness, sharpness, and color balance only within the detected subject area
 - **Background Blur Detection**: Identifies intentional background blur (bokeh) and rewards it instead of penalizing
 
 ### 2. Image Context Detection
+
 - **Black & White Detection**: Automatically detects monochrome images and skips color balance scoring
 - **Low-Key/High-Key Detection**: Identifies dark or bright images and adjusts brightness expectations
 - **Portrait Detection**: Recognizes portrait orientation and applies appropriate scoring rules
@@ -28,22 +30,26 @@ The analysis now uses a **3-tier quality system**:
 ### 3. Context-Aware Metric Calculation
 
 #### Brightness
+
 - **Normal Images**: Expects 30-80 range
 - **Low-Key Images**: Rewards visible subjects (≥30) even with dark backgrounds
 - **High-Key Images**: Checks for overexposed subjects (≤200)
 - **Subject-Focused**: Calculates brightness only in the main subject area
 
 #### Sharpness
+
 - **Subject-Focused**: Measures sharpness only in the detected subject region
 - **Bokeh Bonus**: Rewards sharp subjects with blurred backgrounds (+20 points)
 - **Portrait Protection**: Minimum 50 points for portraits with intentional background blur
 
 #### Color Balance
+
 - **Black & White**: Automatically scores 100 (perfect) for intentional B&W
 - **Subject-Focused**: Calculates color balance only in the subject area
 - **Context-Aware**: Adapts expectations based on image style
 
 #### Contrast
+
 - **Subject-Focused**: Measures contrast in the main subject area
 - **Context-Aware**: Adjusts expectations for different lighting conditions
 
@@ -62,6 +68,7 @@ The analysis now uses a **3-tier quality system**:
 ### Key Functions
 
 #### Subject Detection
+
 ```typescript
 analyzeImageContext(data, width, height): ImageContext
 detectSalientRegion(data, width, height): SubjectRegion
@@ -73,6 +80,7 @@ detectBackgroundBlur(data, width, height): boolean
 ```
 
 #### Context-Aware Metrics
+
 ```typescript
 calculateContextAwareMetrics(data, width, height, context): ContextAwareMetrics
 calculateContextAwareBrightness(data, width, height, context): number
@@ -83,9 +91,11 @@ calculateContextAwareColorBalance(data, context): number
 ## Usage Examples
 
 ### Testing the New Features
+
 Visit `/test-context-analysis` to test the context-aware analysis with individual images.
 
 ### In Bulk Analysis
+
 The context-aware analysis is automatically applied in the bulk image analysis feature. Context information is displayed as tags for each analyzed image.
 
 ## Benefits
@@ -99,24 +109,28 @@ The context-aware analysis is automatically applied in the bulk image analysis f
 ## Perfect Values by Context
 
 ### Normal Images
+
 - **Brightness**: 30-80 (50-70 ideal)
 - **Contrast**: 70-100
 - **Sharpness**: 80-100
 - **Color Balance**: 70-100
 
 ### Low-Key Images
+
 - **Brightness**: Subject ≥30 (global can be lower)
 - **Contrast**: 70-100
 - **Sharpness**: 80-100 (subject-focused)
 - **Color Balance**: 70-100 (subject-focused)
 
 ### Black & White Images
+
 - **Brightness**: 30-80 (50-70 ideal)
 - **Contrast**: 70-100
 - **Sharpness**: 80-100
 - **Color Balance**: 100 (automatic perfect score)
 
 ### Portraits with Bokeh
+
 - **Brightness**: 30-80 (50-70 ideal)
 - **Contrast**: 70-100
 - **Sharpness**: Subject 80-100, Background can be lower
@@ -125,16 +139,19 @@ The context-aware analysis is automatically applied in the bulk image analysis f
 ## Quality Thresholds
 
 ### Good Quality (75-100 points)
+
 - Score ≥ 75 AND meets technical requirements
 - High technical standards across all metrics
 - Excellent composition and subject focus
 
 ### Standard Quality (50-74 points)
+
 - Score ≥ 50 AND meets technical requirements
 - Good technical standards with room for improvement
 - Acceptable composition and subject focus
 
 ### Bad Quality (0-49 points)
+
 - Score < 50 OR doesn't meet technical requirements
 - Significant technical issues
 - Poor composition or subject focus

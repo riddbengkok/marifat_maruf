@@ -82,24 +82,12 @@ const translations: Record<Language, Record<string, string>> = {
       'Showcasing creativity, technical skills, and problem-solving abilities through various projects.',
     'portfolio.viewProject': 'View Project',
     'portfolio.preview': 'Preview',
-    'portfolio.openInFigma': 'Open in Figma →',
+    'portfolio.openInFigma': 'Open URL→',
     'portfolio.technologies': 'Technologies',
     'portfolio.previewDesign': 'Preview Design',
     'portfolio.category.webApp': 'Web Application',
     'portfolio.category.mobileApp': 'Mobile Application',
     'portfolio.category.uiux': 'UI/UX Design',
-
-    // Projects
-    'projects.1.title': 'User Transfer Report',
-    'projects.1.description':
-      'A web dashboard to show data user transfer report',
-    'projects.2.title': 'Component edit feature',
-    'projects.2.description':
-      'Dashboard for setting component that show in mobile application',
-    'projects.3.title': 'Product management for apps',
-    'projects.3.description':
-      'Dashboard product management create edit delete for apps',
-
     // Hero Section
     'hero.name': 'Marifat Maruf',
     'hero.title': 'Frontend Web Developer',
@@ -200,17 +188,6 @@ const translations: Record<Language, Record<string, string>> = {
     'portfolio.category.webApp': 'Aplikasi Web',
     'portfolio.category.mobileApp': 'Aplikasi Mobile',
     'portfolio.category.uiux': 'Desain UI/UX',
-
-    // Projects
-    'projects.1.title': 'Generator Prompt Berbasis AI',
-    'projects.1.description':
-      'Aplikasi web yang menghasilkan prompt penulisan kreatif menggunakan AI. Dibangun dengan Next.js dan OpenAI API.',
-    'projects.2.title': 'Platform E-commerce',
-    'projects.2.description':
-      'Platform e-commerce lengkap dengan katalog produk, keranjang, dan fungsionalitas pembayaran.',
-    'projects.3.title': 'Website Portofolio',
-    'projects.3.description':
-      'Website portofolio modern dan responsif yang dibangun dengan Next.js dan Tailwind CSS.',
 
     // Hero Section
     'hero.name': 'Marifat Maruf',

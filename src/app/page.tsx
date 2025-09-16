@@ -520,29 +520,36 @@ export default function Home() {
                   >
                     {/* Project Image */}
                     <div className="relative h-48 overflow-hidden">
-                      {/* Gradient Background */}
+                      {/* Background Image */}
                       <div
-                        className={`absolute inset-0 bg-gradient-to-br ${project.placeholderColor} opacity-80`}
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{
+                          backgroundImage: `url(${project.image ?? '/images/pic01.jpg'})`,
+                        }}
                       ></div>
 
-                      {/* Project Icon */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-white/90 text-6xl font-bold opacity-20">
-                          {project.title.charAt(0)}
-                        </div>
-                      </div>
+                      {/* Overlay gradient for readability */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
 
                       {/* Project Title Overlay */}
                       <div className="absolute bottom-4 left-4 right-4">
-                        <h4 className="text-white font-bold text-lg drop-shadow-lg">
+                        <h3 className="text-white font-bold text-lg drop-shadow-lg">
                           {project.title}
-                        </h4>
+                        </h3>
                       </div>
 
-                      {/* Preview Overlay */}
+                      {/* Preview Overlay - Always show preview button; figma opens modal */}
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <button
-                          onClick={() => openModal(project)}
+                          onClick={() =>
+                            project.link.includes('figma.com')
+                              ? openModal(project)
+                              : window.open(
+                                  project.link,
+                                  '_blank',
+                                  'noopener,noreferrer'
+                                )
+                          }
                           className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2 border border-white/30"
                         >
                           <svg
@@ -570,42 +577,48 @@ export default function Home() {
                     </div>
 
                     {/* Project Content */}
-                    <div className="p-6">
-                      <div className="mb-2">
-                        <span className="text-xs font-medium text-cyan-400 uppercase tracking-wide">
-                          {project.category}
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors duration-200">
-                        {t(`projects.${project.id}.title`, project.title)}
-                      </h3>
-                      <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                        {t(
-                          `projects.${project.id}.description`,
-                          project.description
-                        )}
-                      </p>
-
-                      {/* Technologies */}
-                      <div className="mb-2">
-                        <p className="text-xs text-cyan-400 mb-2">
-                          {t('portfolio.technologies')}
-                        </p>
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {project.technologies.map(tech => (
-                            <span
-                              key={tech}
-                              className="px-2 py-1 text-xs bg-gray-800/50 text-gray-300 rounded-md"
-                            >
-                              {tech}
-                            </span>
-                          ))}
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <div className="p-6">
+                        <div className="mb-2">
+                          <span className="text-xs font-medium text-cyan-400 uppercase tracking-wide">
+                            {project.category}
+                          </span>
                         </div>
-                      </div>
 
-                      {/* Action Buttons */}
-                      <div className="flex space-x-3">
-                        <button
+                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors duration-200">
+                          {t(`projects.${project.id}.title`, project.title)}
+                        </h3>
+                        <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                          {t(
+                            `projects.${project.id}.description`,
+                            project.description
+                          )}
+                        </p>
+
+                        {/* Technologies */}
+                        <div className="mb-2">
+                          <p className="text-xs text-cyan-400 mb-2">
+                            {t('portfolio.technologies')}
+                          </p>
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {project.technologies.map(tech => (
+                              <span
+                                key={tech}
+                                className="px-2 py-1 text-xs bg-gray-800/50 text-gray-300 rounded-md"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex space-x-3">
+                          {/* <button
                           onClick={() => openModal(project)}
                           className="text-cyan-400 hover:text-cyan-300 font-medium text-sm transition-colors duration-200 inline-flex items-center"
                         >
@@ -629,30 +642,36 @@ export default function Home() {
                             />
                           </svg>
                           <span>{t('portfolio.previewDesign')}</span>
-                        </button>
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-cyan-400 hover:text-cyan-300 font-medium text-sm transition-colors duration-200 inline-flex items-center"
-                        >
-                          <svg
-                            className="w-4 h-4 mr-1"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                        </button> */}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              window.open(
+                                project.link,
+                                '_blank',
+                                'noopener,noreferrer'
+                              )
+                            }
+                            className="text-cyan-400 hover:text-cyan-300 font-medium text-sm transition-colors duration-200 inline-flex items-center"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                            />
-                          </svg>
-                          <span>{t('portfolio.openInFigma')}</span>
-                        </a>
+                            <svg
+                              className="w-4 h-4 mr-1"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                              />
+                            </svg>
+                            <span>Open Link →</span>
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    </a>
                   </div>
                 ))}
               </div>

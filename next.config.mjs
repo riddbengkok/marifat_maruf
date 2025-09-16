@@ -10,11 +10,8 @@ const nextConfig = {
       },
     ],
   },
-  api: {
-    bodyParser: {
-      sizeLimit: '6mb', // Increased to 6MB as requested
-    },
-  },
+  // Use supported option in Next.js 15
+  serverExternalPackages: ['sharp'],
 };
 
 export default nextConfig;

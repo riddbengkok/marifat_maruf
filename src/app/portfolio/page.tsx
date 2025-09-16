@@ -324,29 +324,36 @@ const Portfolio = () => {
                 >
                   {/* Project Image */}
                   <div className="relative h-48 overflow-hidden">
-                    {/* Gradient Background */}
+                    {/* Background Image */}
                     <div
-                      className={`absolute inset-0 bg-gradient-to-br ${project.placeholderColor} opacity-80`}
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{
+                        backgroundImage: `url(${project.image ?? '/images/pic01.jpg'})`,
+                      }}
                     ></div>
 
-                    {/* Project Icon */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-white/90 text-6xl font-bold opacity-20">
-                        {project.title.charAt(0)}
-                      </div>
-                    </div>
+                    {/* Overlay gradient for readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
 
                     {/* Project Title Overlay */}
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h4 className="text-white font-bold text-lg drop-shadow-lg">
+                      <h3 className="text-white font-bold text-lg drop-shadow-lg">
                         {project.title}
-                      </h4>
+                      </h3>
                     </div>
 
-                    {/* Preview Overlay */}
+                    {/* Preview Overlay - Always show preview button; figma opens modal */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button
-                        onClick={() => openModal(project)}
+                        onClick={() =>
+                          project.link.includes('figma.com')
+                            ? openModal(project)
+                            : window.open(
+                                project.link,
+                                '_blank',
+                                'noopener,noreferrer'
+                              )
+                        }
                         className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2 border border-white/30"
                       >
                         <svg
@@ -402,7 +409,15 @@ const Portfolio = () => {
                     {/* Action Buttons */}
                     <div className="flex space-x-3">
                       <button
-                        onClick={() => openModal(project)}
+                        onClick={() =>
+                          project.link.includes('figma.com')
+                            ? openModal(project)
+                            : window.open(
+                                project.link,
+                                '_blank',
+                                'noopener,noreferrer'
+                              )
+                        }
                         className="text-cyan-400 hover:text-cyan-300 font-medium text-sm transition-colors duration-200 inline-flex items-center"
                       >
                         <svg
@@ -445,7 +460,7 @@ const Portfolio = () => {
                             d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                           />
                         </svg>
-                        Open in Figma →
+                        Open Link →
                       </a>
                     </div>
                   </div>
