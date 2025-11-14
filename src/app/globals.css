@@ -147,6 +147,8 @@
 
 /* Hyperspace Theme Styles */
 :root {
+  /* Sidebar margin-left for lg screens; controlled by SidebarProvider */
+  --sidebar-ml: 0px;
   --primary-color: #9bf1ff;
   --secondary-color: #ff6b6b;
   --background-color: #0c0c0c;

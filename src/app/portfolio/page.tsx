@@ -1,7 +1,6 @@
 'use client';
 
 import ProjectModal from '@/components/ProjectModal';
-import Sidebar from '@/components/Sidebar';
 import {
   achievements,
   certifications,
@@ -80,8 +79,7 @@ const Portfolio = () => {
 
   return (
     <>
-      <Sidebar />
-      <div className={`min-h-screen lg:ml-64 ${isLoaded ? 'loaded' : ''}`}>
+      <div className={`min-h-screen ${isLoaded ? 'loaded' : ''}`}>
         {/* Hero Section */}
         <section
           id="intro"
@@ -674,7 +672,7 @@ const Portfolio = () => {
                 Connect on LinkedIn
               </a>
               <a
-                href="mailto:riddbengkok@gmail.com"
+                href="mailto:riddtwo@gmail.com"
                 className="inline-flex items-center px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 <svg

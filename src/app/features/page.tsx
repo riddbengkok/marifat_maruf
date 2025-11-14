@@ -3,7 +3,6 @@
 import Features from '@/components/Features';
 import Footer from '@/components/Footer';
 import Intro from '@/components/Intro';
-import Sidebar from '@/components/Sidebar';
 import Spotlights from '@/components/Spotlights';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -23,11 +22,8 @@ export default function FeaturesPage() {
 
   return (
     <>
-      {/* Sidebar */}
-      <Sidebar />
-
       {/* Main Content */}
-      <div className={`min-h-screen lg:ml-64 ${isLoaded ? 'loaded' : ''}`}>
+      <div className={`min-h-screen ${isLoaded ? 'loaded' : ''}`}>
         <div id="wrapper" className="relative">
           {/* Intro Section */}
           <section className="mb-12">
@@ -158,10 +154,10 @@ export default function FeaturesPage() {
                         <div>
                           <h4 className="text-white font-semibold">Email</h4>
                           <a
-                            href="mailto:riddbengkok@gmail.com"
+                            href="mailto:riddtwo@gmail.com"
                             className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200"
                           >
-                            riddbengkok@gmail.com
+                            riddtwo@gmail.com
                           </a>
                         </div>
                       </div>
@@ -367,7 +363,7 @@ export default function FeaturesPage() {
                   Ready to start a project together?
                 </p>
                 <a
-                  href="mailto:riddbengkok@gmail.com"
+                  href="mailto:riddtwo@gmail.com"
                   className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
                   <svg

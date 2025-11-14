@@ -1,4 +1,6 @@
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import SidebarProvider from '@/components/Sidebar/SidebarProvider';
+import ClientShell from '@/components/Layout/ClientShell';
 import type { Metadata } from 'next';
 import { Source_Code_Pro, Source_Sans_3 } from 'next/font/google';
 import './globals.css';
@@ -36,7 +38,11 @@ export default function RootLayout({
         />
       </head>
       <body className={`${sourceSans.variable} ${sourceCode.variable}`}>
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider>
+          <SidebarProvider>
+            <ClientShell>{children}</ClientShell>
+          </SidebarProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

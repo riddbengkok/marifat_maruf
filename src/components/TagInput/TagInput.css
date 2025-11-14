@@ -1,0 +1,159 @@
+/* Tag Input Container */
+.tag-input-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+/* Wrapper for tags and input */
+.tag-input-wrapper {
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease;
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tag-input-wrapper:focus-within {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* Tags List */
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Individual Tag */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  animation: tagAppear 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+@keyframes tagAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Tag Text */
+.tag-text {
+  user-select: none;
+}
+
+/* Remove Button */
+.tag-remove-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.tag-remove-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.tag-remove-btn:active {
+  transform: scale(0.95);
+}
+
+.tag-remove-btn:focus {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Input Field */
+.tag-input {
+  border: none;
+  outline: none;
+  padding: 8px 4px;
+  font-size: 15px;
+  width: 100%;
+  background: transparent;
+  color: #333333;
+}
+
+.tag-input::placeholder {
+  color: #999999;
+}
+
+/* Error Message */
+.error-message {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #fee;
+  border-left: 3px solid #e74c3c;
+  color: #c0392b;
+  font-size: 13px;
+  border-radius: 4px;
+  animation: errorShake 0.3s ease;
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Tag Count */
+.tag-count {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #666666;
+  text-align: right;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .tag-input-container {
+    max-width: 100%;
+  }
+
+  .tag {
+    font-size: 13px;
+    padding: 5px 8px;
+  }
+
+  .tag-input {
+    font-size: 14px;
+  }
+}

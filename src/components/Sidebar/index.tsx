@@ -4,21 +4,21 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { ChevronLeft } from 'lucide-react';
 import { handleSubscribePayment } from '../Auth/handleSubscribePayment';
 import { SidebarContext } from './SidebarContext';
 import { AuthenticationSection } from './components/AuthenticationSection';
 import { NavigationLinks } from './components/NavigationLinks';
 import { SuccessModal } from './components/SuccessModal';
-import { usePayment } from './hooks/usePayment';
 import { useSubscription } from './hooks/useSubscription';
 import { PAGE_TITLES, loadSnapJs } from './utils';
 
 const Sidebar = () => {
   // State
-  const [isOpen, setIsOpen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const { isOpen, setIsOpen, sidebarExpanded, setSidebarContext } =
+    useContext(SidebarContext);
   const [anonLeft, setAnonLeft] = useState(10);
 
   // Hooks
@@ -28,7 +28,6 @@ const Sidebar = () => {
   const { subscriptionStatus, subLoading } = useSubscription(
     user?.email || undefined
   );
-  const { pendingOrderToken, pendingOrderId } = usePayment(user || undefined);
 
   // Environment
   const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '';
@@ -40,10 +39,14 @@ const Sidebar = () => {
     loadSnapJs(clientKey, isProduction);
   }, [clientKey, isProduction]);
 
-  // Page context
-  const isFeaturesPage = pathname === '/features';
-  const isGeneratorPage =
-    pathname.startsWith('/ai-') || pathname === '/teleprompter';
+  // Persisting handled by SidebarProvider
+
+  // Toggle sidebar
+  const toggleSidebar = () => {
+    setSidebarContext(!sidebarExpanded);
+  };
+
+  // Page context (unused; removed)
 
   const handleSubscribe = () => {
     if (user) {
@@ -58,14 +61,22 @@ const Sidebar = () => {
   }, [user]); // resets when user logs in
 
   return (
-    <SidebarContext.Provider
-      value={{
-        isOpen,
-        setIsOpen,
-        sidebarExpanded,
-        setSidebarContext: setSidebarExpanded,
-      }}
-    >
+    <>
+      {/* Toggle Button */}
+      <button
+        onClick={toggleSidebar}
+        className={`fixed left-4 top-4 z-50 p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 ${
+          sidebarExpanded ? 'left-64' : 'left-4'
+        }`}
+        aria-label={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+        aria-controls="sidebar"
+      >
+        <ChevronLeft
+          className={`h-5 w-5 text-gray-600 dark:text-gray-300 transition-transform duration-300 ${
+            !sidebarExpanded && 'rotate-180'
+          }`}
+        />
+      </button>
       {/* Success Modal */}
       <SuccessModal
         isOpen={showSuccessModal}
@@ -107,12 +118,15 @@ const Sidebar = () => {
         id="sidebar"
         className={`fixed inset-y-0 left-0 z-40 w-64 sidebar-bg backdrop-blur-md border-r border-white/20 transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          lg:translate-x-0 lg:block
+          ${sidebarExpanded ? 'lg:translate-x-0' : 'lg:-translate-x-full'}
+          lg:block
         `}
         style={{ touchAction: isOpen ? 'none' : undefined }}
         aria-hidden={
           !isOpen && typeof window !== 'undefined' && window.innerWidth < 1024
         }
+        role="complementary"
+        aria-label="Primary sidebar"
       >
         <div className="flex flex-col h-full p-6">
           {/* Logo/Brand */}
@@ -157,7 +171,7 @@ const Sidebar = () => {
           </div>
 
           {/* Subscribe Button */}
-          <li className="pt-4 border-t border-white/20 flex justify-center">
+          <div className="pt-4 border-t border-white/20 flex justify-center">
             <button
               className="mt-4 px-4 py-2 text-sm font-semibold rounded-md shadow bg-gradient-to-r from-gray-900 to-gray-700 text-white hover:from-gray-800 hover:to-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-400 transition-all border border-cyan-500"
               style={{ letterSpacing: '0.04em' }}
@@ -165,7 +179,7 @@ const Sidebar = () => {
             >
               {t('btn.subscribe')}
             </button>
-          </li>
+          </div>
         </div>
       </section>
 
@@ -177,7 +191,7 @@ const Sidebar = () => {
           aria-label="Close sidebar overlay"
         />
       )}
-    </SidebarContext.Provider>
+    </>
   );
 };
 

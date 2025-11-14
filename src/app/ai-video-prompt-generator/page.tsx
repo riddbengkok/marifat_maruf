@@ -561,7 +561,6 @@ export default function AIVideoPromptGenerator() {
         </div>
       )}
       <div className="generator-flex-layout">
-        <Sidebar />
         <main
           className={`generator-main-content transition-all duration-300 ml-0 mr-0${sidebarExpanded ? ' lg:ml-64' : ' lg:ml-20'} lg:mr-[320px] ${isOpen ? 'block lg:block hidden' : ''}`}
         >

@@ -87,7 +87,7 @@ export default function Home() {
       <Sidebar />
 
       {/* Main Content */}
-      <div className={`min-h-screen lg:ml-64 ${isLoaded ? 'loaded' : ''}`}>
+      <div className={`min-h-screen ${isLoaded ? 'loaded' : ''}`}>
         <div id="wrapper" className="relative">
           {/* Hero Section - Enhanced with Icons8 icons */}
           <section
@@ -823,10 +823,10 @@ export default function Home() {
                         <div>
                           <h4 className="text-white font-semibold">Email</h4>
                           <a
-                            href="mailto:riddbengkok@gmail.com"
+                            href="mailto:riddtwo@gmail.com"
                             className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200"
                           >
-                            riddbengkok@gmail.com
+                            riddtwo@gmail.com
                           </a>
                         </div>
                       </div>
@@ -1032,7 +1032,7 @@ export default function Home() {
                   Ready to start a project together?
                 </p>
                 <a
-                  href="mailto:riddbengkok@gmail.com"
+                  href="mailto:riddtwo@gmail.com"
                   className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
                   <svg

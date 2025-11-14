@@ -11,32 +11,13 @@ import ProgressIndicator from '@/components/PromptGenerator/ProgressIndicator';
 import PromptDisplay from '@/components/PromptGenerator/PromptDisplay';
 import SubscribePrompt from '@/components/PromptGenerator/SubscribePrompt';
 import StructuredData from '@/components/SEO/StructuredData';
-import { SidebarContext } from '@/components/Sidebar';
+// Sidebar is now provided globally via ClientShell; remove local Sidebar usage
 import { useAuth } from '@/hooks/useAuth';
 import { useFormStorage } from '@/hooks/useFormStorage';
-import dynamic from 'next/dynamic';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../../components/PromptGenerator/PromptGenerator.css';
 
-// Dynamically import Sidebar to prevent SSR issues
-const Sidebar = dynamic(() => import('@/components/Sidebar'), {
-  ssr: false,
-  loading: () => (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        width: '256px',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        backdropFilter: 'blur(12px)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.2)',
-        zIndex: 40,
-      }}
-    />
-  ),
-});
+// Removed local Sidebar import; global shell renders Sidebar
 
 const GEN_COUNT_KEY = 'ai-image-prompt-gen-count';
 const MAX_GEN_COUNT =
@@ -112,7 +93,7 @@ export default function PromptGenerator() {
   const [subscriptionStatus, setSubscriptionStatus] = useState<
     'active' | 'inactive' | 'none' | null
   >(null);
-  const { isOpen, sidebarExpanded } = useContext(SidebarContext);
+  // Sidebar layout is handled globally now
 
   // Fetch prompt count from backend on login
   useEffect(() => {
@@ -513,10 +494,7 @@ export default function PromptGenerator() {
       />
 
       <div className="generator-flex-layout">
-        <Sidebar />
-        <main
-          className={`generator-main-content transition-all duration-300 ml-0 mr-0${sidebarExpanded ? ' lg:ml-64' : ' lg:ml-20'} lg:mr-[320px] ${isOpen ? 'block lg:block hidden' : ''}`}
-        >
+        <main className={`generator-main-content transition-all duration-300`}>
           <div
             className="generator-main"
             style={{ maxWidth: '1200px', margin: '0 auto' }}

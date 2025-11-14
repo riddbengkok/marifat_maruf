@@ -1,12 +1,10 @@
 'use client';
 
 import { BulkImageAnalysis } from '@/components/BulkImageAnalysis';
-import Sidebar, { SidebarContext } from '@/components/Sidebar';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ImageAnalysisPage() {
   const [mounted, setMounted] = useState(false);
-  const { sidebarExpanded } = useContext(SidebarContext);
 
   useEffect(() => {
     setMounted(true);
@@ -102,11 +100,8 @@ export default function ImageAnalysisPage() {
 
   return (
     <>
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content */}
-      <div className={`min-h-screen lg:ml-64 ${mounted ? 'loaded' : ''}`}>
+      {/* Main Content (global ClientShell applies sidebar margin) */}
+      <div className={`min-h-screen ${mounted ? 'loaded' : ''}`}>
         <div id="wrapper" className="relative">
           {/* Hero Section */}
           {/* <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden">
