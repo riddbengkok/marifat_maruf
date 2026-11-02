@@ -28,7 +28,6 @@ const MAX_GEN_COUNT =
     ? parseInt(process.env.NEXT_PUBLIC_MAX_GEN_COUNT, 10) || 4
     : 4;
 
-// --- Type Declarations ---
 declare global {
   interface Window {
     snap?: {
@@ -45,7 +44,6 @@ declare global {
   }
 }
 
-// --- Utility: Load Midtrans Snap.js ---
 function loadMidtransScript() {
   if (typeof window !== 'undefined' && !window.snap) {
     const script = document.createElement('script');
@@ -62,7 +60,6 @@ function loadMidtransScript() {
   }
 }
 
-// --- Section Fields Mapping ---
 const sectionFields: { name: string; fields: (keyof FormData)[] }[] = [
   { name: 'Core Elements', fields: ['subject', 'style', 'setting'] },
   {
@@ -106,9 +103,7 @@ function isSectionComplete(
   );
 }
 
-// --- Main Component ---
 export default function AIVideoPromptGenerator() {
-  // --- State ---
   const [mounted, setMounted] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
@@ -127,7 +122,6 @@ export default function AIVideoPromptGenerator() {
   >(null);
   const { isOpen, sidebarExpanded } = useContext(SidebarContext);
 
-  // --- Effects ---
   useEffect(() => {
     const fetchSubscription = async () => {
       if (user?.uid) {
@@ -181,7 +175,6 @@ export default function AIVideoPromptGenerator() {
     }
   }, [user]);
 
-  // --- Form Data Management ---
   const initialFormData: FormData = {
     // Core Elements
     subject: '',
@@ -270,7 +263,6 @@ export default function AIVideoPromptGenerator() {
     initialData: initialFormData,
   });
 
-  // --- Handlers ---
   const generatePrompt = () => {
     if (!formData.subject.trim()) {
       setSubjectError('Please enter a subject for your video');
@@ -455,7 +447,6 @@ export default function AIVideoPromptGenerator() {
     }, 3000);
   };
 
-  // --- Midtrans Payment Handler ---
   const handleSubscribe = async () => {
     // Call your backend to get a Midtrans Snap token
     const res = await fetch('/api/create-midtrans-transaction', {
@@ -483,13 +474,11 @@ export default function AIVideoPromptGenerator() {
     }
   };
 
-  // --- Subscription Payment Logic (copied from Sidebar) ---
   const subscribePrice =
     typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE
       ? parseInt(process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE, 10)
       : 10000;
 
-  // --- Early return for SSR ---
   if (!mounted) {
     return (
       <div className="loading-container">
@@ -498,7 +487,6 @@ export default function AIVideoPromptGenerator() {
     );
   }
 
-  // --- Progress Calculation ---
   const completedSections = sectionFields.filter(section =>
     isSectionComplete(section, formData)
   );
@@ -507,7 +495,6 @@ export default function AIVideoPromptGenerator() {
     progressSteps.length
   );
 
-  // --- Render ---
   return (
     <>
       <StructuredData

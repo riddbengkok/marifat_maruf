@@ -325,21 +325,6 @@
   gap: 16px;
 }
 
-/* Form Validation */
-.form-field.has-error .form-input,
-.form-field.has-error .form-select,
-.form-field.has-error .form-textarea {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
-}
-
-.form-field.has-success .form-input,
-.form-field.has-success .form-select,
-.form-field.has-success .form-textarea {
-  border-color: #10b981;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-}
-
 /* Form Help Text */
 .form-help {
   font-size: 12px;

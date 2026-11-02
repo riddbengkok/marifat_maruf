@@ -5,6 +5,7 @@ A fully-featured, accessible, and type-safe Tag Input component built with React
 ## 📋 Overview
 
 This component was created as part of a 30-minute live coding test to demonstrate proficiency in:
+
 - React functional components and Hooks
 - TypeScript type safety
 - Event handling and state management
@@ -15,12 +16,14 @@ This component was created as part of a 30-minute live coding test to demonstrat
 ## ✨ Features
 
 ### Core Functionality
+
 - ✅ **Add Tags**: Press `Enter` to add tags
 - ✅ **Remove Tags**: Click the × button to remove tags
 - ✅ **Input Validation**: Prevents empty and duplicate tags
 - ✅ **Auto-clear**: Input field clears after successful tag addition
 
 ### Advanced Features
+
 - 🎨 **Beautiful UI**: Modern gradient design with smooth animations
 - 📱 **Responsive**: Works seamlessly on mobile and desktop
 - ♿ **Accessible**: ARIA labels and keyboard navigation
@@ -53,12 +56,12 @@ function App() {
 
 ## 📖 Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `initialTags` | `string[]` | `[]` | Initial tags to display |
-| `placeholder` | `string` | `'Type a tag and press Enter...'` | Input placeholder text |
-| `maxTags` | `number` | `undefined` | Maximum number of tags allowed |
-| `caseSensitive` | `boolean` | `true` | Whether duplicate checking is case-sensitive |
+| Prop            | Type       | Default                           | Description                                  |
+| --------------- | ---------- | --------------------------------- | -------------------------------------------- |
+| `initialTags`   | `string[]` | `[]`                              | Initial tags to display                      |
+| `placeholder`   | `string`   | `'Type a tag and press Enter...'` | Input placeholder text                       |
+| `maxTags`       | `number`   | `undefined`                       | Maximum number of tags allowed               |
+| `caseSensitive` | `boolean`  | `true`                            | Whether duplicate checking is case-sensitive |
 
 ## 🎯 Validation Rules
 
@@ -70,6 +73,7 @@ function App() {
 ## 🎨 Styling
 
 The component uses CSS modules with:
+
 - Smooth animations for tag appearance
 - Hover and focus states for better UX
 - Responsive design for mobile devices
@@ -112,6 +116,7 @@ TagInput/
 ### State Management
 
 The component uses React's `useState` hook to manage:
+
 - `tags`: Array of current tags
 - `inputValue`: Current input field value
 - `error`: Error message for validation feedback
@@ -126,11 +131,13 @@ The component uses React's `useState` hook to manage:
 ## 🎓 Design Principles Applied
 
 ### Atomic Design
+
 - **Atom**: Individual tag element
 - **Molecule**: Tag with remove button
 - **Organism**: Complete TagInput component
 
 ### Best Practices
+
 - Single Responsibility Principle
 - DRY (Don't Repeat Yourself)
 - Separation of Concerns
@@ -148,6 +155,7 @@ The component uses React's `useState` hook to manage:
 ## 🚦 Demo
 
 Visit the demo page at `/tag-input-demo` to see the component in action with:
+
 - Basic usage example
 - Max tags limit example
 - Feature showcase
@@ -156,6 +164,7 @@ Visit the demo page at `/tag-input-demo` to see the component in action with:
 ## 📝 Future Enhancements
 
 Potential improvements for production use:
+
 - [ ] Tag editing functionality
 - [ ] Multiple key triggers (comma, tab)
 - [ ] Tag autocomplete/suggestions

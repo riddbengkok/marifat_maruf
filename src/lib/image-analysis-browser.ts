@@ -58,11 +58,6 @@ export async function analyzeImageLocalBrowser(
   base64Image: string
 ): Promise<LocalImageAnalysis> {
   try {
-    console.log(
-      'DEBUG: base64 length',
-      base64Image.length,
-      base64Image.slice(0, 100)
-    );
     // Validate input
     if (!base64Image || base64Image.length < 100) {
       throw new Error('Invalid or empty image data');
@@ -80,8 +75,6 @@ export async function analyzeImageLocalBrowser(
       data: Uint8ClampedArray;
     }>((resolve, reject) => {
       img.onload = () => {
-        console.log('DEBUG: Image loaded, dimensions:', img.width, img.height);
-
         // Check if image is too large (browser canvas limits)
         if (img.width > 4096 || img.height > 4096) {
           console.warn('Image is very large, may cause performance issues');
@@ -100,7 +93,6 @@ export async function analyzeImageLocalBrowser(
         try {
           ctx.drawImage(img, 0, 0);
           const imageData = ctx.getImageData(0, 0, img.width, img.height);
-          console.log('DEBUG: Canvas data length:', imageData.data.length);
           if (!imageData.data || imageData.data.length < 100) {
             reject(new Error('Canvas pixel data is empty or too small.'));
             return;
@@ -130,16 +122,12 @@ export async function analyzeImageLocalBrowser(
         : `data:image/jpeg;base64,${base64Image}`;
     });
 
-    console.log('Starting metric calculations...');
-
     // Analyze image context first
     const context = analyzeImageContext(
       imageData.data,
       imageData.width,
       imageData.height
     );
-
-    console.log('Image context detected:', context);
 
     // Calculate context-aware metrics
     const contextAwareMetrics = calculateContextAwareMetrics(
@@ -155,15 +143,6 @@ export async function analyzeImageLocalBrowser(
     const sharpness = contextAwareMetrics.sharpness;
     const colorBalance = contextAwareMetrics.colorBalance;
     const noiseLevel = contextAwareMetrics.noiseLevel;
-
-    console.log('Context-aware metrics calculated:', {
-      brightness,
-      contrast,
-      sharpness,
-      colorBalance,
-      noiseLevel,
-      context: context,
-    });
 
     // Calculate advanced composition metrics
     const composition = calculateAdvancedComposition(
@@ -183,14 +162,6 @@ export async function analyzeImageLocalBrowser(
       imageData.data,
       imageData.width,
       imageData.height
-    );
-
-    console.log('Composition metrics calculated:', composition);
-    console.log(
-      'Additional metrics - Subject Centering:',
-      subjectCentering,
-      'Horizon Tilt:',
-      horizonTilt
     );
 
     // setelah komposisi dihitung
@@ -398,7 +369,6 @@ export async function analyzeImageLocalBrowser(
       },
     };
 
-    console.log('Analysis completed successfully:', result);
     return result;
   } catch (error) {
     console.error('BULK ANALYSIS ERROR:', error);

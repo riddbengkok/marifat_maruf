@@ -22,7 +22,7 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96],
     minimumCacheTTL: 86400, // 24 hours
   },
-  
+
   webpack: (config, { isServer, dev }) => {
     // Only apply optimizations in production
     if (!dev) {
@@ -42,7 +42,9 @@ const nextConfig = {
               name(module) {
                 // Handle cases where module.context might be undefined
                 if (!module.context) return 'vendor';
-                const match = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/);
+                const match = module.context.match(
+                  /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+                );
                 return match ? `npm.${match[1].replace('@', '')}` : 'vendor';
               },
             },
@@ -55,7 +57,7 @@ const nextConfig = {
 
   // Enable compression
   compress: true,
-  
+
   experimental: {
     optimizeCss: true,
   },

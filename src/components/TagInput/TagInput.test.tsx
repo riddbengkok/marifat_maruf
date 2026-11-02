@@ -21,7 +21,7 @@ describe('TagInput Component', () => {
     it('should render with initial tags', () => {
       const initialTags = ['React', 'TypeScript'];
       render(<TagInput initialTags={initialTags} />);
-      
+
       initialTags.forEach(tag => {
         expect(screen.getByText(tag)).toBeInTheDocument();
       });
@@ -41,7 +41,9 @@ describe('TagInput Component', () => {
 
     it('should clear input after adding a tag', () => {
       render(<TagInput />);
-      const input = screen.getByRole('textbox', { name: /tag input/i }) as HTMLInputElement;
+      const input = screen.getByRole('textbox', {
+        name: /tag input/i,
+      }) as HTMLInputElement;
 
       fireEvent.change(input, { target: { value: 'React' } });
       fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
@@ -107,7 +109,9 @@ describe('TagInput Component', () => {
 
       // Start typing
       fireEvent.change(input, { target: { value: 'R' } });
-      expect(screen.queryByText(/tag cannot be empty/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/tag cannot be empty/i)
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -199,7 +203,9 @@ describe('TagInput Component', () => {
       render(<TagInput initialTags={tags} />);
 
       tags.forEach(tag => {
-        const removeButton = screen.getByLabelText(new RegExp(`remove ${tag}`, 'i'));
+        const removeButton = screen.getByLabelText(
+          new RegExp(`remove ${tag}`, 'i')
+        );
         fireEvent.click(removeButton);
       });
 
@@ -221,7 +227,9 @@ describe('TagInput Component', () => {
       const removeButton = screen.getByLabelText(/remove react/i);
       fireEvent.click(removeButton);
 
-      expect(screen.queryByText(/maximum 2 tags allowed/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/maximum 2 tags allowed/i)
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -245,8 +253,10 @@ describe('TagInput Component', () => {
   describe('Accessibility', () => {
     it('should have proper ARIA labels', () => {
       render(<TagInput initialTags={['React']} />);
-      
-      expect(screen.getByRole('textbox', { name: /tag input/i })).toBeInTheDocument();
+
+      expect(
+        screen.getByRole('textbox', { name: /tag input/i })
+      ).toBeInTheDocument();
       expect(screen.getByLabelText(/remove react/i)).toBeInTheDocument();
     });
 

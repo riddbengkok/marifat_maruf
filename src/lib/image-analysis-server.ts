@@ -1,18 +1,23 @@
 import { ImageAnnotatorClient } from '@google-cloud/vision';
+import type {
+  VisionImageAnalysis,
+  LikelihoodString,
+  SafeSearchAnnotation,
+  LabelAnnotation,
+  FaceAnnotation,
+  TextAnnotation,
+  ImagePropertiesAnnotation,
+} from './api-types';
 
-// Google Vision API analysis (server-side only)
-export interface VisionImageAnalysis {
-  isGood: boolean;
-  score: number;
-  features: {
-    safeSearch?: SafeSearchAnnotation;
-    labelDetection: LabelAnnotation[];
-    faceDetection: FaceAnnotation[];
-    textDetection: TextAnnotation[];
-    imageProperties?: ImagePropertiesAnnotation;
-  };
-  reasons: string[];
-}
+export type {
+  VisionImageAnalysis,
+  LikelihoodString,
+  SafeSearchAnnotation,
+  LabelAnnotation,
+  FaceAnnotation,
+  TextAnnotation,
+  ImagePropertiesAnnotation,
+};
 
 export async function analyzeImageVision(
   imageBuffer: Buffer
@@ -93,46 +98,6 @@ export async function analyzeImageVision(
   } catch (error) {
     throw new Error(`Vision API analysis failed: ${error}`);
   }
-}
-
-export type LikelihoodString =
-  | 'UNKNOWN'
-  | 'VERY_UNLIKELY'
-  | 'UNLIKELY'
-  | 'POSSIBLE'
-  | 'LIKELY'
-  | 'VERY_LIKELY';
-
-export interface SafeSearchAnnotation {
-  adult?: LikelihoodString | number;
-  violence?: LikelihoodString | number;
-  racy?: LikelihoodString | number;
-  medical?: LikelihoodString | number;
-  spoof?: LikelihoodString | number;
-}
-
-export interface LabelAnnotation {
-  description?: string;
-  score?: number;
-  topicality?: number;
-}
-
-export interface FaceAnnotation {
-  detectionConfidence?: number;
-}
-
-export interface TextAnnotation {
-  description?: string;
-}
-
-export interface ImagePropertiesAnnotation {
-  dominantColors?: {
-    colors?: Array<{
-      color?: { red?: number; green?: number; blue?: number };
-      score?: number;
-      pixelFraction?: number;
-    }>;
-  };
 }
 
 interface VisionFeaturesData {

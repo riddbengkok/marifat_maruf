@@ -57,7 +57,6 @@ export async function POST(req: NextRequest) {
       return createErrorResponse('Rate limit exceeded', 429);
     }
 
-    // Validate base64 image
     if (
       !image.startsWith('data:image/') &&
       !image.match(/^[A-Za-z0-9+/]*={0,2}$/)
@@ -72,11 +71,9 @@ export async function POST(req: NextRequest) {
     let imageBuffer: Buffer;
     try {
       if (image.startsWith('data:image/')) {
-        // Handle data URL format
         const base64Data = image.split(',')[1];
         imageBuffer = Buffer.from(base64Data, 'base64');
       } else {
-        // Handle raw base64
         imageBuffer = Buffer.from(image, 'base64');
       }
     } catch (error) {
@@ -174,7 +171,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET method for API information
 export async function GET() {
   return createSuccessResponse({
     message: 'Image Analysis API',

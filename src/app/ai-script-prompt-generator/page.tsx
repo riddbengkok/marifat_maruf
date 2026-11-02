@@ -31,11 +31,12 @@ const progressSteps = sectionFields.map((s: { name: string }) => s.name);
 
 function isSectionComplete(
   section: { fields: string[] },
-  formData: Record<string, string>
+  formData: StoryFormData
 ): boolean {
-  return section.fields.every(
-    (field: string) => formData[field] && formData[field].trim() !== ''
-  );
+  return section.fields.every((field: string) => {
+    const val = formData[field as keyof StoryFormData];
+    return typeof val === 'string' && val.trim() !== '';
+  });
 }
 
 export default function AIScriptPromptGenerator() {
@@ -263,7 +264,7 @@ export default function AIScriptPromptGenerator() {
 
   // Calculate completed sections and current step
   const completedSections = sectionFields.filter(section =>
-    isSectionComplete(section, formData as unknown as Record<string, string>)
+    isSectionComplete(section, formData)
   );
   const currentStep = Math.min(
     completedSections.length + 1,

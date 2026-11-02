@@ -60,18 +60,22 @@ const progressSteps: string[] = sectionFields.map(
 
 function isSectionComplete(
   section: { fields: string[]; requiredFields: string[] },
-  formData: Record<string, string>
+  formData: StoryFormData
 ): boolean {
   // Check if all required fields are filled
   const requiredFieldsComplete = section.requiredFields.every(
-    (field: string) => formData[field] && formData[field].trim() !== ''
+    (field: string) => {
+      const val = formData[field as keyof StoryFormData];
+      return typeof val === 'string' && val.trim() !== '';
+    }
   );
 
   // If there are no required fields, consider the section complete if at least one field is filled
   if (section.requiredFields.length === 0) {
-    return section.fields.some(
-      (field: string) => formData[field] && formData[field].trim() !== ''
-    );
+    return section.fields.some((field: string) => {
+      const val = formData[field as keyof StoryFormData];
+      return typeof val === 'string' && val.trim() !== '';
+    });
   }
 
   return requiredFieldsComplete;
@@ -344,7 +348,6 @@ export default function AIStoryPromptGenerator() {
     }
   };
 
-  // --- Subscription Payment Logic (copied from Sidebar) ---
   const subscribePrice =
     typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE
       ? parseInt(process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE, 10)
@@ -369,7 +372,7 @@ export default function AIStoryPromptGenerator() {
 
   // Calculate completed sections and current step
   const completedSections = sectionFields.filter(section =>
-    isSectionComplete(section, formData as unknown as Record<string, string>)
+    isSectionComplete(section, formData)
   );
 
   // Calculate progress more intelligently

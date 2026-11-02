@@ -76,7 +76,9 @@ export async function handleSubscribePayment(user: {
                   }),
                 });
               }
-            } catch (e) {}
+            } catch (e) {
+              console.error('Failed to update subscription status:', e);
+            }
             localStorage.removeItem('snap_token');
             localStorage.removeItem('snap_order_id');
           },
@@ -126,7 +128,9 @@ export async function handleSubscribePayment(user: {
                   }),
                 });
               }
-            } catch (e) {}
+            } catch (e) {
+              console.error('Failed to update subscription status:', e);
+            }
             localStorage.removeItem('snap_token');
             localStorage.removeItem('snap_order_id');
           },

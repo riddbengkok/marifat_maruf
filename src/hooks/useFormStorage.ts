@@ -15,7 +15,6 @@ export function useFormStorage<
   const [formData, setFormData] = useState<T>(initialData);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load data from localStorage on mount
   useEffect(() => {
     try {
       const savedData = localStorage.getItem(key);
@@ -30,7 +29,6 @@ export function useFormStorage<
     }
   }, [key]);
 
-  // Save data to localStorage whenever formData changes
   useEffect(() => {
     if (isLoaded) {
       try {

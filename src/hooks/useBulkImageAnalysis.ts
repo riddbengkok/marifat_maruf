@@ -152,52 +152,48 @@ export const useBulkImageAnalysis = () => {
   const analyzeImage = async (
     imageFile: ImageFile
   ): Promise<AnalysisResult> => {
-    try {
-      // Check quota for non-logged users
-      if (!user) {
-        const used =
-          parseInt(localStorage.getItem('anonImageAnalysisCount') || '0', 10) ||
-          0;
-        if (used >= FREE_LIMIT) {
-          throw new Error('Free limit reached. Sign in to continue.');
-        }
-        localStorage.setItem('anonImageAnalysisCount', String(used + 1));
-        setAnonUsed(used + 1);
+    // Check quota for non-logged users
+    if (!user) {
+      const used =
+        parseInt(localStorage.getItem('anonImageAnalysisCount') || '0', 10) ||
+        0;
+      if (used >= FREE_LIMIT) {
+        throw new Error('Free limit reached. Sign in to continue.');
+      }
+      localStorage.setItem('anonImageAnalysisCount', String(used + 1));
+      setAnonUsed(used + 1);
+    }
+
+    const base64 = await fileToBase64(imageFile.file);
+
+    if (analysisMethod === 'local') {
+      const result = await analyzeImageLocalBrowser(base64);
+      return {
+        quality: result.quality,
+        score: result.score,
+        isNight: result.isNight,
+        reasons: result.reasons,
+        metrics: result.metrics,
+      };
+    } else {
+      // Vision API analysis
+      const response = await fetch('/api/analyze-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64, method: 'vision' }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Vision API analysis failed');
       }
 
-      const base64 = await fileToBase64(imageFile.file);
-
-      if (analysisMethod === 'local') {
-        const result = await analyzeImageLocalBrowser(base64);
-        return {
-          quality: result.quality,
-          score: result.score,
-          isNight: result.isNight,
-          reasons: result.reasons,
-          metrics: result.metrics,
-        };
-      } else {
-        // Vision API analysis
-        const response = await fetch('/api/analyze-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: base64, method: 'vision' }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Vision API analysis failed');
-        }
-
-        const data = await response.json();
-        return {
-          quality: data.quality,
-          score: data.score,
-          isNight: data.isNight || false, // Default to false for Vision API
-          reasons: data.reasons,
-        };
-      }
-    } catch (error) {
-      throw error;
+      const data = await response.json();
+      return {
+        quality: data.quality,
+        score: data.score,
+        isNight: data.isNight || false, // Default to false for Vision API
+        reasons: data.reasons,
+      };
     }
   };
 

@@ -1123,45 +1123,6 @@ html {
   color: #fff;
   min-height: 100vh;
 }
-.subscribe-box {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 24px 0;
-}
-.subscribe-box-message {
-  color: #f4a261;
-  font-weight: 600;
-  margin-bottom: 12px;
-  text-align: center;
-}
-.subscribe-btn {
-  background: linear-gradient(135deg, #7dd8e0, #6b9ac4);
-  color: #000;
-  font-weight: 600;
-  padding: 12px 28px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 12px rgba(125, 216, 224, 0.15);
-  margin-top: 8px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition:
-    background 0.2s,
-    box-shadow 0.2s;
-}
-.subscribe-btn:hover {
-  background: linear-gradient(135deg, #8ee8f0, #7baad4);
-  box-shadow: 0 4px 20px rgba(125, 216, 224, 0.3);
-}
-.subscribe-btn-emoji {
-  font-size: 20px;
-}
 .generator-progress-sidebar {
   width: 320px;
   position: fixed;

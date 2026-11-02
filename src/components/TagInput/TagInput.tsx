@@ -13,7 +13,7 @@ interface TagInputProps {
 
 /**
  * Simple Tag Input Component
- * 
+ *
  * Features:
  * - Add tags by pressing Enter
  * - Remove tags by clicking the X button

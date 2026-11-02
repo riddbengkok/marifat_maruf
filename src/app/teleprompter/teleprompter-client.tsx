@@ -52,7 +52,6 @@ export default function Teleprompter() {
   const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef(0);
 
-  // --- Recording Functions ---
   const handleRecordedData = useCallback((blob: Blob) => {
     const videoUrl = URL.createObjectURL(blob);
     setRecordedVideoUrl(videoUrl);
@@ -100,7 +99,6 @@ export default function Teleprompter() {
 
   // These aliases will be defined after the functions they reference to avoid circular dependencies
 
-  // --- Recording Logic ---
   const startRecording = useCallback(
     async (stream: MediaStream) => {
       if (!stream || stream.getVideoTracks().length === 0) {
@@ -150,7 +148,6 @@ export default function Teleprompter() {
     setIsRecording(false);
   }, []);
 
-  // --- Scrolling Logic ---
   const animateScroll = useCallback(
     (time: number) => {
       if (!lastTimeRef.current) {

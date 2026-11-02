@@ -35,12 +35,10 @@ export function verifyMidtransSignature(
   return signatureKey === expectedSignature;
 }
 
-// Extract order ID from Midtrans order_id format
 export function extractOrderId(orderId: string): number {
   return parseInt(orderId.replace('order-', ''));
 }
 
-// Validate required fields
 export function validateRequiredFields(
   body: unknown,
   requiredFields: string[]
@@ -59,7 +57,6 @@ export function validateRequiredFields(
   return null;
 }
 
-// Get subscription price from environment
 export function getSubscriptionPrice(): number {
   return typeof process !== 'undefined' &&
     process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE

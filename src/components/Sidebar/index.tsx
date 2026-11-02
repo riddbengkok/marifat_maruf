@@ -65,14 +65,14 @@ const Sidebar = () => {
       {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className={`fixed left-4 top-4 z-50 p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 ${
-          sidebarExpanded ? 'left-64' : 'left-4'
+        className={`fixed top-4 z-50 p-2 rounded-xl bg-slate-900 border border-white/[0.1] text-slate-300 hover:text-white hover:bg-slate-800 shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white ${
+          sidebarExpanded ? 'left-68' : 'left-4'
         }`}
         aria-label={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
         aria-controls="sidebar"
       >
         <ChevronLeft
-          className={`h-5 w-5 text-gray-600 dark:text-gray-300 transition-transform duration-300 ${
+          className={`h-4 w-4 transition-transform duration-200 ${
             !sidebarExpanded && 'rotate-180'
           }`}
         />
@@ -85,12 +85,12 @@ const Sidebar = () => {
 
       {/* Mobile menu button */}
       <button
-        className="fixed top-4 right-4 z-50 lg:hidden p-2 rounded-md bg-black/20 backdrop-blur-sm border border-white/20"
+        className="fixed top-4 right-4 z-50 lg:hidden p-2 rounded-xl bg-slate-900/90 backdrop-blur-sm border border-white/[0.1] text-slate-200"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Open sidebar menu"
       >
         <svg
-          className="w-6 h-6 text-white"
+          className="w-5 h-5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -116,7 +116,7 @@ const Sidebar = () => {
       {/* Sidebar */}
       <section
         id="sidebar"
-        className={`fixed inset-y-0 left-0 z-40 w-64 sidebar-bg backdrop-blur-md border-r border-white/20 transform transition-transform duration-300 ease-in-out
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#090d16]/95 backdrop-blur-xl border-r border-white/[0.08] transform transition-transform duration-200 ease-in-out flex flex-col
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           ${sidebarExpanded ? 'lg:translate-x-0' : 'lg:-translate-x-full'}
           lg:block
@@ -128,57 +128,61 @@ const Sidebar = () => {
         role="complementary"
         aria-label="Primary sidebar"
       >
-        <div className="flex flex-col h-full p-6">
+        <div className="flex flex-col h-full p-5">
           {/* Logo/Brand */}
-          <div className="mb-8">
-            <Link href="/" className="text-2xl font-bold text-gradient">
-              {PAGE_TITLES[pathname] || 'Portfolio'}
+          <div className="mb-6 flex items-center justify-between pb-4 border-b border-white/[0.06]">
+            <Link
+              href="/"
+              className="text-base font-bold text-white tracking-tight"
+            >
+              {PAGE_TITLES[pathname] || 'Marifat Maruf'}
             </Link>
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-400">
+              v2.4
+            </span>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1">
-            <ul className="space-y-2">
-              <NavigationLinks
-                pathname={pathname}
-                setIsOpen={setIsOpen}
-                isFeaturesPage={false}
-                isGeneratorPage={false}
-              />
-            </ul>
+          <nav className="flex-1 overflow-y-auto pr-1">
+            <NavigationLinks
+              pathname={pathname}
+              setIsOpen={setIsOpen}
+              isFeaturesPage={false}
+              isGeneratorPage={false}
+            />
           </nav>
 
           {/* Authentication Section */}
-          <AuthenticationSection
-            user={user}
-            subscriptionStatus={subscriptionStatus}
-            subLoading={subLoading}
-            onSubscribe={handleSubscribe}
-          />
+          <div className="pt-4 border-t border-white/[0.06]">
+            <AuthenticationSection
+              user={user}
+              subscriptionStatus={subscriptionStatus}
+              subLoading={subLoading}
+              onSubscribe={handleSubscribe}
+            />
+          </div>
 
           {/* Non-login free quota notice */}
           {!user && (
-            <div className="mt-3 p-2 text-xs rounded bg-gray-800/60 border border-gray-700/60 text-gray-300">
-              Free image analyses left:{' '}
-              <span className="font-semibold">{anonLeft}/10</span>. Sign in for
-              unlimited usage.
+            <div className="mt-3 p-2.5 text-[11px] rounded-lg bg-white/[0.03] border border-white/[0.06] text-slate-400">
+              Analyses quota:{' '}
+              <span className="font-semibold text-slate-200">
+                {anonLeft}/10
+              </span>
             </div>
           )}
 
-          {/* Footer */}
-          <div className="pt-4 border-t border-white/20">
-            <p className="text-sm text-gray-400">{t('footer.copyright')}</p>
-          </div>
-
-          {/* Subscribe Button */}
-          <div className="pt-4 border-t border-white/20 flex justify-center">
+          {/* Footer & Subscribe */}
+          <div className="pt-4 mt-2 border-t border-white/[0.06]">
             <button
-              className="mt-4 px-4 py-2 text-sm font-semibold rounded-md shadow bg-gradient-to-r from-gray-900 to-gray-700 text-white hover:from-gray-800 hover:to-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-400 transition-all border border-cyan-500"
-              style={{ letterSpacing: '0.04em' }}
+              className="w-full px-3 py-2 text-xs font-semibold rounded-lg bg-white text-slate-950 hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white shadow-sm"
               onClick={handleSubscribe}
             >
-              {t('btn.subscribe')}
+              {t('btn.subscribe') || 'Upgrade to Pro'}
             </button>
+            <p className="text-[10px] text-slate-400 text-center mt-2 font-mono">
+              &copy; {new Date().getFullYear()} Marifat Maruf
+            </p>
           </div>
         </div>
       </section>

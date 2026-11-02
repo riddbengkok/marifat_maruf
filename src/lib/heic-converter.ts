@@ -49,7 +49,6 @@ export async function convertHeicToJpeg(file: File): Promise<ConvertedImage> {
       quality: 0.8, // Good quality while keeping file size reasonable
     });
 
-    // Create a new file with the converted data
     const convertedFile = new File(
       [convertedBlob as Blob],
       file.name.replace(/\.(heic|heif)$/i, '.jpg'),
@@ -59,7 +58,6 @@ export async function convertHeicToJpeg(file: File): Promise<ConvertedImage> {
       }
     );
 
-    // Create preview URL
     const previewUrl = URL.createObjectURL(convertedFile);
 
     return {

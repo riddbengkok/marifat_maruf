@@ -145,11 +145,6 @@ export const ImageAnalysisDemo: React.FC = () => {
       // If it's local analysis and we have imageData, process it client-side
       if (data.method === 'local' && data.imageData) {
         try {
-          console.log(
-            'Starting local analysis with imageData length:',
-            data.imageData.length
-          );
-
           // Import the browser-based analysis function
           const { analyzeImageLocalBrowser } = await import(
             '@/lib/image-analysis-browser'
@@ -157,8 +152,6 @@ export const ImageAnalysisDemo: React.FC = () => {
 
           // Pass the base64 image data directly
           const localAnalysis = await analyzeImageLocalBrowser(data.imageData);
-
-          console.log('Local analysis completed:', localAnalysis);
 
           // Update the result with the actual analysis, preserving the shape expected by the UI
           setResult({
@@ -244,7 +237,6 @@ export const ImageAnalysisDemo: React.FC = () => {
               value={analysisMethod}
               onChange={e => {
                 const value = e.target.value as 'local' | 'vision';
-                console.log('Analysis method changed to:', value);
                 setAnalysisMethod(value);
               }}
               className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 bg-gray-700 text-gray-200"

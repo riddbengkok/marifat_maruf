@@ -46,6 +46,17 @@ export const projects: Project[] = [
   },
   {
     id: 4,
+    title: 'Mesiro Coffee Store',
+    description:
+      'WooCommerce-powered WordPress storefront for Mesiro Coffee, featuring product catalogs, checkout flow, and responsive UX tuned for specialty coffee sales.',
+    image: '/images/mesiro-wp.png',
+    technologies: ['WordPress', 'WooCommerce', 'PHP', 'Tailwind CSS'],
+    link: 'https://mesirocoffe.gt.tc/',
+    category: 'E-commerce',
+    placeholderColor: 'from-brown-500 to-amber-500',
+  },
+  {
+    id: 5,
     title: 'User Transfer Report',
     description:
       'Comprehensive user transfer reporting system with detailed analytics and data visualization for financial transactions.',
@@ -56,7 +67,7 @@ export const projects: Project[] = [
     placeholderColor: 'from-blue-500 to-cyan-500',
   },
   {
-    id: 5,
+    id: 6,
     title: 'Component Edit System',
     description:
       'Advanced component editing interface with real-time updates and seamless integration for Vue.js to Next.js migration.',
@@ -67,7 +78,7 @@ export const projects: Project[] = [
     placeholderColor: 'from-purple-500 to-pink-500',
   },
   {
-    id: 6,
+    id: 7,
     title: 'KoinBill Add Product',
     description:
       'Product management system for KoinBill platform with intuitive interface for adding and managing digital products.',
@@ -78,7 +89,7 @@ export const projects: Project[] = [
     placeholderColor: 'from-green-500 to-teal-500',
   },
   {
-    id: 7,
+    id: 8,
     title: 'Incoming Cash',
     description:
       'Financial management system for tracking incoming cash flows with comprehensive reporting and analytics dashboard.',
@@ -89,7 +100,7 @@ export const projects: Project[] = [
     placeholderColor: 'from-orange-500 to-red-500',
   },
   {
-    id: 8,
+    id: 9,
     title: 'Coupon Campaign System',
     description:
       'Dynamic coupon campaign management dashboard for manage coupon mobile app.',
@@ -100,7 +111,7 @@ export const projects: Project[] = [
     placeholderColor: 'from-indigo-500 to-purple-500',
   },
   {
-    id: 9,
+    id: 10,
     title: 'KScore Dashboard',
     description:
       'Credit scoring and financial assessment dashboard with real-time data processing and user-friendly interface.',

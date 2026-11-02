@@ -636,7 +636,6 @@ export default function AIAudioPromptGenerator() {
     setGeneratedStory(''); // Clear the enhanced story
   };
 
-  // --- Subscription Payment Logic (copied from Sidebar) ---
   const subscribePrice =
     typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE
       ? parseInt(process.env.NEXT_PUBLIC_SUBSCRIBE_PRICE, 10)
