@@ -191,30 +191,30 @@ export const ImageAnalysisDemo: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-          Image Analysis Tool
-        </h2>
-        <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+    <div className="image-analysis-workspace mx-auto max-w-6xl">
+      <div className="ui-page-header">
+        <p className="ui-eyebrow">IMAGE WORKSPACE</p>
+        <h2>Image Analysis Tool</h2>
+        <p>
           Upload an image to analyze its quality using local analysis or Google
           Vision API
         </p>
       </div>
 
-      <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 p-8">
+      <div className="ui-card p-5 sm:p-8">
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="ui-label" htmlFor="image-analysis-file">
               Select Image
             </label>
             <input
+              id="image-analysis-file"
               type="file"
               accept="image/*"
               onChange={handleFileSelect}
-              className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-500/20 file:text-cyan-400 hover:file:bg-cyan-500/30"
+              className="ui-field file:mr-4 file:rounded-md file:border-0 file:bg-emerald-400/10 file:px-3 file:py-2 file:font-medium file:text-emerald-300 hover:file:bg-emerald-400/15"
             />
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-2 text-xs text-slate-400">
               Maximum file size: 3.3 MB. Supported formats: JPG, PNG, WebP, GIF.
             </p>
           </div>
@@ -224,22 +224,23 @@ export const ImageAnalysisDemo: React.FC = () => {
               <img
                 src={previewUrl}
                 alt="Selected preview"
-                className="w-1/2 h-64 rounded-lg border border-gray-700/50 shadow-md object-contain bg-black/20"
+                className="h-64 w-full max-w-xl rounded-lg border border-white/10 bg-slate-950/50 object-contain"
               />
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="ui-label" htmlFor="image-analysis-method">
               Analysis Method
             </label>
             <select
+              id="image-analysis-method"
               value={analysisMethod}
               onChange={e => {
                 const value = e.target.value as 'local' | 'vision';
                 setAnalysisMethod(value);
               }}
-              className="block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 bg-gray-700 text-gray-200"
+              className="ui-field"
             >
               <option value="local">Local Analysis (Canvas) - Free</option>
               <option value="vision">Google Vision API - Advanced</option>
@@ -247,7 +248,7 @@ export const ImageAnalysisDemo: React.FC = () => {
           </div>
 
           {!user && (
-            <div className="text-xs text-gray-400 text-center">
+            <div className="text-center text-xs text-slate-400">
               Free analyses left: {Math.max(0, FREE_LIMIT - anonUsed)}/
               {FREE_LIMIT}. Sign in for more.
             </div>
@@ -256,13 +257,16 @@ export const ImageAnalysisDemo: React.FC = () => {
           <button
             onClick={analyzeImage}
             disabled={!selectedFile || loading}
-            className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 text-white py-3 px-6 rounded-md hover:from-cyan-600 hover:to-purple-600 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all duration-300 font-semibold"
+            className="btn btn-primary w-full"
           >
             {loading ? 'Analyzing...' : 'Analyze Image'}
           </button>
 
           {error && (
-            <div className="bg-red-900/50 border border-red-500/50 rounded-md p-4">
+            <div
+              className="rounded-lg border border-red-500/20 bg-red-500/[0.06] p-4"
+              role="alert"
+            >
               <p className="text-red-300">{error}</p>
             </div>
           )}
@@ -270,7 +274,7 @@ export const ImageAnalysisDemo: React.FC = () => {
       </div>
 
       {result && (
-        <div className="mt-8 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 p-8">
+        <div className="ui-card mt-8 p-5 sm:p-8">
           {/* Only show these for local analysis */}
           {result.method === 'local' && (
             <>

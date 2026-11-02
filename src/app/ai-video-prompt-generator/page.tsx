@@ -547,7 +547,7 @@ export default function AIVideoPromptGenerator() {
           </div>
         </div>
       )}
-      <div className="generator-flex-layout">
+      <div className="generator-flex-layout generator-workspace">
         <main
           className={`generator-main-content transition-all duration-300 ml-0 mr-0${sidebarExpanded ? ' lg:ml-64' : ' lg:ml-20'} lg:mr-[320px] ${isOpen ? 'block lg:block hidden' : ''}`}
         >
@@ -555,10 +555,17 @@ export default function AIVideoPromptGenerator() {
             <Header
               title="AI Video Prompt Generator"
               subtitle="Create professional video prompts for AI generators"
-              icon="🎬"
             />
             <PresetTemplates onApplyTemplate={handleApplyTemplate} />
-            <Instructions />
+            <Instructions
+              title="How to use"
+              steps={[
+                'Describe the subject and setting for your video',
+                'Choose camera movement, duration, and visual style',
+                'Add lighting, composition, and atmosphere details',
+                'Generate your prompt, then copy it into your video tool',
+              ]}
+            />
 
             <PromptGeneratorForm
               formData={formData}

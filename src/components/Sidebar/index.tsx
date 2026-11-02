@@ -12,7 +12,7 @@ import { AuthenticationSection } from './components/AuthenticationSection';
 import { NavigationLinks } from './components/NavigationLinks';
 import { SuccessModal } from './components/SuccessModal';
 import { useSubscription } from './hooks/useSubscription';
-import { PAGE_TITLES, loadSnapJs } from './utils';
+import { PAGE_TITLES } from './utils';
 
 const Sidebar = () => {
   // State
@@ -20,6 +20,7 @@ const Sidebar = () => {
   const { isOpen, setIsOpen, sidebarExpanded, setSidebarContext } =
     useContext(SidebarContext);
   const [anonLeft, setAnonLeft] = useState(10);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
 
   // Hooks
   const pathname = usePathname();
@@ -28,16 +29,6 @@ const Sidebar = () => {
   const { subscriptionStatus, subLoading } = useSubscription(
     user?.email || undefined
   );
-
-  // Environment
-  const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '';
-  const isProduction =
-    process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === 'true';
-
-  // Load Snap.js
-  useEffect(() => {
-    loadSnapJs(clientKey, isProduction);
-  }, [clientKey, isProduction]);
 
   // Persisting handled by SidebarProvider
 
@@ -59,6 +50,16 @@ const Sidebar = () => {
       parseInt(localStorage.getItem('anonImageAnalysisCount') || '0', 10) || 0;
     setAnonLeft(Math.max(0, 10 - used));
   }, [user]); // resets when user logs in
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 1023px)');
+    const updateViewport = () => setIsMobileViewport(mediaQuery.matches);
+
+    updateViewport();
+    mediaQuery.addEventListener('change', updateViewport);
+
+    return () => mediaQuery.removeEventListener('change', updateViewport);
+  }, []);
 
   return (
     <>
@@ -122,9 +123,7 @@ const Sidebar = () => {
           lg:block
         `}
         style={{ touchAction: isOpen ? 'none' : undefined }}
-        aria-hidden={
-          !isOpen && typeof window !== 'undefined' && window.innerWidth < 1024
-        }
+        aria-hidden={!isOpen && isMobileViewport}
         role="complementary"
         aria-label="Primary sidebar"
       >

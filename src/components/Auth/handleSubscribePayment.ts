@@ -1,4 +1,43 @@
 // src/components/Auth/handleSubscribePayment.ts
+let snapJsLoadPromise: Promise<void> | null = null;
+
+function loadSnapJs() {
+  if (window.snap) {
+    return Promise.resolve();
+  }
+
+  if (!snapJsLoadPromise) {
+    const script = document.createElement('script');
+    script.src =
+      process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === 'true'
+        ? 'https://app.midtrans.com/snap/snap.js'
+        : 'https://app.sandbox.midtrans.com/snap/snap.js';
+    script.setAttribute(
+      'data-client-key',
+      process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || ''
+    );
+    script.async = true;
+
+    snapJsLoadPromise = new Promise<void>((resolve, reject) => {
+      script.onload = () => {
+        if (window.snap) {
+          resolve();
+        } else {
+          reject(new Error('Midtrans Snap.js loaded without initializing.'));
+        }
+      };
+      script.onerror = () =>
+        reject(new Error('Failed to load Midtrans Snap.js.'));
+      document.body.appendChild(script);
+    }).catch(error => {
+      snapJsLoadPromise = null;
+      throw error;
+    });
+  }
+
+  return snapJsLoadPromise;
+}
+
 export async function handleSubscribePayment(user: {
   email?: string | null;
   displayName?: string | null;
@@ -14,6 +53,8 @@ export async function handleSubscribePayment(user: {
       alert('User email not found or not registered.');
       return;
     }
+    await loadSnapJs();
+
     // Extract first and last name from displayName
     const displayName = user?.displayName || '';
     const [first_name = '', ...lastArr] = displayName.split(' ');

@@ -129,16 +129,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a2e;
+  background: #090d16;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4ecdc4;
+  background: #475569;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9bf1ff;
+  background: #64748b;
 }
 
 /* Import component-specific styles */
@@ -149,11 +149,15 @@
 :root {
   /* Sidebar margin-left for lg screens; controlled by SidebarProvider */
   --sidebar-ml: 0px;
-  --primary-color: #9bf1ff;
-  --secondary-color: #ff6b6b;
-  --background-color: #0c0c0c;
-  --text-color: #ffffff;
-  --accent-color: #4ecdc4;
+  --primary-color: #34d399;
+  --secondary-color: #94a3b8;
+  --background-color: #090d16;
+  --text-color: #f8fafc;
+  --accent-color: #6ee7b7;
+  --surface-color: #0c101a;
+  --surface-muted-color: rgba(255, 255, 255, 0.03);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --text-muted-color: #94a3b8;
 }
 
 * {
@@ -253,7 +257,7 @@ a {
 }
 
 a:hover {
-  color: #7dd8e0;
+  color: #6ee7b7;
 }
 
 /* Monospace font for code elements */
@@ -372,10 +376,119 @@ small,
 }
 
 .glass-effect {
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+}
+
+.ui-card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+.ui-card-muted {
+  background: var(--surface-muted-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.ui-card-muted.border-dashed {
+  border-style: dashed;
+}
+
+.ui-eyebrow {
+  color: var(--text-muted-color);
+  font-family: var(--font-source-code), 'Source Code Pro', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.ui-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #cbd5e1;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.ui-field {
+  min-height: 44px;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #090d16;
+  padding: 0.625rem 0.75rem;
+  color: #f8fafc;
+  font-size: 0.875rem;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.ui-field:focus-visible {
+  outline: none;
+  border-color: #34d399;
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.12);
+}
+
+.ui-field:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ui-page {
+  min-height: 100vh;
+  background: var(--background-color);
+  color: var(--text-color);
+}
+
+.ui-page-header {
+  margin: 0 auto 2.5rem;
+  max-width: 760px;
+  text-align: center;
+}
+
+.ui-page-header h1,
+.ui-page-header h2 {
+  margin: 0.75rem 0;
+  color: #f8fafc;
+  font-size: clamp(1.875rem, 4vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+}
+
+.ui-page-header p {
+  margin: 0;
+  color: var(--text-muted-color);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.image-analysis-workspace [class*='bg-gray-800'],
+.image-analysis-workspace [class*='bg-gray-700'] {
+  background-color: rgba(255, 255, 255, 0.025) !important;
+}
+
+.image-analysis-workspace [class*='text-cyan-'],
+.image-analysis-workspace [class*='text-purple-'] {
+  color: #6ee7b7 !important;
+}
+
+.image-analysis-workspace [class*='bg-cyan-'],
+.image-analysis-workspace [class*='bg-purple-'] {
+  background-color: rgba(52, 211, 153, 0.1) !important;
+}
+
+.image-analysis-workspace [class*='border-cyan-'],
+.image-analysis-workspace [class*='border-purple-'] {
+  border-color: rgba(52, 211, 153, 0.3) !important;
+}
+
+.image-analysis-workspace [class*='border-l-cyan-'] {
+  border-left-color: #34d399 !important;
 }
 
 /* Animation classes */
@@ -449,17 +562,12 @@ small,
 }
 
 .button.scrolly {
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--accent-color)
-  );
-  color: #000;
+  background: #f8fafc;
+  color: #090d16;
 }
 
 .button.scrolly:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(155, 241, 255, 0.3);
+  background: #cbd5e1;
 }
 
 /* Responsive typography - matching original Hyperspace */

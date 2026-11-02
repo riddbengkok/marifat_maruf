@@ -741,15 +741,14 @@ export default function AIAudioPromptGenerator() {
         </div>
       )}
 
-      <div className="generator-flex-layout">
+      <div className="generator-flex-layout generator-workspace">
         <Sidebar />
         <main
-          className={`generator-main-content transition-all duration-300 ml-0 mr-0${sidebarExpanded ? ' lg:ml-64' : ' lg:ml-20'} lg:mr-[320px] ${isOpen ? 'block lg:block hidden' : ''}`}
+          className={`generator-main generator-main-content transition-all duration-300 ml-0 mr-0${sidebarExpanded ? ' lg:ml-64' : ' lg:ml-20'} lg:mr-[320px] ${isOpen ? 'block lg:block hidden' : ''}`}
         >
           <Header
             title="AI Audio Prompt Generator"
             subtitle="Create professional audio prompts for AI generators"
-            icon="🎵"
           />
 
           <Instructions

@@ -101,58 +101,31 @@ export default function ImageAnalysisPage() {
   return (
     <>
       {/* Main Content (global ClientShell applies sidebar margin) */}
-      <div className={`min-h-screen ${mounted ? 'loaded' : ''}`}>
+      <div className={`ui-page ${mounted ? 'loaded' : ''}`}>
         <div id="wrapper" className="relative">
-          {/* Hero Section */}
-          {/* <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden">
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-              <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-              <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-            </div>
-
-            <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-              <div className="fade-up visible transition-all duration-1000 ease-out">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                  Bulk
-                  <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                    {' '}
-                    Image Analysis
-                  </span>
-                </h1>
-                <p className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
-                  Analyze Bad or Good image quality using alogarithm
+          <section className="px-4 pb-20 pt-16 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-6xl">
+              <header className="ui-page-header">
+                <span className="ui-eyebrow">IMAGE TOOLS / 02</span>
+                <h1>Bulk Image Analysis</h1>
+                <p>
+                  Compare image quality across a batch with consistent metrics
+                  and exportable results.
                 </p>
-              </div>
-            </div>
-          </section> */}
-
-          {/* Analysis Section */}
-          <section className="relative py-20 bg-gradient-to-b from-gray-900 to-black">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="fade-up visible transition-all duration-1000 ease-out">
-                {/* SEO-friendly header */}
-                <header className="text-center mb-12">
-                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                    Bulk
-                    <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                      {' '}
-                      Image Analysis
-                    </span>
-                  </h1>
-                  <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-400">
-                    <span className="bg-gray-800 px-3 py-1 rounded-full">
-                      Free Tool
-                    </span>
-                    <span className="bg-gray-800 px-3 py-1 rounded-full">
-                      Batch Processing
-                    </span>
-                    <span className="bg-gray-800 px-3 py-1 rounded-full">
-                      Advanced Metrics
-                    </span>
-                  </div>
-                </header>
-
+                <div className="mt-5 flex flex-wrap justify-center gap-2">
+                  {['Free tool', 'Batch processing', 'Exportable results'].map(
+                    label => (
+                      <span
+                        key={label}
+                        className="ui-card-muted px-3 py-1 text-xs text-slate-300"
+                      >
+                        {label}
+                      </span>
+                    )
+                  )}
+                </div>
+              </header>
+              <div className="fade-up visible">
                 <BulkImageAnalysis />
               </div>
             </div>

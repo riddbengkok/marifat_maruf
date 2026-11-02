@@ -60,7 +60,7 @@ export default function GenerateButton({
       <div className="button-container-spacer"></div>
 
       {user ? (
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div className="button-container__actions">
           <button
             onClick={handleGenerateClick}
             disabled={isLoading || disabled}
@@ -68,8 +68,8 @@ export default function GenerateButton({
           >
             {isLoading && <div className="loading-spinner"></div>}
             {disabled
-              ? '🚀 Subscribe to get unlimited access only IDR 6k'
-              : '🚀 Generate Prompt'}
+              ? 'Subscribe for unlimited access · IDR 6k'
+              : 'Generate prompt'}
           </button>
 
           {hasGeneratedPrompt && onEnhance && (
@@ -77,21 +77,9 @@ export default function GenerateButton({
               onClick={handleEnhanceClick}
               disabled={isLoading || disabled || isEnhancing}
               className="btn-secondary"
-              style={{
-                background: 'linear-gradient(135deg, #7dd8e0, #6b9ac4)',
-                color: '#000',
-                border: 'none',
-                padding: '16px 24px',
-                fontSize: '16px',
-                fontWeight: '600',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 20px rgba(125, 216, 224, 0.3)',
-              }}
             >
               {isEnhancing && <div className="loading-spinner"></div>}
-              🤖 Enhance with AI
+              Enhance with AI
             </button>
           )}
         </div>
@@ -102,7 +90,7 @@ export default function GenerateButton({
           className="btn-primary"
         >
           {isLoading && <div className="loading-spinner"></div>}
-          {'🔐 Sign in Google to Generate Prompt'}
+          Sign in with Google to generate
         </button>
       )}
 

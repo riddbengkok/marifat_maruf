@@ -17,13 +17,9 @@ export default function ProgressIndicator({
 
   return (
     <div className="progress-indicator hidden lg:block">
-      {/* Decorative top border */}
-      <div className="progress-indicator__top-border" />
-
       <div style={{ marginBottom: '20px' }}>
         <h3 className="progress-indicator__header">
-          <span className="progress-indicator__header-emoji">📊</span>
-          Progress: Step {currentStep} of {totalSteps}
+          Step {currentStep} of {totalSteps}
         </h3>
 
         {/* Progress bar */}
@@ -31,10 +27,7 @@ export default function ProgressIndicator({
           <div
             className="progress-indicator__bar-inner"
             style={{ width: `${progress}%` }}
-          >
-            {/* Animated shine effect */}
-            <div className="progress-indicator__bar-shine" />
-          </div>
+          ></div>
         </div>
 
         <div className="progress-indicator__bar-labels">

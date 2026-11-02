@@ -316,18 +316,14 @@ export default function AIScriptPromptGenerator() {
           </div>
         </div>
       )}
-      <div className="generator-flex-layout">
+      <div className="generator-flex-layout generator-workspace">
         <main
           className={`generator-main-content transition-all duration-300 ml-0 mr-0${sidebarExpanded ? ' lg:ml-64' : ' lg:ml-20'} lg:mr-[320px] ${isOpen ? 'block lg:block hidden' : ''}`}
         >
-          <div
-            className="generator-main"
-            style={{ maxWidth: '900px', margin: '0 auto' }}
-          >
+          <div className="generator-main">
             <Header
               title="AI Script Prompt Generator"
               subtitle="Create detailed script or screenplay prompts for ChatGPT, Gemini, and other AI tools"
-              icon="🎬"
             />
             <Instructions
               title="How to Use"

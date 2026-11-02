@@ -495,16 +495,12 @@ export default function PromptGenerator() {
         url="https://marifat-maruf.vercel.app/ai-image-prompt-generator"
       />
 
-      <div className="generator-flex-layout">
-        <main className={`generator-main-content transition-all duration-300`}>
-          <div
-            className="generator-main"
-            style={{ maxWidth: '1200px', margin: '0 auto' }}
-          >
+      <div className="generator-flex-layout generator-workspace">
+        <main className="generator-main-content transition-all duration-300">
+          <div className="generator-main">
             <Header
               title="AI Image Prompt Generator"
               subtitle="Create image prompts for AI generators"
-              icon="🖼️"
             />
 
             <Instructions

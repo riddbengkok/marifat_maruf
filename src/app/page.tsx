@@ -733,14 +733,14 @@ export default function Home() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* Email Card */}
                       <a
-                        href="mailto:riddtwo@gmail.com"
+                        href="mailto:riddbengkok@gmail.com"
                         className="p-4 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] transition-colors block group"
                       >
                         <span className="text-xs font-mono text-slate-400 block mb-1">
                           EMAIL
                         </span>
                         <span className="text-sm font-semibold text-white group-hover:text-slate-200">
-                          riddtwo@gmail.com
+                          riddbengkok@gmail.com
                         </span>
                       </a>
 
@@ -802,7 +802,7 @@ export default function Home() {
 
                     <div className="space-y-3">
                       <a
-                        href="/marifat_maruf_resume.pdf"
+                        href="/marifat_middle_resume.pdf"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full inline-flex items-center justify-between p-3.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-sm font-medium text-slate-200 transition-colors group"
@@ -830,7 +830,7 @@ export default function Home() {
                       </Link>
 
                       <a
-                        href="mailto:riddtwo@gmail.com"
+                        href="mailto:riddbengkok@gmail.com"
                         className="w-full inline-flex items-center justify-center p-3.5 rounded-lg bg-white text-slate-950 hover:bg-slate-100 font-semibold text-sm transition-colors shadow-sm mt-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                       >
                         Send an Email

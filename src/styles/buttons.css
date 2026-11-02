@@ -12,7 +12,11 @@
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
   text-decoration: none;
   font-family: inherit;
   line-height: 1;
@@ -49,40 +53,35 @@
 
 /* Button Variants */
 .btn-primary {
-  background: linear-gradient(135deg, #00ffff, #00cccc);
-  color: #000;
+  background: #f8fafc;
+  color: #090d16;
   border: none;
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #00cccc, #009999);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 255, 255, 0.3);
+  background: #cbd5e1;
 }
 
 .btn-secondary {
-  background: transparent;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.04);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .btn-outline {
   background: transparent;
-  color: #00ffff;
-  border: 2px solid #00ffff;
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .btn-outline:hover {
-  background: #00ffff;
-  color: #000;
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
 }
 
 .btn-ghost {
@@ -98,39 +97,33 @@
 
 /* Gradient Buttons */
 .btn-gradient-cyan {
-  background: linear-gradient(135deg, #00ffff, #00cccc);
-  color: #000;
+  background: #f8fafc;
+  color: #090d16;
   border: none;
 }
 
 .btn-gradient-cyan:hover {
-  background: linear-gradient(135deg, #00cccc, #009999);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 255, 255, 0.3);
+  background: #cbd5e1;
 }
 
 .btn-gradient-purple {
-  background: linear-gradient(135deg, #a855f7, #7c3aed);
-  color: #fff;
+  background: #334155;
+  color: #f8fafc;
   border: none;
 }
 
 .btn-gradient-purple:hover {
-  background: linear-gradient(135deg, #7c3aed, #5b21b6);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(168, 85, 247, 0.3);
+  background: #475569;
 }
 
 .btn-gradient-green {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: #fff;
+  background: #34d399;
+  color: #052e25;
   border: none;
 }
 
 .btn-gradient-green:hover {
-  background: linear-gradient(135deg, #059669, #047857);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+  background: #6ee7b7;
 }
 
 .btn-gradient-orange {

@@ -197,10 +197,10 @@ const Contact = () => {
               <li>
                 <h3 className="text-2xl font-bold mb-3 text-cyan-400">Email</h3>
                 <a
-                  href="mailto:user@untitled.tld"
+                  href="mailto:riddbengkok@gmail.com"
                   className="text-cyan-300 hover:text-cyan-200 transition-colors duration-200"
                 >
-                  user@untitled.tld
+                  riddbengkok@gmail.com
                 </a>
               </li>
               <li>

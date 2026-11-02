@@ -502,13 +502,13 @@ export default function Portfolio() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a
-                href="mailto:riddtwo@gmail.com"
+                href="mailto:riddbengkok@gmail.com"
                 className="px-6 py-3 rounded-xl bg-white text-slate-950 hover:bg-slate-100 font-semibold text-sm transition-colors shadow-sm"
               >
-                Send Email (riddtwo@gmail.com)
+                Send Email (riddbengkok@gmail.com)
               </a>
               <a
-                href="/marifat_maruf_resume.pdf"
+                href="/marifat_middle_resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-medium text-sm transition-colors"

@@ -84,10 +84,11 @@ module.exports = {
         'gradient-to-r': 'linear-gradient(to right, var(--tw-gradient-stops))',
       },
       colors: {
-        primary: '#9bf1ff',
-        secondary: '#ff6b6b',
-        accent: '#4ecdc4',
-        background: '#0c0c0c',
+        primary: '#34d399',
+        secondary: '#94a3b8',
+        accent: '#6ee7b7',
+        background: '#090d16',
+        foreground: '#f8fafc',
         // Purple
         purple: {
           50: '#faf5ff',
