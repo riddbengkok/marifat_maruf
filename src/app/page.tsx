@@ -102,8 +102,8 @@ export default function Home() {
                   {t('about.title') || 'About Me'}
                 </h2>
                 <p className="text-base sm:text-lg text-slate-400 leading-relaxed font-normal">
-                  Bridging the gap between robust architectural engineering and
-                  refined, responsive user experiences.
+                  Frontend development with a focus on maintainable code,
+                  responsive interfaces, and reliable application behavior.
                 </p>
               </div>
 
@@ -112,11 +112,11 @@ export default function Home() {
                 <div className="lg:col-span-6 space-y-6 text-slate-300 leading-relaxed font-normal">
                   <p className="text-base sm:text-lg">
                     {t('about.intro1') ||
-                      'Focused on web application development with over 6 years of hands-on production engineering.'}
+                      'I have more than six years of professional experience in web development, across frontend and full-stack roles.'}
                   </p>
                   <p className="text-base text-slate-400">
                     {t('about.intro2') ||
-                      'I specialize in finding the sweet spot between high performance, clean state management, and elegant interfaces. Every system I build is tuned for speed, accessibility, and maintainability.'}
+                      'My work focuses on clear component structure, accessible interfaces, and maintainable frontend code. I also contribute to APIs and backend integrations when a project calls for it.'}
                   </p>
                   <div className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
@@ -124,10 +124,10 @@ export default function Home() {
                     </div>
                     <div className="text-xs text-slate-300">
                       <strong className="text-white block font-medium">
-                        Production-Grade Standards
+                        Engineering Approach
                       </strong>
-                      Adheres to strict code quality gates, 100% type safety,
-                      and zero unnecessary bundle overhead.
+                      I use TypeScript, code review, and project-specific
+                      quality checks to support maintainable releases.
                     </div>
                   </div>
                 </div>
@@ -181,8 +181,8 @@ export default function Home() {
                       {t('about.optimization') || 'Optimization'}
                     </h3>
                     <p className="text-xs text-slate-400 leading-relaxed">
-                      Bundle tree-shaking, sub-second TTFB, Lighthouse scores,
-                      and accessible keyboard navigation.
+                      Responsive loading, bundle analysis, accessibility
+                      checks, and keyboard navigation.
                     </p>
                   </div>
                 </div>
@@ -201,8 +201,7 @@ export default function Home() {
                   {t('skills.title') || 'Technical Competence'}
                 </h2>
                 <p className="text-base sm:text-lg text-slate-400 leading-relaxed font-normal">
-                  Production-tested technologies and tooling applied across 6+
-                  years of shipping web software.
+                  Technologies I have used across frontend, full-stack, and web application projects.
                 </p>
               </div>
 
@@ -375,7 +374,7 @@ export default function Home() {
                 </h2>
                 <p className="text-base sm:text-lg text-slate-400 leading-relaxed font-normal">
                   {t('experience.subtitle') ||
-                    'Career path and software engineering accomplishments.'}
+                    'Roles, responsibilities, and technologies from my software development career.'}
                 </p>
               </div>
 
@@ -423,7 +422,7 @@ export default function Home() {
                       {/* Achievements */}
                       <div className="space-y-2 pt-4 border-t border-white/[0.06]">
                         <h4 className="text-xs font-semibold text-slate-200 tracking-wider uppercase">
-                          {t('experience.keyAchievements') || 'Key Highlights'}
+                          {t('experience.keyAchievements') || 'Responsibilities & Contributions'}
                         </h4>
                         <ul className="space-y-2 mt-2">
                           {job.achievements.map((achievement, idx) => (
@@ -458,7 +457,7 @@ export default function Home() {
                 </h2>
                 <p className="text-base sm:text-lg text-slate-400 leading-relaxed font-normal">
                   {t('portfolio.description') ||
-                    'A selection of production web applications, design systems, and tools I have engineered.'}
+                    'Selected web applications, interface designs, and tools, with the technologies used for each.'}
                 </p>
               </div>
 
@@ -582,8 +581,7 @@ export default function Home() {
                   Education & Certifications
                 </h2>
                 <p className="text-base sm:text-lg text-slate-400 leading-relaxed font-normal">
-                  Academic foundation and verified professional technical
-                  qualifications.
+                  Education and software development training.
                 </p>
               </div>
 
@@ -628,7 +626,7 @@ export default function Home() {
                       CREDENTIALS
                     </span>
                     <h3 className="text-lg font-bold text-white">
-                      Professional Licenses
+                      Certificates & Training
                     </h3>
                   </div>
                   <div className="space-y-4">
@@ -665,11 +663,10 @@ export default function Home() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center max-w-3xl mx-auto mb-16">
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">
-                  Key Achievements
+                  Career Highlights
                 </h2>
                 <p className="text-base sm:text-lg text-slate-400 leading-relaxed font-normal">
-                  Highlights and verifiable milestones from my engineering
-                  journey.
+                  Experience and areas of focus from my work in web development.
                 </p>
               </div>
 
@@ -723,11 +720,10 @@ export default function Home() {
                 <div className="lg:col-span-7 space-y-4">
                   <div className="p-6 sm:p-8 rounded-2xl bg-slate-900/60 border border-white/[0.08]">
                     <h3 className="text-xl font-bold text-white mb-2">
-                      Direct Communication
+                      Contact
                     </h3>
                     <p className="text-sm text-slate-400 mb-8 leading-relaxed">
-                      Whether you have an upcoming project, architecture
-                      questions, or a permanent role, reach out directly.
+                      Contact me about frontend or full-stack roles, project work, or collaboration.
                     </p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -796,7 +792,7 @@ export default function Home() {
                       </h3>
                       <p className="text-sm text-slate-400 mb-6 leading-relaxed">
                         Download my full engineering résumé or inspect the
-                        comprehensive interactive portfolio.
+                        portfolio with project details and work experience.
                       </p>
                     </div>
 

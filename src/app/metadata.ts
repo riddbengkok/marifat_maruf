@@ -4,11 +4,11 @@ import { Metadata } from 'next';
 export const baseMetadata: Metadata = {
   metadataBase: new URL('https://marifat-maruf.vercel.app'),
   title: {
-    default: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
+    default: 'Marifat Maruf | Frontend & Full-Stack Developer',
     template: '%s | Marifat',
   },
   description:
-    'Professional portfolio and AI prompt generator tools for creating high-quality prompts for AI image and video generation.',
+    'Portfolio of Marifat Maruf, a frontend and full-stack web developer. Browse selected projects, technical skills, and professional experience.',
   keywords: [
     'AI prompt generator',
     'text to image',
@@ -35,9 +35,9 @@ export const baseMetadata: Metadata = {
     locale: 'en_US',
     url: 'https://marifat-maruf.vercel.app',
     siteName: 'Marifat',
-    title: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
+    title: 'Marifat Maruf | Frontend & Full-Stack Developer',
     description:
-      'Professional portfolio and AI prompt generator tools for creating high-quality prompts for AI image and video generation.',
+      'Portfolio of Marifat Maruf, a frontend and full-stack web developer. Browse selected projects, technical skills, and professional experience.',
     images: [
       {
         url: '/images/og-image.jpg',
@@ -49,9 +49,9 @@ export const baseMetadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
+    title: 'Marifat Maruf | Frontend & Full-Stack Developer',
     description:
-      'Professional portfolio and AI prompt generator tools for creating high-quality prompts for AI image and video generation.',
+      'Portfolio of Marifat Maruf, a frontend and full-stack web developer. Browse selected projects, technical skills, and professional experience.',
     images: ['/images/og-image.jpg'],
     creator: '@marifatmaruf',
   },
@@ -76,9 +76,9 @@ export const baseMetadata: Metadata = {
 // Home page metadata
 export const homeMetadata: Metadata = {
   ...baseMetadata,
-  title: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
+  title: 'Marifat Maruf | Frontend & Full-Stack Developer',
   description:
-    'Welcome to my professional portfolio showcasing web development projects, AI prompt generators, and creative solutions. Expert in React, Vue.js, and modern web technologies.',
+    'Portfolio of Marifat Maruf, a frontend and full-stack developer with over six years of professional experience. Explore selected projects and work with React, Next.js, Vue, and TypeScript.',
   keywords: [
     'portfolio',
     'web developer',
@@ -93,15 +93,15 @@ export const homeMetadata: Metadata = {
   ],
   openGraph: {
     ...baseMetadata.openGraph,
-    title: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
+    title: 'Marifat Maruf | Frontend & Full-Stack Developer',
     description:
-      'Welcome to my professional portfolio showcasing web development projects, AI prompt generators, and creative solutions.',
+      'Selected web development projects, technical skills, and professional experience with React, Next.js, Vue, and TypeScript.',
   },
   twitter: {
     ...baseMetadata.twitter,
-    title: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
+    title: 'Marifat Maruf | Frontend & Full-Stack Developer',
     description:
-      'Welcome to my professional portfolio showcasing web development projects, AI prompt generators, and creative solutions.',
+      'Selected web development projects, technical skills, and professional experience with React, Next.js, Vue, and TypeScript.',
   },
 };
 
@@ -186,7 +186,7 @@ export const portfolioMetadata: Metadata = {
   ...baseMetadata,
   title: 'Portfolio - Web Development Projects & Skills',
   description:
-    'Explore my portfolio of web development projects, technical skills, and professional experience. Specialized in React, Vue.js, TypeScript, and modern web technologies.',
+    'Explore selected web development projects, technical skills, and professional experience with React, Next.js, Vue, and TypeScript.',
   keywords: [
     'portfolio',
     'web development projects',

@@ -35,7 +35,10 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
             <div className="flex justify-center lg:justify-start">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-medium text-slate-300">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Available for new projects & engineering roles</span>
+                <span>
+                  Available for frontend and full-stack roles, volunteer work,
+                  or collaboration
+                </span>
               </div>
             </div>
 
@@ -60,20 +63,18 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
                   </h1>
                   <p className="text-lg sm:text-xl font-medium text-slate-300 mt-2 tracking-tight">
                     {t('hero.title') ||
-                      'Senior Frontend & Web Application Engineer'}
+                      'Mid-to-senior Frontend & Full-Stack Developer'}
                   </p>
                 </div>
               </div>
 
-              {/* Punchy, high-signal value statement */}
               <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
-                Crafting performant, resilient, and beautifully engineered web
-                applications. 6+ years of production experience specializing in
-                React, Next.js, Vue, and TypeScript architecture.
+                I build web applications and user interfaces with React,
+                Next.js, Vue, and TypeScript, drawing on more than six years of
+                professional experience across frontend and full-stack work.
               </p>
             </div>
 
-            {/* Tactile Hallmark-standard Action Buttons */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
               <button
                 type="button"
@@ -113,25 +114,17 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
               </button>
             </div>
 
-            {/* Key Fact Line */}
             <div className="pt-4 border-t border-white/[0.08] flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-slate-400">
               <div className="flex items-center gap-2">
                 <span className="text-slate-200 font-semibold text-sm">6+</span>
-                <span>Years Production Experience</span>
+                <span>Years of Professional Experience</span>
               </div>
               <span className="text-white/[0.15]">•</span>
               <div className="flex items-center gap-2">
                 <span className="text-slate-200 font-semibold text-sm">
                   10+
                 </span>
-                <span>Shipped Applications</span>
-              </div>
-              <span className="text-white/[0.15]">•</span>
-              <div className="flex items-center gap-2">
-                <span className="text-slate-200 font-semibold text-sm">
-                  100%
-                </span>
-                <span>Type-Safe & Scalable</span>
+                <span>Projects in Portfolio</span>
               </div>
             </div>
           </div>
@@ -147,7 +140,7 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
                   <span className="w-3 h-3 rounded-full bg-white/[0.15]" />
                 </div>
                 <span className="text-xs font-mono text-slate-400">
-                  marifat.engineer.json
+                  profile.json
                 </span>
                 <span className="text-xs text-emerald-400 font-mono">
                   active
@@ -158,7 +151,7 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
               <div className="space-y-4 text-xs font-mono">
                 <div>
                   <span className="text-slate-400">
-                    {'// Primary Capabilities'}
+                  {'// Core Technologies'}
                   </span>
                   <div className="mt-2 grid grid-cols-2 gap-2 text-slate-200">
                     <div className="p-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
@@ -198,7 +191,7 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
 
                 <div className="pt-2 border-t border-white/[0.06]">
                   <span className="text-slate-400">
-                    {'// Recent Shipped Work'}
+                  {'// Selected Projects'}
                   </span>
                   <div className="mt-2 space-y-2">
                     <button
@@ -229,7 +222,7 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
                           Nuxt Admin Dashboard
                         </div>
                         <div className="text-[11px] text-slate-400">
-                          Full-featured management platform
+                          Nuxt.js admin interface
                         </div>
                       </div>
                       <span className="text-slate-400 group-hover:text-white transition-transform group-hover:translate-x-0.5">
@@ -247,7 +240,7 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
                           Bulk Image Analysis Tool
                         </div>
                         <div className="text-[11px] text-slate-400">
-                          Algorithmic quality assessment
+                          Browser-based image metrics
                         </div>
                       </div>
                       <span className="text-slate-400 group-hover:text-white transition-transform group-hover:translate-x-0.5">

@@ -70,7 +70,7 @@ export default function Portfolio() {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] mb-8">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
               <span className="text-xs font-mono text-slate-300">
-                Interactive Engineering Showcase
+                Selected Projects & Experience
               </span>
             </div>
 
@@ -92,12 +92,12 @@ export default function Portfolio() {
               Marifat Maruf
             </h1>
             <p className="text-lg sm:text-xl text-slate-300 font-medium mb-6">
-              Frontend & Full-Stack Systems Engineer
+              Frontend & Full-Stack Developer (Mid-to-senior level)
             </p>
             <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
-              Specialized in production-grade React, Next.js, and TypeScript
-              architectures. Designed with zero synthetic fluff, high-contrast
-              dark surfaces, and strict performance metrics.
+              I build web applications and interfaces with React, Next.js,
+              Vue, and TypeScript. This portfolio includes selected projects,
+              technologies, and details of my professional experience.
             </p>
 
             {/* Tactile Action Buttons */}
@@ -107,14 +107,14 @@ export default function Portfolio() {
                 onClick={() => scrollToSection('showcase-projects')}
                 className="px-6 py-3 rounded-xl bg-white text-slate-950 hover:bg-slate-100 font-semibold text-sm transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                Inspect Projects
+                View Projects
               </button>
               <button
                 type="button"
                 onClick={() => scrollToSection('showcase-experience')}
                 className="px-6 py-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-medium text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white"
               >
-                Career Timeline
+                Work Experience
               </button>
               <Link
                 href="/"
@@ -208,7 +208,7 @@ export default function Portfolio() {
                   Services & Data
                 </h3>
                 <p className="text-xs text-slate-400 mb-6">
-                  REST APIs, database queries, and robust auth integrations.
+                  REST APIs, database queries, and authentication integrations.
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {[
@@ -494,11 +494,11 @@ export default function Portfolio() {
         <section id="showcase-contact" className="py-24 bg-[#070a12]">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">
-              Direct Engineering Consultation
+              Get in Touch
             </h2>
             <p className="text-base text-slate-400 max-w-xl mx-auto mb-10 font-normal">
-              Available for senior frontend contract architecture, UI
-              engineering, and fullstack Next.js applications.
+              Available for frontend roles, full-stack application development,
+              and volunteer work or collaboration.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a

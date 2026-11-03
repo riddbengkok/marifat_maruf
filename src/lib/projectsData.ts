@@ -15,7 +15,7 @@ export const projects: Project[] = [
     id: 1,
     title: 'BubbleGum Template UI',
     description:
-      'Modern Tailwind CSS template with dynamic components support using next js, responsive design, and performance optimization. A comprehensive design system for building beautiful, professional websites.',
+      'Reusable website template built with Next.js, TypeScript, and Tailwind CSS, with responsive layouts and configurable components.',
     image: '/images/buble.png',
     technologies: ['Tailwind CSS', 'Next.js', 'TypeScript', 'Figma'],
     link: 'https://oska-bubblegum-template.vercel.app',
@@ -26,7 +26,7 @@ export const projects: Project[] = [
     id: 2,
     title: 'Nuxt Admin Dashboard',
     description:
-      'Professional admin dashboard built with Nuxt.js featuring modern UI components, responsive design, and comprehensive admin functionality for managing applications.',
+      'Admin dashboard interface built with Nuxt.js and Vue, with responsive layouts and reusable UI components.',
     image: '/images/nuxt.png',
     technologies: ['Nuxt.js', 'Vue.js', 'TypeScript', 'Tailwind CSS'],
     link: 'https://riddbengkok.github.io/nuxt_dashdash/login',
@@ -37,7 +37,7 @@ export const projects: Project[] = [
     id: 3,
     title: 'Bulk Image Analysis Tool',
     description:
-      'Advanced image quality assessment tool that analyzes multiple images using algorithmic metrics including brightness, contrast, sharpness, composition, and noise levels. Features context-aware analysis and 3-tier quality classification.',
+      'Browser-based tool for reviewing multiple images using brightness, contrast, sharpness, composition, and noise metrics.',
     image: '/images/image-analyze.png',
     technologies: ['Next.js', 'TypeScript', 'Canvas API', 'Image Processing'],
     link: '/bulk-image-analyze',
@@ -48,7 +48,7 @@ export const projects: Project[] = [
     id: 4,
     title: 'Mesiro Coffee Store',
     description:
-      'WooCommerce-powered WordPress storefront for Mesiro Coffee, featuring product catalogs, checkout flow, and responsive UX tuned for specialty coffee sales.',
+      'WordPress and WooCommerce storefront for Mesiro Coffee, including product listings and a checkout flow.',
     image: '/images/mesiro-wp.png',
     technologies: ['WordPress', 'WooCommerce', 'PHP', 'Tailwind CSS'],
     link: 'https://mesirocoffe.gt.tc/',
@@ -59,7 +59,7 @@ export const projects: Project[] = [
     id: 5,
     title: 'User Transfer Report',
     description:
-      'Comprehensive user transfer reporting system with detailed analytics and data visualization for financial transactions.',
+      'Financial reporting interface for reviewing user transfers and transaction data.',
     image: '/images/user-transfer.png',
     technologies: ['Vue.js', 'Laravel', 'Figma', 'MySQL'],
     link: 'https://www.figma.com/design/H9S7zoLuAu2A2zRJdtbGcK/user-transfer-report---vue-laravel?node-id=0-1&p=f&t=7lHb8MkXkTdsN6c4-0',
@@ -70,7 +70,7 @@ export const projects: Project[] = [
     id: 6,
     title: 'Component Edit System',
     description:
-      'Advanced component editing interface with real-time updates and seamless integration for Vue.js to Next.js migration.',
+      'Component editing interface designed to support a migration from Vue.js to Next.js.',
     image: '/images/component.png',
     technologies: ['Vue.js', 'Laravel', 'Next.js', 'TypeScript'],
     link: 'https://www.figma.com/design/UVAWI2hdWcewkIkBrzPXfG/component-edit---vue-laravel---migrate-to-next-js?node-id=0-1&p=f&t=kZ0EtWRCJzIjdBbM-0',
@@ -81,7 +81,7 @@ export const projects: Project[] = [
     id: 7,
     title: 'KoinBill Add Product',
     description:
-      'Product management system for KoinBill platform with intuitive interface for adding and managing digital products.',
+      'Product management interface for adding digital products to the KoinBill platform.',
     image: '/images/koinbill.png',
     technologies: ['Vue.js', 'Laravel', 'Figma', 'REST API'],
     link: 'https://www.figma.com/design/PXZ0CzMlDkcz0e0MFsYcU5/koinbill-add-product---vue-laravel?node-id=0-1&p=f&t=PjjMGpQ76Cx02qYC-0',
@@ -92,7 +92,7 @@ export const projects: Project[] = [
     id: 8,
     title: 'Incoming Cash',
     description:
-      'Financial management system for tracking incoming cash flows with comprehensive reporting and analytics dashboard.',
+      'Dashboard concept for tracking incoming cash flow and reviewing financial reports.',
     image: '/images/incoming.png',
     technologies: ['Vue.js', 'Laravel', 'Figma', 'Chart.js'],
     link: 'https://www.figma.com/design/Gqvd1cQ6Hx7CFdHOmPXnuT/porto-incoming-cash---vue-laravel?node-id=0-1&p=f&t=nh7GO9KtKUD80Dto-0',
@@ -103,7 +103,7 @@ export const projects: Project[] = [
     id: 9,
     title: 'Coupon Campaign System',
     description:
-      'Dynamic coupon campaign management dashboard for manage coupon mobile app.',
+      'Dashboard concept for creating and managing coupon campaigns for a mobile app.',
     image: '/images/coupon.png',
     technologies: ['Laravel', 'Next.js', 'Figma', 'MySQL'],
     link: 'https://www.figma.com/design/jGNmXrFO969siHWTZ0xTCv/Coupon-Campaign---Migrate-laravel-to-next-js?node-id=0-1&p=f&t=DTzg33eAhIPfNRex-0',
@@ -114,7 +114,7 @@ export const projects: Project[] = [
     id: 10,
     title: 'KScore Dashboard',
     description:
-      'Credit scoring and financial assessment dashboard with real-time data processing and user-friendly interface.',
+      'Dashboard interface for reviewing credit scores and financial assessment data.',
     image: '/images/kscore.png',
     technologies: ['React.js', 'Figma', 'JavaScript', 'CSS3'],
     link: 'https://www.figma.com/design/Vk6voJBCWH0jANJLwaFYvx/Kscore--react-js?node-id=0-1&p=f&t=IQ8537kVuc7ajgBw-0',
@@ -164,7 +164,7 @@ export const experience = [
     duration: 'May 2019 - May 2025 · 6 yrs 1 mo',
     location: 'Yogyakarta, Indonesia',
     description:
-      'Started as a fullstack developer working with Laravel and Ruby on Rails. Transitioned to focus on frontend development, becoming an expert in HTML, CSS, React.js, Next.js, Vue.js and Nuxt.js. Enjoyed the specialization and continued to develop skills in frontend technologies.',
+      'Worked across frontend and full-stack development, using Laravel and Ruby on Rails before focusing more on React, Next.js, Vue, and Nuxt applications.',
     technologies: [
       'HTML',
       'CSS',
@@ -176,25 +176,25 @@ export const experience = [
       'Ruby on Rails',
     ],
     achievements: [
-      'Gained 6+ years of experience in web development specializing in frontend development',
-      'very familiar working together in a team',
-      'Developed expertise in React.js, Next.js, Vue.js, Nuxt.js frameworks and other frontend technologies ,with tools like Git, Cursor, Docker, Vercel, Confluence, Jira, and other tools',
-      'familiar with Laravel,prisma,Next.js for backend integration',
+      'Worked on frontend and full-stack web application development over a six-year period.',
+      'Collaborated with designers, developers, and product teams.',
+      'Built interfaces with React, Next.js, Vue, and Nuxt using TypeScript and JavaScript.',
+      'Contributed to backend integrations using Laravel, Prisma, and APIs.',
     ],
   },
   {
     company: 'Upwork',
-    position: 'Professional Freelancer',
+    position: 'Freelance Web Developer',
     duration: 'Nov 2015 - May 2019 · 3 yrs 7 mos',
     location: 'Yogyakarta Area, Yogyakarta, Indonesia',
     description:
-      'Worked as a professional freelancer providing PHP and frontend web development services to various clients through the Upwork platform.',
+      'Delivered PHP and frontend web development work for clients through Upwork.',
     technologies: ['PHP', 'Frontend Development', 'Web Development'],
     achievements: [
-      'Successfully completed multiple freelance projects',
-      'Built client relationships and maintained high satisfaction',
-      'Developed skills in PHP and frontend technologies',
-      'Gained experience in remote work and project management',
+      'Delivered web development work for multiple clients.',
+      'Communicated with clients to clarify requirements and project scope.',
+      'Built experience in PHP, frontend development, and remote project delivery.',
+      'Managed project tasks and delivery remotely.',
     ],
   },
   {
@@ -203,7 +203,7 @@ export const experience = [
     duration: 'Jan 2019 - Apr 2019 · 4 mos',
     location: 'Greater Jakarta Area, Indonesia',
     description:
-      'Worked as a backend developer using Ruby on Rails and JavaScript. Gained experience in backend development and software programming.',
+      'Worked on backend development with Ruby on Rails and JavaScript.',
     technologies: ['Ruby on Rails', 'JavaScript', 'Backend Development'],
     achievements: [
       'Developed backend solutions using Ruby on Rails',
@@ -218,7 +218,7 @@ export const experience = [
     duration: 'Jun 2017 - Jan 2019 · 1 yr 8 mos',
     location: 'Yogyakarta Area, Yogyakarta, Indonesia',
     description:
-      'Worked as a frontend developer, Laravel developer, WordPress developer. Specialized in PHP, JavaScript, PSD to HTML conversion, and other frontend technologies.',
+      'Developed frontend interfaces and worked with Laravel and WordPress using PHP and JavaScript, including converting design files into HTML and CSS.',
     technologies: ['Laravel', 'WordPress', 'PHP', 'JavaScript', 'PSD to HTML'],
     achievements: [
       'Developed frontend applications using multiple technologies',
@@ -315,22 +315,22 @@ export const certifications = [
 // Shared achievements data (superset)
 export const achievements = [
   {
-    title: '6+ Years of Experience',
+    title: 'Frontend Development',
     description:
-      'Extensive experience in frontend development with modern frameworks and technologies.',
+      'More than six years at PT. Lunaria Annua Teknologi working across frontend and full-stack web development.',
   },
   {
-    title: '50+ Projects Completed',
+    title: 'Framework Experience',
     description:
-      'Successfully delivered numerous projects across various industries and technologies.',
+      'Projects include React, Next.js, Vue, Nuxt, Laravel, WordPress, and Ruby on Rails.',
   },
   {
-    title: 'Full Stack Expertise',
+    title: 'Cross-functional Collaboration',
     description:
-      'Proficient in both frontend and backend development with modern tech stacks.',
+      'Experience collaborating with designers, developers, and clients on web application work.',
   },
-  '9+ years of experience in web development and programming',
-  'Specialized in frontend development with React.js and Vue.js',
-  'Worked with multiple frameworks including Laravel, Ruby on Rails, and WordPress',
-  'Successfully transitioned from fullstack to specialized frontend development',
+  'Frontend development with React, Next.js, Vue, and Nuxt',
+  'Backend experience with PHP, Laravel, and Ruby on Rails',
+  'Web application work across company and freelance roles',
+  'Progressed from full-stack work to a stronger focus on frontend development',
 ];

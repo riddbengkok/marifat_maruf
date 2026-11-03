@@ -77,9 +77,9 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Portfolio Section
     'portfolio.title': 'Portfolio',
-    'portfolio.subtitle': 'A collection of my best work',
+    'portfolio.subtitle': 'Selected web development projects',
     'portfolio.description':
-      'Showcasing creativity, technical skills, and problem-solving abilities through various projects.',
+      'A selection of web applications and interface work, with project details and technologies.',
     'portfolio.viewProject': 'View Project',
     'portfolio.preview': 'Preview',
     'portfolio.openInFigma': 'Open URL→',
@@ -90,9 +90,9 @@ const translations: Record<Language, Record<string, string>> = {
     'portfolio.category.uiux': 'UI/UX Design',
     // Hero Section
     'hero.name': 'Marifat Maruf',
-    'hero.title': 'Frontend - Fullstack Web Developer',
+    'hero.title': 'Frontend & Full-Stack Developer | Mid-to-Senior Level',
     'hero.description':
-      'Obsessed with finding the sweet spot between beauty, performance, and efficiency. I design solutions that are powerful without wasting unnecessary energy. Focused on web application development, I specialize in React.js, Vue.js, and modern frontend technologies with 6+ years of experience.',
+      'Frontend and full-stack web developer with more than six years of professional experience. I build web applications with React, Next.js, Vue, and TypeScript, and have worked with backend frameworks including Laravel and Ruby on Rails.',
 
     // Buttons
     'btn.about': 'About',
@@ -107,28 +107,27 @@ const translations: Record<Language, Record<string, string>> = {
     // About Section
     'about.title': 'About Me',
     'about.description':
-      'I am a passionate frontend developer with expertise in modern web technologies.',
+      'Frontend and full-stack web developer with experience in modern web technologies.',
     'about.intro1':
-      "I'm a passionate Frontend - Fullstack Web Developer with over 6 years of experience creating beautiful and functional web applications. My journey in web development started with PHP and has evolved to include modern frameworks like React.js, Vue.js, and Next.js.",
+      'I have more than six years of professional experience in web development, working across frontend and full-stack roles. My background includes PHP and Laravel as well as React, Next.js, Vue, and Nuxt.',
     'about.intro2':
-      'I specialize in building responsive, user-friendly interfaces and have worked on projects ranging from small business websites to complex financial applications. My expertise includes both frontend and backend development, giving me a holistic understanding of web application architecture.',
+      'My work includes responsive interfaces, business websites, dashboards, and financial application features. I focus on frontend development and also contribute to APIs and backend integrations when needed.',
     'about.whatIDo': 'What I Do',
-    'about.frontendDev':
-      'Frontend Development with React.js & Vue.js and other frontend frameworks',
-    'about.uiux': 'Implement UI/UX into real project',
-    'about.fullstack': 'Sometimes I can be a Full Stack Developer',
-    'about.optimization': 'Performance Optimization and SEO Optimization',
+    'about.frontendDev': 'Frontend Engineering',
+    'about.uiux': 'UI & Design Systems',
+    'about.fullstack': 'Backend & Integrations',
+    'about.optimization': 'Performance & Accessibility',
 
     // Skills Section
-    'skills.title': 'Skills & Expertise',
+    'skills.title': 'Technical Skills',
     'skills.description':
-      'My technical skills span across frontend and backend technologies, with a focus on modern Frontend web development frameworks. I have a strong understanding of the entire Frontend web development process, debugging and optimizing the code.',
+      'My core experience is in frontend development with React, Next.js, Vue, and Nuxt, alongside TypeScript, JavaScript, and CSS. I also have experience with PHP, Laravel, databases, and API integration.',
 
     // Experience Section
     'experience.title': 'Professional Experience',
     'experience.subtitle':
-      'My journey in software development, from freelance work to leading teams at fintech companies.',
-    'experience.keyAchievements': 'Key Achievements',
+      'A summary of my web development roles, responsibilities, and technology experience.',
+    'experience.keyAchievements': 'Responsibilities & Contributions',
 
     // Projects Section
     'projects.title': 'Projects',
@@ -177,9 +176,9 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Portfolio Section
     'portfolio.title': 'Portofolio',
-    'portfolio.subtitle': 'Kumpulan karya terbaik saya',
+    'portfolio.subtitle': 'Pilihan proyek pengembangan web',
     'portfolio.description':
-      'Menampilkan kreativitas, keterampilan teknis, dan kemampuan pemecahan masalah melalui berbagai proyek.',
+      'Pilihan aplikasi web dan pekerjaan antarmuka, beserta detail proyek dan teknologi yang digunakan.',
     'portfolio.viewProject': 'Lihat Proyek',
     'portfolio.preview': 'Pratinjau',
     'portfolio.openInFigma': 'Buka di Figma →',
@@ -191,9 +190,9 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Hero Section
     'hero.name': 'Marifat Maruf',
-    'hero.title': 'Pengembang Web Frontend',
+    'hero.title': 'Developer Frontend & Full-Stack | Level Menengah ke Senior',
     'hero.description':
-      'Terobsesi untuk menemukan titik manis antara keindahan, performa, dan efisiensi. Saya merancang solusi yang kuat tanpa membuang energi yang tidak perlu. Fokus pada pengembangan aplikasi web, saya mengkhususkan diri dalam React.js, Vue.js, dan teknologi frontend modern dengan pengalaman 6+ tahun.',
+      'Developer frontend dan full-stack dengan pengalaman profesional lebih dari enam tahun. Saya membangun aplikasi web menggunakan React, Next.js, Vue, dan TypeScript, serta pernah bekerja dengan Laravel dan Ruby on Rails.',
 
     // Buttons
     'btn.about': 'Tentang',
@@ -208,28 +207,27 @@ const translations: Record<Language, Record<string, string>> = {
     // About Section
     'about.title': 'Tentang Saya',
     'about.description':
-      'Saya adalah pengembang frontend yang bersemangat dengan keahlian dalam teknologi web modern.',
+      'Developer frontend dan full-stack dengan pengalaman menggunakan teknologi web modern.',
     'about.intro1':
-      'Saya seorang Pengembang Web Frontend yang bersemangat dengan pengalaman lebih dari 6 tahun dalam menciptakan aplikasi web yang indah dan fungsional. Perjalanan saya dalam pengembangan web dimulai dengan PHP dan telah berkembang untuk mencakup framework modern seperti React.js, Vue.js, dan Next.js.',
+      'Saya memiliki pengalaman profesional lebih dari enam tahun dalam pengembangan web, baik di bidang frontend maupun full-stack. Latar belakang saya mencakup PHP dan Laravel, serta React, Next.js, Vue, dan Nuxt.',
     'about.intro2':
-      'Saya berspesialisasi dalam membangun antarmuka yang responsif dan ramah pengguna, dan telah mengerjakan proyek mulai dari website bisnis kecil hingga aplikasi keuangan yang kompleks. Keahlian saya mencakup pengembangan frontend dan backend, memberikan saya pemahaman holistik tentang arsitektur aplikasi web.',
+      'Pekerjaan saya mencakup antarmuka responsif, situs bisnis, dashboard, dan fitur aplikasi keuangan. Fokus utama saya adalah frontend, dengan pengalaman berkontribusi pada API dan integrasi backend.',
     'about.whatIDo': 'Apa yang Saya Lakukan',
-    'about.frontendDev':
-      'Pengembangan Frontend dengan React.js & Vue.js dan framework frontend lainnya',
-    'about.uiux': 'Mengimplementasikan UI/UX ke dalam proyek nyata',
-    'about.fullstack': 'Terkadang saya bisa menjadi Full Stack Developer',
-    'about.optimization': 'Optimalisasi Kinerja dan SEO',
+    'about.frontendDev': 'Pengembangan Frontend',
+    'about.uiux': 'UI & Sistem Desain',
+    'about.fullstack': 'Backend & Integrasi',
+    'about.optimization': 'Performa & Aksesibilitas',
 
     // Skills Section
-    'skills.title': 'Keahlian & Keterampilan',
+    'skills.title': 'Keterampilan Teknis',
     'skills.description':
-      'Keterampilan teknis saya mencakup teknologi frontend dan backend, dengan fokus pada framework pengembangan web Frontend modern. Saya memiliki pemahaman yang kuat tentang seluruh proses pengembangan web Frontend, termasuk debugging dan pengoptimalan kode.',
+      'Pengalaman utama saya adalah pengembangan frontend dengan React, Next.js, Vue, dan Nuxt, serta TypeScript, JavaScript, dan CSS. Saya juga memiliki pengalaman dengan PHP, Laravel, database, dan integrasi API.',
 
     // Experience Section
     'experience.title': 'Pengalaman Profesional',
     'experience.subtitle':
-      'Perjalanan saya dalam pengembangan perangkat lunak, mulai dari pekerjaan lepas hingga memimpin tim di perusahaan fintech.',
-    'experience.keyAchievements': 'Pencapaian Utama',
+      'Ringkasan peran, tanggung jawab, dan pengalaman teknologi saya dalam pengembangan web.',
+    'experience.keyAchievements': 'Tanggung Jawab & Kontribusi',
 
     // Projects Section
     'projects.title': 'Proyek',
