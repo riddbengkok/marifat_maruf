@@ -151,7 +151,7 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
               <div className="space-y-4 text-xs font-mono">
                 <div>
                   <span className="text-slate-400">
-                  {'// Core Technologies'}
+                    {'// Core Technologies'}
                   </span>
                   <div className="mt-2 grid grid-cols-2 gap-2 text-slate-200">
                     <div className="p-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
@@ -191,7 +191,7 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
 
                 <div className="pt-2 border-t border-white/[0.06]">
                   <span className="text-slate-400">
-                  {'// Selected Projects'}
+                    {'// Selected Projects'}
                   </span>
                   <div className="mt-2 space-y-2">
                     <button

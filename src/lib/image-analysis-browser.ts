@@ -137,11 +137,8 @@ export async function analyzeImageLocalBrowser(
       context
     );
 
-    // Use context-aware metrics
-    const brightness = contextAwareMetrics.brightness;
-    const contrast = contextAwareMetrics.contrast;
+    // Use context-aware metrics (referenced via contextAwareMetrics properties directly if needed)
     const sharpness = contextAwareMetrics.sharpness;
-    const colorBalance = contextAwareMetrics.colorBalance;
     const noiseLevel = contextAwareMetrics.noiseLevel;
 
     // Calculate advanced composition metrics
@@ -377,23 +374,23 @@ export async function analyzeImageLocalBrowser(
 }
 
 // Helper functions (unchanged)
-function calculateBrightness(data: Uint8ClampedArray): number {
+function calculateBrightness(_data: Uint8ClampedArray): number {
   let total = 0;
-  for (let i = 0; i < data.length; i += 4) {
-    const r = data[i];
-    const g = data[i + 1];
-    const b = data[i + 2];
+  for (let i = 0; i < _data.length; i += 4) {
+    const r = _data[i];
+    const g = _data[i + 1];
+    const b = _data[i + 2];
     total += (r + g + b) / 3;
   }
-  return Math.min(100, (total / (data.length / 4) / 255) * 100);
+  return Math.min(100, (total / (_data.length / 4) / 255) * 100);
 }
 
-function calculateContrast(data: Uint8ClampedArray): number {
+function calculateContrast(_data: Uint8ClampedArray): number {
   const values = [];
-  for (let i = 0; i < data.length; i += 4) {
-    const r = data[i];
-    const g = data[i + 1];
-    const b = data[i + 2];
+  for (let i = 0; i < _data.length; i += 4) {
+    const r = _data[i];
+    const g = _data[i + 1];
+    const b = _data[i + 2];
     values.push((r + g + b) / 3);
   }
 
@@ -551,8 +548,8 @@ function findFocalPoints(
 // Calculate Rule of Thirds compliance
 function calculateRuleOfThirds(
   focalPoints: Array<{ x: number; y: number; weight: number }>,
-  width: number,
-  height: number
+  _width: number,
+  _height: number
 ): number {
   if (focalPoints.length === 0) return 50; // Neutral score if no focal points
 
@@ -587,8 +584,8 @@ function calculateRuleOfThirds(
 // Calculate Golden Ratio compliance
 function calculateGoldenRatio(
   focalPoints: Array<{ x: number; y: number; weight: number }>,
-  width: number,
-  height: number
+  _width: number,
+  _height: number
 ): number {
   if (focalPoints.length === 0) return 50;
 

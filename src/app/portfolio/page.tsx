@@ -95,8 +95,8 @@ export default function Portfolio() {
               Frontend & Full-Stack Developer (Mid-to-senior level)
             </p>
             <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
-              I build web applications and interfaces with React, Next.js,
-              Vue, and TypeScript. This portfolio includes selected projects,
+              I build web applications and interfaces with React, Next.js, Vue,
+              and TypeScript. This portfolio includes selected projects,
               technologies, and details of my professional experience.
             </p>
 

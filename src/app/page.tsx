@@ -181,8 +181,8 @@ export default function Home() {
                       {t('about.optimization') || 'Optimization'}
                     </h3>
                     <p className="text-xs text-slate-400 leading-relaxed">
-                      Responsive loading, bundle analysis, accessibility
-                      checks, and keyboard navigation.
+                      Responsive loading, bundle analysis, accessibility checks,
+                      and keyboard navigation.
                     </p>
                   </div>
                 </div>
@@ -201,7 +201,8 @@ export default function Home() {
                   {t('skills.title') || 'Technical Competence'}
                 </h2>
                 <p className="text-base sm:text-lg text-slate-400 leading-relaxed font-normal">
-                  Technologies I have used across frontend, full-stack, and web application projects.
+                  Technologies I have used across frontend, full-stack, and web
+                  application projects.
                 </p>
               </div>
 
@@ -422,7 +423,8 @@ export default function Home() {
                       {/* Achievements */}
                       <div className="space-y-2 pt-4 border-t border-white/[0.06]">
                         <h4 className="text-xs font-semibold text-slate-200 tracking-wider uppercase">
-                          {t('experience.keyAchievements') || 'Responsibilities & Contributions'}
+                          {t('experience.keyAchievements') ||
+                            'Responsibilities & Contributions'}
                         </h4>
                         <ul className="space-y-2 mt-2">
                           {job.achievements.map((achievement, idx) => (
@@ -723,7 +725,8 @@ export default function Home() {
                       Contact
                     </h3>
                     <p className="text-sm text-slate-400 mb-8 leading-relaxed">
-                      Contact me about frontend or full-stack roles, project work, or collaboration.
+                      Contact me about frontend or full-stack roles, project
+                      work, or collaboration.
                     </p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
