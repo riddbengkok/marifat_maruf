@@ -43,3 +43,8 @@ service-account*
 next-env.d.ts
 
 .env*.local
+
+# Local AI coding assistant instructions
+/.cursor/
+/.windsurfrules
+/CLAUDE.md

@@ -713,8 +713,8 @@ export default function Home() {
                   Get In Touch
                 </h2>
                 <p className="text-base sm:text-lg text-slate-400 leading-relaxed font-normal">
-                  Available for senior frontend roles, full-stack application
-                  development, and technical consulting.
+                  Available for frontend roles, full-stack application
+                  development, and volunteer work or collaboration.
                 </p>
               </div>
 
