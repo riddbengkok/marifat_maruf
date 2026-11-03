@@ -90,7 +90,7 @@ const translations: Record<Language, Record<string, string>> = {
     'portfolio.category.uiux': 'UI/UX Design',
     // Hero Section
     'hero.name': 'Marifat Maruf',
-    'hero.title': 'Frontend Web Developer',
+    'hero.title': 'Frontend - Fullstack Web Developer',
     'hero.description':
       'Obsessed with finding the sweet spot between beauty, performance, and efficiency. I design solutions that are powerful without wasting unnecessary energy. Focused on web application development, I specialize in React.js, Vue.js, and modern frontend technologies with 6+ years of experience.',
 
@@ -109,7 +109,7 @@ const translations: Record<Language, Record<string, string>> = {
     'about.description':
       'I am a passionate frontend developer with expertise in modern web technologies.',
     'about.intro1':
-      "I'm a passionate Frontend Web Developer with over 6 years of experience creating beautiful and functional web applications. My journey in web development started with PHP and has evolved to include modern frameworks like React.js, Vue.js, and Next.js.",
+      "I'm a passionate Frontend - Fullstack Web Developer with over 6 years of experience creating beautiful and functional web applications. My journey in web development started with PHP and has evolved to include modern frameworks like React.js, Vue.js, and Next.js.",
     'about.intro2':
       'I specialize in building responsive, user-friendly interfaces and have worked on projects ranging from small business websites to complex financial applications. My expertise includes both frontend and backend development, giving me a holistic understanding of web application architecture.',
     'about.whatIDo': 'What I Do',

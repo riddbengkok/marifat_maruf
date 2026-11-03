@@ -160,7 +160,7 @@ export const skills = [
 export const experience = [
   {
     company: 'PT. Lunaria Annua Teknologi',
-    position: 'Frontend Web Developer',
+    position: 'Frontend - Fullstack Web Developer',
     duration: 'May 2019 - May 2025 · 6 yrs 1 mo',
     location: 'Yogyakarta, Indonesia',
     description:

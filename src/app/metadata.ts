@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 export const baseMetadata: Metadata = {
   metadataBase: new URL('https://marifat-maruf.vercel.app'),
   title: {
-    default: 'Marifat - Frontend Web Developer & AI Tools',
+    default: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
     template: '%s | Marifat',
   },
   description:
@@ -35,7 +35,7 @@ export const baseMetadata: Metadata = {
     locale: 'en_US',
     url: 'https://marifat-maruf.vercel.app',
     siteName: 'Marifat',
-    title: 'Marifat - Frontend Web Developer & AI Tools',
+    title: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
     description:
       'Professional portfolio and AI prompt generator tools for creating high-quality prompts for AI image and video generation.',
     images: [
@@ -43,13 +43,13 @@ export const baseMetadata: Metadata = {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Marifat - Frontend Web Developer & AI Tools',
+        alt: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Marifat - Frontend Web Developer & AI Tools',
+    title: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
     description:
       'Professional portfolio and AI prompt generator tools for creating high-quality prompts for AI image and video generation.',
     images: ['/images/og-image.jpg'],
@@ -76,7 +76,7 @@ export const baseMetadata: Metadata = {
 // Home page metadata
 export const homeMetadata: Metadata = {
   ...baseMetadata,
-  title: 'Marifat - Frontend Web Developer & AI Tools',
+  title: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
   description:
     'Welcome to my professional portfolio showcasing web development projects, AI prompt generators, and creative solutions. Expert in React, Vue.js, and modern web technologies.',
   keywords: [
@@ -93,13 +93,13 @@ export const homeMetadata: Metadata = {
   ],
   openGraph: {
     ...baseMetadata.openGraph,
-    title: 'Marifat - Frontend Web Developer & AI Tools',
+    title: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
     description:
       'Welcome to my professional portfolio showcasing web development projects, AI prompt generators, and creative solutions.',
   },
   twitter: {
     ...baseMetadata.twitter,
-    title: 'Marifat - Frontend Web Developer & AI Tools',
+    title: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
     description:
       'Welcome to my professional portfolio showcasing web development projects, AI prompt generators, and creative solutions.',
   },

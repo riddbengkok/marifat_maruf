@@ -120,7 +120,7 @@ export default function StructuredData({
           '@context': 'https://schema.org',
           '@type': 'Person',
           name: 'Marifat Maruf',
-          jobTitle: 'Frontend Web Developer',
+          jobTitle: 'Frontend - Fullstack Web Developer',
           description:
             'Professional web developer specializing in React, Vue.js, TypeScript, and modern web technologies.',
           url: 'https://marifat-maruf.vercel.app',
@@ -147,7 +147,7 @@ export default function StructuredData({
           ],
           hasOccupation: {
             '@type': 'Occupation',
-            name: 'Frontend Web Developer',
+            name: 'Frontend - Fullstack Web Developer',
             description:
               'Specialized in frontend development with React and Vue.js',
           },
@@ -157,14 +157,14 @@ export default function StructuredData({
         return {
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          name: 'Marifat - Frontend Web Developer & AI Tools',
+          name: 'Marifat - Frontend - Fullstack Web Developer & AI Tools',
           description:
             'Professional portfolio and AI prompt generator tools for creating high-quality prompts for AI image and video generation.',
           url: 'https://marifat-maruf.vercel.app',
           author: {
             '@type': 'Person',
             name: 'Marifat Maruf',
-            jobTitle: 'Frontend Web Developer',
+            jobTitle: 'Frontend - Fullstack Web Developer',
             url: 'https://marifat-maruf.vercel.app',
           },
           potentialAction: {
