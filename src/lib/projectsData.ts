@@ -12,6 +12,16 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: 0,
+    title: 'Hookmatic',
+    description:
+      'AI-powered hook and script generator for TikTok creators in the Fashion and Sport niche.',
+    technologies: ['React', 'Vite', 'Hono', 'Google Gemini', 'Vercel'],
+    link: 'https://hookmatic.vercel.app',
+    category: 'AI Tools',
+    placeholderColor: 'from-violet-600 to-fuchsia-500',
+  },
+  {
     id: 1,
     title: 'BubbleGum Template UI',
     description:
