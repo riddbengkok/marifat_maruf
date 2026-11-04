@@ -67,9 +67,10 @@ const Sidebar = () => {
       <button
         onClick={toggleSidebar}
         className={`fixed top-4 z-50 p-2 rounded-xl bg-slate-900 border border-white/[0.1] text-slate-300 hover:text-white hover:bg-slate-800 shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white ${
-          sidebarExpanded ? 'left-68' : 'left-4'
+          sidebarExpanded ? 'left-64' : 'left-4'
         }`}
         aria-label={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+        aria-expanded={sidebarExpanded}
         aria-controls="sidebar"
       >
         <ChevronLeft

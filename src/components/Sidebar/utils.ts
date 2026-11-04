@@ -32,6 +32,11 @@ export const scrollToSection = (
   const element = document.getElementById(sectionId);
   if (element) {
     element.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    // Section links are also shown on standalone tool pages, where the
+    // portfolio anchors are not mounted. Return to the portfolio and let the
+    // browser resolve the selected section from the URL hash.
+    window.location.href = `/#${sectionId}`;
   }
   setIsOpen(false);
 };

@@ -140,6 +140,20 @@ export const NavigationLinks = memo<NavigationLinksProps>(
     }
 
     // Portfolio page navigation (root & /portfolio)
+    // The featured portfolio page uses its own section IDs. Keep the sidebar
+    // destinations aligned with those anchors when it is open on /portfolio.
+    const portfolioSectionIds: Record<string, string> = {
+      hero: 'intro',
+      about: 'showcase-skills',
+      skills: 'showcase-skills',
+      experience: 'showcase-experience',
+      projects: 'showcase-projects',
+      education: 'showcase-credentials',
+      achievements: 'showcase-credentials',
+      contact: 'showcase-contact',
+    };
+    const sectionIds =
+      pathname === '/portfolio' ? portfolioSectionIds : undefined;
     const sections = [
       { id: 'hero', label: 'Overview' },
       { id: 'about', label: 'Architecture & Craft' },
@@ -210,7 +224,9 @@ export const NavigationLinks = memo<NavigationLinksProps>(
               <li key={section.id}>
                 <button
                   type="button"
-                  onClick={() => handleScrollToSection(section.id)}
+                  onClick={() =>
+                    handleScrollToSection(sectionIds?.[section.id] ?? section.id)
+                  }
                   className="w-full text-left text-slate-300 hover:text-white hover:bg-white/[0.05] px-3 py-1.5 rounded-lg transition-colors text-xs font-normal flex items-center justify-between group"
                 >
                   <span>{section.label}</span>
